@@ -1,0 +1,77 @@
+{% extends "layout/base.html" %}
+{% block title %} - {{ page_title }}{% endblock title %}
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <form action="" method="post">
+                                {% csrf_token %}
+
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>User Information</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="first_name">First Name * </label>
+                                            <input type="text" value="{{ formdata.first_name }}" class="form-control" name="first_name" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="last_name">Last Name * </label>
+                                            <input type="text" value="{{ formdata.last_name }}" class="form-control" name="last_name" required />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col g-1">
+                                            <label for="email">Email Address * </label>
+                                            <input type="text" value="{{ formdata.email }}" class="form-control" name="email" required />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="role">User Role *</label>
+                                            <select name="role" class="form-control" required>
+                                                {% for role in roles %}
+                                                <option value="{{ role.0 }}" {% if role.0 == formdata.role %} selected {% endif %}>{{ role.1 }}</option>
+                                                {% endfor %}
+                                        </select>
+                                        </div>
+                                        <div class="col pt-4">
+                                            {% if form_purpose == "edit" %}
+                                            <div class="custom-control custom-switch align-middle">
+                                                <input type="hidden" name="is_active" value="off" />
+                                                <input type="checkbox" id="active_user" value="on" {% if formdata.is_active %} checked {% endif %} class="custom-control-input" name="is_active" />
+                                                <label class="custom-control-label" id="active_user_label" for="active_user">{% if formdata.is_active %} Active{% else %} Inactive{% endif %} User </label>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <button type="submit" class="btn btn-lg btn-primary py-1 px-3">Submit</button>
+                            </form>
+                            <!-- end form for validations -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('#active_user').change(function() {
+            if ($(this).is(':checked')) {
+                $('#active_user_label').text('Active User');
+            } else {
+                $('#active_user_label').text('Inactive User');
+            }
+        });
+    });
+</script>
+{% endblock script %}

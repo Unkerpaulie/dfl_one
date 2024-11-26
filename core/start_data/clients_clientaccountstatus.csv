@@ -1,0 +1,9 @@
+ClientAccountStatusID,ClientAccountStatus1
+1,Pending
+2,Active
+3,Reopened
+4,Dormant 
+5,Frozen
+6,Closed
+7,Rejected
+8,Submitted for Approval

@@ -1,0 +1,61 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title> DFL Foreign Exchange {% block title %}{% endblock title %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="shortcut icon" type="image/png" href="{% static 'images/logo/favicon.ico' %}"/>
+        <link rel="stylesheet" href="{% static "css/custom.css" %}" />
+        <!-- Vendor css that came with the template -->
+        <link rel="stylesheet" href="{% static "css/vendor.css" %}" />
+        <!-- DataTables -->
+        <link href="{% static "css/datatables.min.css" %}" rel="stylesheet" />
+        <!-- Theme initialization -->
+        {% block css %}{% endblock css %}
+        <script>
+            var themeSettings = (localStorage.getItem('themeSettings')) ? JSON.parse(localStorage.getItem('themeSettings')) :
+            {};
+            var themeName = themeSettings.themeName || '';
+            if (themeName)
+            {
+                document.write('<link rel="stylesheet" id="theme-style" href="/static/css/app-' + themeName + '.css">');
+            }
+            else
+            {
+                document.write('<link rel="stylesheet" id="theme-style" href="/static/css/app.css">');
+            }
+        </script>
+    </head>
+    <body>
+        <div class="main-wrapper">
+            <div class="app" id="app">
+                {% include "layout/topbar.html" %}
+                {% include "layout/sidebar.html" %}
+                <div class="sidebar-overlay" id="sidebar-overlay"></div>
+                <div class="sidebar-mobile-menu-handle" id="sidebar-mobile-menu-handle"></div>
+                <div class="mobile-menu-handle"></div>
+                <article class="content">
+                    {% include "layout/messages.html" %}
+                    {% block content %}
+                    {% endblock content %}
+                </article>
+            </div>
+        </div>
+        <!-- Reference block for JS -->
+        <div class="ref" id="ref">
+            <div class="color-primary"></div>
+            <div class="chart">
+                <div class="color-primary"></div>
+                <div class="color-secondary"></div>
+            </div>
+        </div>
+
+        <script src="{% static "js/vendor.js" %}"></script>
+        <script src="{% static "js/datatables.min.js" %}"></script>
+        <script src="{% static "js/app.js" %}"></script>
+        {% block script %}{% endblock script %}
+    </body>
+</html>

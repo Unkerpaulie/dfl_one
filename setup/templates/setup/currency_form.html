@@ -1,0 +1,51 @@
+{% extends "layout/base.html" %}
+{% block title %} - {{ page_title }}{% endblock title %}
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>Currency Info</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col-8">
+                                            <label for="currency_name">Country/Region * </label>
+                                            <input type="text" value="{{ formdata.currency_name }}" class="form-control" name="currency_name" required />
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="currency_code">Currency Code * </label>
+                                            <input type="text" value="{{ formdata.currency_code }}" class="form-control" name="currency_code" required />
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <button type="submit" class="btn btn-lg btn-primary py-1 px-3">Submit</button>
+                            </form>
+                            <!-- end form for validations -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('#active_user').change(function() {
+            if ($(this).is(':checked')) {
+                $('#active_user_label').text('Active User');
+            } else {
+                $('#active_user_label').text('Inactive User');
+            }
+        });
+    });
+</script>
+{% endblock script %}

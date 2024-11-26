@@ -1,0 +1,83 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table customer {
+    customer_id varchar [primary key]
+    first_name varchar
+    last_name varchar
+    middle_name varchar
+    customer_type varchar
+    email varchar
+    date_of_birth date
+    sex varchar
+    address1 varchar
+    address2 varchar
+    city varchar
+    country varchar
+    phone_number varchar
+    mobile_number varchar
+    dual_citizen bool
+    dual_country varchar
+    residence_country varchar
+    birth_country varchar
+    nationality_country varchar
+}
+
+Table customer_corporation {
+    corporation_id integer
+    customer_id varchar
+    company_name varchar
+    email varchar
+    address1 varchar
+    address2 varchar
+    city varchar
+    country varchar
+    phone_number varchar
+}
+
+Table customer_identification {
+    customer_id varchar [primary key]
+    id_type integer [primary key]
+    id_number varchar
+    country varchar
+    id_expiration date
+}
+
+Table identfication_types {
+    id_type_id integer [primary key]
+    id_type_name varchar
+}
+
+Table beneficiary_bank {
+    beneficary_id integer [primary key]
+    customer_id varchar
+    bank_name varchar
+    account_number varchar
+    swift_code varchar
+    bank_address varchar
+    intermdeiary_bank varchar
+    intermediary_account varchar
+}
+
+Table fx_transaction {
+    deal_id integer [primary key]
+    customer_id varchar
+    contract_date date
+    value_date date
+    customer_id varchar
+    from_currency varchar
+    to_currency varchar
+    exchange_rate decimal
+    transaction_rate decimal
+    request_amount decimal
+    entered_by integer
+    entered_on date
+}
+
+
+Ref: customer.customer_id - customer_corporation.customer_id // one-to-one
+Ref: customer.customer_id < customer_identification.customer_id // one-to-many
+Ref: customer.customer_id < beneficiary_bank.customer_id // one-to-many
+Ref: customer.customer_id < fx_transaction.customer_id // one-to-many
+Ref: identfication_types.id_type_id < customer_identification.id_type // one-to-many
+

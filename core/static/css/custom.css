@@ -1,0 +1,12 @@
+.smaller-text {
+    font-size: 0.8rem;
+}
+.even-smaller-text {
+    font-size: 0.7rem;
+}
+.deal-confirm {
+    background: url("/static/images/letterhead.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: top;
+}

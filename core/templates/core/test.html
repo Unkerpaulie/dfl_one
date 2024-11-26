@@ -1,0 +1,140 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>{{ current_page }}</h3>
+            </div>
+
+            <div class="title_right">
+                <div class="col-md-5 col-sm-5  form-group pull-right top_search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">Go!</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 ">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Individual Client <small>different form elements</small></h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <br />
+                        <form id="demo-form" data-parsley-validate>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <label for="first_name">First Name * :</label>
+                                    <input type="text" class="form-control" name="first_name" required />
+                                </div>
+                                <div class="col">
+                                    <label for="middle_name">Middle Name:</label>
+                                    <input type="text" class="form-control" name="middle_name" />
+                                </div>
+                                <div class="col">
+                                    <label for="surname">Surnmae * :</label>
+                                    <input type="text" class="form-control" name="surname" required />
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <label for="date_of_birth">Date Of Birth * :</label>
+                                    <input type="date" placeholder="yyyy-mm-dd" class="form-control" id="datepick" name="date_of_birth" required />
+                                </div>
+                                <div class="col">
+                                    <label>Gender *:</label>
+                                    <div class="row">
+                                        <div class="col">
+                                            M: <input type="radio" class="flat" name="gender" value="M" checked="" required />
+                                        </div>
+                                        <div class="col">
+                                            F: <input type="radio" class="flat" name="gender" value="F" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label for="marital_status">Marital Status *:</label>
+                                    <select name="marital_status" class="form-control" required>
+                                        <option value="S">Single</option>
+                                        <option value="M">Married</option>
+                                        <option value="D">Divorced</option>
+                                        <option value="W">Widowed</option>
+                                        <option value="O">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label for="residential_address">Residential Address * :</label>
+                                <input type="residential_address" class="form-control" name="residential_address" required />
+                            </div>
+                            <div class="mb-2">
+                                <label for="residential_address2">Residential Address (line 2) :</label>
+                                <input type="residential_address2" class="form-control" name="residential_address2" />
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <label for="residential_city">Residential City * :</label>
+                                    <input type="residential_city" class="form-control" name="residential_city" required />
+                                </div>
+                                <div class="col">
+                                    <label for="residential_country">Residesntial Country *:</label>
+                                    <select name="residential_country" class="form-control" required>
+                                        <option value="S">Single</option>
+                                        <option value="M">Married</option>
+                                        <option value="D">Divorced</option>
+                                        <option value="W">Widowed</option>
+                                        <option value="O">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <label for="email">Email * :</label>
+                            <input type="email" id="email" class="form-control" name="email" data-parsley-trigger="change" required />
+
+
+                            <label>Hobbies (2 minimum):</label>
+                            <p style="padding: 5px;">
+                                <input type="checkbox" name="hobbies[]" id="hobby1" value="ski" data-parsley-mincheck="2" required class="flat" /> Skiing
+                                <br />
+
+                                <input type="checkbox" name="hobbies[]" id="hobby2" value="run" class="flat" /> Running
+                                <br />
+
+                                <input type="checkbox" name="hobbies[]" id="hobby3" value="eat" class="flat" /> Eating
+                                <br />
+
+                                <input type="checkbox" name="hobbies[]" id="hobby4" value="sleep" class="flat" /> Sleeping
+                                <br />
+                                <p>
+
+                                    <label for="heard">Heard us by *:</label>
+                                    <select id="heard" class="form-control" required>
+                                        <option value="">Choose..</option>
+                                        <option value="press">Press</option>
+                                        <option value="net">Internet</option>
+                                        <option value="mouth">Word of mouth</option>
+                                    </select>
+
+                                    <label for="message">Message (20 chars min, 100 max) :</label>
+                                    <textarea id="message" required="required" class="form-control" name="message" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message="Come on! You need to enter at least a 20 caracters long comment.." data-parsley-validation-threshold="10"></textarea>
+
+                                    <br />
+                                    <span class="btn btn-primary">Validate form</span>
+
+                        </form>
+                        <!-- end form for validations -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

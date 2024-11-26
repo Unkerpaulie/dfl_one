@@ -1,0 +1,49 @@
+{% extends "layout/base.html" %}
+
+{% block title %} - {{ page_title }}{% endblock title %}
+
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content mx-5">
+                            <form action="" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>User Details</small></legend>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="first_name">First Name * </label>
+                                            <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="last_name">Surname * </label>
+                                            <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col g-1">
+                                            <label for="email">Email  </label>
+                                            <input type="text" disabled="disabled" class="form-control boxed" placeholder="{{ user.email }}" />
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                
+                                <input type="submit" value="Submit" class="btn btn-lg btn-primary py-1 px-3" />
+
+                            </form>
+                            <!-- end form for validations -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

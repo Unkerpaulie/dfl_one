@@ -1,0 +1,9 @@
+ClientStatusID,Status
+1,Pending
+2,Submitted for Approval
+3,Under Review
+4,Sent for Repair
+5,Rejected
+6,First Approval
+7,Final Approval
+8,Deferment

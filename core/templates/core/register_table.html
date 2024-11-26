@@ -1,0 +1,118 @@
+{% extends "layout/base.html" %}
+{% load humanize %}
+{% load static %}
+{% block title %} - {{ page_title }}{% endblock title %}
+
+{% block content %}
+    <section class="section">
+        <div class="row">
+            <div class="col">
+                <div class="card stats" data-exclude="xs">
+                    <div class="card-block">
+                        <div class="title-block">
+                            <div class="col-md-4">
+                                <span class="text-muted">Today's Date:</span>
+                                <span class="text-info font-weight-bold">{{ today_date }}</span>
+                            </div>
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary btn-sm" onclick="exportTableToExcel('register-table', 'Deal Register')">Export to Excel</button>
+                            </div>
+                    </div>
+                        <div class="row row-sm table-responsive">
+                            <div class="table-responsive">
+
+                                <table class="table table-striped smaller-text" id="register-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Deal #</th>
+                                            <th>Contract Date</th>
+                                            <th>Value Date</th>
+                                            <th>Client</th>
+                                            <th>Purchase/Sale</th>
+                                            <th>Currency</th>
+                                            <th>Amount</th>
+                                            <th>Exchange Rate</th>
+                                            <th>Settlement Currency</th>
+                                            <th>Settlement Amount</th>
+                                            <th>Deal Status</th>
+                                            <th>Trader</th>
+                                            <th>Beneficiary</th>
+                                            <th>Beneficiary Bank</th>
+                                            <th>Beneficiary Acc #</th>
+                                            <th>Intermediary Bank</th>
+                                            <th>Intermediary Acc #</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for transaction in transactions %}
+                                        <tr>
+                                            <td>{{ transaction.id }}</td>
+                                            <td>{{ transaction.contract_date }}</td>
+                                            <td>{{ transaction.value_date }}</td>
+                                            <td>{{ transaction.client }}</td>
+                                            <td>{{ transaction.get_transaction_type_display }}</td>
+                                            <td>{{ transaction.origin_currency }}</td>
+                                            <td>{{ transaction.origin_amount|floatformat:2|intcomma }}</td>
+                                            <td>{{ transaction.origin_currency_rate|floatformat:2|intcomma }}</td>
+                                            <td>{{ transaction.settlement_currency }}</td>
+                                            <td>{{ transaction.settlement_amount|floatformat:2|intcomma }}</td>
+                                            <td>{{ transaction.deal_status }}</td>
+                                            <td>{{ transaction.trader.first_name }} {{ transaction.trader.last_name }}</td>
+                                            <td>{{ transaction.beneficiary.recipient_name }}</td>
+                                            <td>{{ transaction.beneficiary.bank_name }}</td>
+                                            <td>{{ transaction.beneficiary.account_number }}</td>
+                                            <td>{{ transaction.beneficiary.intermediary_bank_name }}</td>
+                                            <td>{{ transaction.beneficiary.intermediary_account_number }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+{% block script %}
+<script>
+    new DataTable("#register-table", {
+        order: [[1, 'desc']]
+    });
+
+    function exportTableToExcel(tableID, filename) {
+        var downloadLink;
+        var dataType = 'application/vnd.ms-excel';
+        var tableSelect = document.getElementById(tableID);
+        var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+
+        // Specify file name
+        filename = filename + '.xls';
+
+        // Create download link element
+        downloadLink = document.createElement("a");
+
+        document.body.appendChild(downloadLink);
+
+        if (navigator.msSaveOrOpenBlob) {
+            var blob = new Blob(['\ufeff', tableHTML], {
+                type: dataType
+            });
+            navigator.msSaveOrOpenBlob(blob, filename);
+        } else {
+            // Create a link to the file
+            downloadLink.href = 'data:' + dataType + ','+ tableHTML;
+
+            // Setting the file name
+            downloadLink.download = filename;
+
+            //triggering the function
+            downloadLink.click();
+        }
+    }
+</script>
+{% endblock script %}

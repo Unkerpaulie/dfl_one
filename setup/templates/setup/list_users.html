@@ -1,0 +1,91 @@
+{% extends "layout/base.html" %}
+{% load static %}
+{% block title %} - {{ page_title }}{% endblock title %}
+
+{% block content %}
+    <div class="title-block">
+        <a href="{% url "setup:add_user" %}" class="btn btn-primary btn-lg">Add User</a>
+    </div>
+    <section class="section">
+        <div class="container">
+            <div class="card">
+                <div class="card-block">
+                    {% if users %}
+                    <table class="table hover" id="users-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <th scope="row">{{ user.id }}</th>
+                                <td>
+                                    {% if not user.is_active %}<span class="text-black-50">{% endif %}
+                                        {{ user.first_name }} {{ user.last_name }}
+                                    {% if not user.is_active %}</span>{% endif %}
+                                </td>
+                                <td>
+                                    {% if not user.is_active %}<span class="text-black-50">{% endif %}
+                                    {{ user.email }}
+                                    {% if not user.is_active %}</span>{% endif %}
+                                </td>
+                                <td>
+                                    {% if not user.is_active %}<span class="text-black-50">{% endif %}
+                                    {{ user.get_role_display }}
+                                    {% if not user.is_active %}</span>{% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url "setup:edit_user" user.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit User Info"><i class="fa fa-edit"></i></a>
+                                    <button class="btn btn-sm btn-oval btn-danger mx-1" data-toggle="modal" data-target="#resetModal{{ user.id }}" title="Reset User Password"><i class="fa fa-lock"></i></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <h4 class="text-center">No Beneficiaries for this Client</h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+  
+  <!-- Modal -->
+   {% for user in users %}
+  <div class="modal fade" id="resetModal{{ user.id }}" tabindex="-1" aria-labelledby="resetModalLabel{{ user.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="resetModalLabel{{ user.id }}">Reset User Password</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <p>Email: {{ user.email }}</p>
+            <p>Password: ChangeMe!</p>
+            <p>The user will be prompted to change their password on their next login.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <form action="{% url "setup:reset_user_password" user.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Confirm</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+   {% endfor %}
+{% endblock content %}
+{% block script %}
+<script>
+    new DataTable("#users-table");
+</script>
+{% endblock script %}

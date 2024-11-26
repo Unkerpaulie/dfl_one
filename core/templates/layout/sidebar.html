@@ -1,0 +1,52 @@
+{% load static %}
+<aside class="sidebar">
+    <div class="sidebar-container">
+        <div class="sidebar-header">
+            <div class="brand d-flex">
+                <div class="mr-2">
+                    <img src="{% static "images/logo/favicon-32x32.png" %}" alt="Development Finance Limited">
+                </div>DFL Foreign Exchange
+            </div>
+        </div>
+        <nav class="menu">
+            <ul class="sidebar-menu metismenu" id="sidebar-menu">
+                <li{% if section == "home" %} class="active"{% endif %}>
+                    <a href="{% url "core:home" %}">
+                        <i class="fa fa-bar-chart"></i> Blotter </a>
+                </li>
+                <li{% if section == "register" %} class="active"{% endif %}>
+                    <a href="{% url "core:register_all" %}">
+                        <i class="fa fa-th"></i> Register </a>
+                </li>
+                <li{% if section == "clients" %} class="active"{% endif %}>
+                    <a href="{% url "clients:home" %}"> 
+                        <i class="fa fa-users"></i> Clients 
+                    </a>
+                </li>
+                <li{% if section == "transactions" %} class="active"{% endif %}>
+                    <a href="{% url "transactions:transactions_list" %}">
+                        <i class="fa fa-exchange"></i> Transactions 
+                    </a>
+                </li>
+                {% if user.role == "admin" %}
+                <li{% if section == "setup" %} class="active open"{% endif %}>
+                    <a href="">
+                        <i class="fa fa-sliders"></i> Settings <i class="fa arrow"></i>
+                    </a>
+                    <ul class="sidebar-nav">
+                        <li{% if page_title == "User Management" %} class="active"{% endif %}>
+                            <a href="{% url "setup:list_users" %}"> User Managment </a>
+                        </li>
+                        <li{% if page_title == "Currency List" %} class="active"{% endif %}>
+                            <a href="{% url "setup:list_currencies" %}"> Currency List </a>
+                        </li>
+                        <li{% if page_title == "Deal Statuses" %} class="active"{% endif %}>
+                            <a href="{% url "setup:list_deal_status" %}"> Deal Statuses </a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</aside>

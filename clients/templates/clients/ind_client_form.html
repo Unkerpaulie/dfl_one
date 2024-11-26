@@ -1,0 +1,448 @@
+{% extends "layout/base.html" %}
+{% block title %} - {{ page_title }}{% endblock title %}
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <form action="" method="post">
+                                {% csrf_token %}
+
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>Basic Information</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <label>
+                                                <input type="checkbox" class="checkbox" onclick="toggleDivVisibility(this, 'legacy_id')"> <span>This is a Legacy Client</span> 
+                                            </label>
+                                        </div>
+                                        <div class="col-8" id="legacy_id">
+                                            <label for="legacy_id">Legacy ID </label>
+                                            <input type="text" value="{{ formdata.legacy_id|default_if_none:"" }}" class="form-control" name="legacy_id" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="first_name">First Name * </label>
+                                            <input type="text" value="{{ formdata.first_name }}" class="form-control" name="first_name" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="middle_name">Middle Name</label>
+                                            <input type="text" value="{{ formdata.middle_name|default_if_none:"" }}" class="form-control" name="middle_name" />
+                                        </div>
+                                        <div class="col">
+                                            <label for="surname">Surname * </label>
+                                            <input type="text" value="{{ formdata.surname }}" class="form-control" name="surname" required />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="date_of_birth">Date Of Birth * </label>
+                                            <input type="date" value="{{ formdata.date_of_birth|date:'Y-m-d' }}" class="form-control" name="date_of_birth" required />
+                                        </div>
+                                        <div class="col">
+                                            <label>Gender *</label>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label>
+                                                        <input type="radio" class="radio" name="gender" value="M" {% if formdata.gender == 'M' %} checked {% endif %} required />
+                                                        <span>Male</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col">
+                                                    <label>
+                                                        <input type="radio" class="radio" name="gender" value="F" {% if formdata.gender == 'F' %} checked {% endif %} />
+                                                        <span>Female</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <label for="marital_status">Marital Status *</label>
+                                            <select name="marital_status" class="form-control" required>
+                                                {% for status in mar_statuses %}
+                                                <option value="{{ status.0 }}" {% if status.0 == formdata.marital_status %} selected {% endif %}>{{ status.1 }}</option>
+                                                {% endfor %}
+                                        </select>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>Address Information</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col g-1">
+                                            <label for="residential_address">Residential Address * </label>
+                                            <input type="text" value="{{ formdata.residential_address }}" class="form-control" name="residential_address" required />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col g-1">
+                                            <label for="residential_address2">Residential Address (line 2) </label>
+                                            <input type="text" value="{{ formdata.residential_address2|default_if_none:"" }}" class="form-control" name="residential_address2" />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="residential_city">Residential City * </label>
+                                            <input type="text" value="{{ formdata.residential_city }}" class="form-control" name="residential_city" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="residential_country">Residential Country *</label>
+                                            <select name="residential_country" class="form-control" required>
+                                                {% if form_purpose == "new" %}
+                                                {% for country in countries %}
+                                                <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
+                                                {% endfor %}
+                                                {% else %}
+                                                {% for country in countries %}
+                                                <option value="{{ country.id }}" {% if country.country_code == formdata.residential_country.country_code %} selected {% endif %}>{{ country.country }}</option>
+                                                {% endfor %}
+                                                {% endif %}
+                                        </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col g-1">
+                                            <label>
+                                                <input type="checkbox" class="checkbox" onclick="toggleDivVisibility(this, 'mailing_address')"> <span>This Client has a different mailing address</span> 
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="mailing_address">
+                                        <div class="row mb-2">
+                                            <div class="col g-1">
+                                                <label for="mailing_address">Mailing Address </label>
+                                                <input type="text" value="{{ formdata.mailing_address|default_if_none:"" }}" class="form-control" name="mailing_address" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col g-1">
+                                                <label for="mailing_address2">Mailing Address (line 2) </label>
+                                                <input type="text" value="{{ formdata.mailing_address2|default_if_none:"" }}" class="form-control" name="mailing_address2" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                <label for="mailing_city">Mailing City </label>
+                                                <input type="text" value="{{ formdata.mailing_city|default_if_none:"" }}" class="form-control" name="mailing_city" />
+                                            </div>
+                                            <div class="col">
+                                                <label for="mailing_country">Mailing Country </label>
+                                                <select name="mailing_country" class="form-control">
+                                                    {% if form_purpose == "new" %}
+                                                    {% for country in countries %}
+                                                    <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    {% for country in countries %}
+                                                    <option value="{{ country.id }}" {% if country.country_code == formdata.mailing_country.country_code %} selected {% endif %}>{{ country.country }}</option>
+                                                    {% endfor %}
+                                                    {% endif %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>Nationality</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="country_of_birth">Country of Birth *</label>
+                                            <select name="country_of_birth" class="form-control" required>
+                                                {% if form_purpose == "new" %}
+                                                {% for country in countries %}
+                                                <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
+                                                {% endfor %}
+                                                {% else %}
+                                                {% for country in countries %}
+                                                <option value="{{ country.id }}" {% if country.country_code == formdata.country_of_birth.country_code %} selected {% endif %}>{{ country.country }}</option>
+                                                {% endfor %}
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label for="nationality">Country of Nationality *</label>
+                                            <select name="nationality" class="form-control" required>
+                                                {% if form_purpose == "new" %}
+                                                {% for country in countries %}
+                                                <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
+                                                {% endfor %}
+                                                {% else %}
+                                                {% for country in countries %}
+                                                <option value="{{ country.id }}" {% if country.country_code == formdata.nationality.country_code %} selected {% endif %}>{{ country.country }}</option>
+                                                {% endfor %}
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label>
+                                                <input type="hidden" value="off" name="dual_citizen">
+                                                <input type="checkbox" class="checkbox" name="dual_citizen" onclick="toggleDivVisibility(this, 'dual_nationality')"> <span>Client has dual citizenship</span> 
+                                            </label>
+                                        </div>
+                                        <div class="col" id="dual_nationality">
+                                            <label for="dual_nationality">Dual Nationality *</label>
+                                            <select name="dual_nationality" class="form-control">
+                                                {% if form_purpose == "new" %}
+                                                {% for country in countries %}
+                                                <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
+                                                {% endfor %}
+                                                {% else %}
+                                                {% for country in countries %}
+                                                <option value="{{ country.id }}"{% if country.country_code == formdata.dual_nationality.country_code %} selected {% endif %}>{{ country.country }}</option>
+                                                {% endfor %}
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                
+                                <fieldset class="border my-2 px-2" id="id_entries">
+                                    <legend class="w-auto px-2">
+                                        <button type="button" class="btn btn-primary-outline btn-sm p-2" data-toggle="tooltip" data-placement="right" title="Click to add Client Identification Information" onclick="add_id_entry();">Add Identification Item</button type="button">
+                                    </legend>
+                                    {% if form_purpose == "edit" %}
+                                    {% for id_info in id_infos %}
+                                    <div class="alert alert-light alert-dismissible fade show" role="presentation">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="id_type">Identification Type *</label>
+                                                <select name="id_type" class="form-control" required>
+                                                    {% for id_type in id_types %}
+                                                    <option value="{{ id_type.id }}"{% if id_type.id == id_info.id_type.id %} selected {% endif %}>{{ id_type.id_type }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col">
+                                                <label for="id_number">Identification Number * </label>
+                                                <input type="text" class="form-control" value="{{ id_info.id_number }}" name="id_number" required />
+                                            </div>
+                                            <div class="col">
+                                                <label for="id_country">Country *</label>
+                                                <select name="id_country" class="form-control" required>
+                                                    {% for country in countries %}
+                                                    <option value="{{ country.id }}" {% if country.country_code == id_info.id_country.country_code %} selected{% endif %}>{{ country.country }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col">
+                                                <label for="issue_date">Issue Date </label>
+                                                <input type="date" class="form-control" name="issue_date" value="{{ id_info.issue_date|date:'Y-m-d' }}" />
+                                            </div>
+                                            <div class="col">
+                                                <label for="expiry_date">Expiry Date * </label>
+                                                <input type="date" class="form-control" name="expiry_date" value="{{ id_info.expiry_date|date:'Y-m-d' }}" required />
+                                            </div>
+                                            <input type="hidden" name="id_info_id" value="{{ id_info.id }}">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                </fieldset>
+                        
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>Contact Information</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="primary_phone">Primary Phone *</label>
+                                            <input type="text" value="{{ formdata.primary_phone }}" name="primary_phone" class="form-control" required /> 
+                                        </div>
+                                        <div class="col">
+                                            <label for="secondary_phone">Secondary Phone </label>
+                                            <input type="text" value="{{ formdata.secondary_phone|default_if_none:"" }}" name="secondary_phone" class="form-control" /> 
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col g-1">
+                                            <label for="email">Email * </label>
+                                            <input type="email" class="form-control" value="{{ formdata.email }}" name="email" required />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <label>Preferred method of contact</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <label>
+                                                <input type="hidden" value="off" name="telephone_preferred">
+                                                <input type="checkbox" class="checkbox" name="telephone_preferred" {% if formdata.telephone_preferred %} checked {% endif %}> <span>Telephone</span> 
+                                            </label>
+                                        </div>
+                                        <div class="col-2">
+                                            <label>
+                                                <input type="hidden" value="off" name="email_preferred">
+                                                <input type="checkbox" class="checkbox" name="email_preferred" {% if formdata.email_preferred %} checked {% endif %}> <span>Email</span> 
+                                            </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>Income</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col g-1">
+                                            <label for="primary_income_source">Primary Income Source * </label>
+                                            <input type="text" value="{{ formdata.primary_income_source }}" class="form-control" name="primary_income_source" required />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <label for="employment_status">Employment Status *</label>
+                                            <select name="employment_status" class="form-control" required> 
+                                                {% for status in emp_statuses %}
+                                                <option value="{{ status.0 }}"{% if status.0 == formdata.employment_status %} selected {% endif %}>{{ status.1 }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-8">
+                                            <label for="position_held">Position Held </label>
+                                            <input type="text" value="{{ formdata.position_held|default_if_none:"" }}" name="position_held" class="form-control" /> 
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="employer">Employer *</label>
+                                            <input type="text" value="{{ formdata.employer }}" name="employer" class="form-control" /> 
+                                        </div>
+                                        <div class="col">
+                                            <label for="business_type">Business Type </label>
+                                            <input type="text" value="{{ formdata.business_type|default_if_none:"" }}" name="business_type" class="form-control" /> 
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col g-1">
+                                            <label for="employer_address">Employer Address </label>
+                                            <input type="text" value="{{ formdata.employer_address|default_if_none:"" }}" class="form-control" name="employer_address" />
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>Other Information</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <label>
+                                                <input type="hidden" value="off" name="politically_exposed">
+                                                <input type="checkbox" class="checkbox" name="politically_exposed" onclick="toggleDivVisibility(this, 'political_details')" {% if formdata.politically_exposed %} checked {% endif %}> <span>Client is politically exposed</span> 
+                                            </label>
+                                        </div>
+                                        <div class="col-8" id="political_details">
+                                            <label for="political_details">Details of poltical exposure </label>
+                                            <input type="text" value="{{ formdata.political_details|default_if_none:"" }}" class="form-control" name="political_details" />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <label for="transaction_frequency">Transaction Frequency *</label>
+                                            <select name="transaction_frequency" class="form-control" required> 
+                                                {% for freq in trans_freq %}
+                                                <option value="{{ freq.0 }}"{% if freq.0 == formdata.transaction_frequency %} selected {% endif %}>{{ freq.1 }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <button type="submit" class="btn btn-lg btn-primary py-1 px-3">Submit</button>
+                            </form>
+                            <!-- end form for validations -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Hide the div by default
+        document.getElementById("legacy_id").style.display = "none";
+        document.getElementById("mailing_address").style.display = "none";
+        document.getElementById("dual_nationality").style.display = "none";
+        document.getElementById("political_details").style.display = "none";
+    });
+
+    function toggleDivVisibility(checkbox, divId) {
+        var div = document.getElementById(divId);
+        if (checkbox.checked) {
+            div.style.display = "block";
+        } else {
+            div.style.display = "none";
+        }
+    }
+    
+    function toggleEleRequired(checkbox, eleId) {
+        var ele = document.getElementById(eleId);
+        if (checkbox.checked) {
+            ele.required = true;
+        } else {
+            ele.required = false;
+        }
+    }
+    
+    
+    function add_id_entry() {
+        console.log("clicked");
+        var id_entry_div = document.createElement('div');
+        id_entry_div.className = "alert alert-light alert-dismissible fade show";
+        id_entry_div.setAttribute("role", "presentation");
+        var inner_div =  `
+                <div class="row">
+                    <div class="col">
+                        <label for="id_type">Identification Type *</label>
+                        <select name="id_type" class="form-control" required>
+                            {% for id_type in id_types %}
+                            <option value="{{ id_type.id }}">{{ id_type.id_type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="id_number">Identification Number * </label>
+                        <input type="text" class="form-control" name="id_number" required />
+                    </div>
+                    <div class="col">
+                        <label for="id_country">Country *</label>
+                        <select name="id_country" class="form-control" required>
+                            {% for country in countries %}
+                            <option value="{{ country.id }}" {% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="issue_date">Issue Date </label>
+                        <input type="date" class="form-control" name="issue_date" />
+                    </div>
+                    <div class="col">
+                        <label for="expiry_date">Expiry Date * </label>
+                        <input type="date" class="form-control" name="expiry_date" required />
+                    </div>
+                    <input type="hidden" name="id_info_id" value="">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>`;
+            id_entry_div.innerHTML = inner_div;
+            const entries_div = document.getElementById("id_entries"); 
+            entries_div.appendChild(id_entry_div);
+        }
+
+
+</script>
+{% endblock script %}

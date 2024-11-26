@@ -1,0 +1,175 @@
+{% extends "layout/base.html" %}
+{% load static %}
+{% block title %} - {{ page_title }}{% endblock title %}
+{% block css %}
+<style>
+    @media print {
+        body * {
+            display: none;
+        }
+        .modal, .modal * {
+            display: block;
+            visibility: visible;
+        }
+        #deal_review, #deal_review * {
+            display: block;
+            visibility: visible;
+        }
+        #deal_review {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+
+</style>
+{% endblock css %}
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <form action="" method="post" id="transaction_form">
+                                {% csrf_token %}
+                                <input type="hidden" name="client_id" value="{{ client.ClientID }}">
+                                <input type="hidden" name="client_name" value="{{ client.ClientName }}">
+                                <input type="hidden" name="deal_id" value="{{ deal_id }}">
+                                <input type="hidden" name="trader" value="{{ user.first_name }} {{ user.last_name }}">
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>Transaction Details</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="contract_date">Contract Date * </label>
+                                            <input type="date" value="{{ formdata.contract_date|date:'Y-m-d' }}" class="form-control" name="contract_date" id="contract_date" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="value_date">Value Date * </label>
+                                            <input type="date" value="{{ formdata.value_date|date:'Y-m-d' }}" class="form-control" name="value_date" id="value_date" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="transaction_type">Transaction Type *</label>
+                                            <select name="transaction_type" class="form-control" id="transaction_type" required>
+                                                {% for transaction_type in transaction_types %}
+                                                <option value="{{ transaction_type.0 }}"{% if transaction_type.0 == formdata.transaction_type.id %} selected {% endif %}>{{ transaction_type.1 }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="settlement_currency">Settlement Currency * (deduct from us)</label>
+                                            <select name="settlement_currency" class="form-control" id="settlement_currency" onchange="checkForTT('settlement_currency')" required>
+                                                {% for currency in currencies %}
+                                                <option value="{{ currency.id }}"{% if currency.id == formdata.settlement_currency.id %} selected {% endif %}>{{ currency }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label for="settlement_currency_rate">Settlement Currency Rate * </label>
+                                            <input type="text" value="{{ formdata.settlement_currency_rate }}" class="form-control" name="settlement_currency_rate" id="settlement_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="settlement_amount">Settlement Amount * </label>
+                                            <input type="text" value="{{ formdata.settlement_amount }}" class="form-control" name="settlement_amount" id="settlement_amount" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="origin_currency">Origin Currency * (add to us)</label>
+                                            <select name="origin_currency" class="form-control" id="origin_currency" onchange="checkForTT('origin_currency')" required>
+                                                {% for currency in currencies %}
+                                                <option value="{{ currency.id }}"{% if currency.id == formdata.origin_currency.id %} selected {% endif %}>{{ currency }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label for="origin_currency_rate">Origin Currency Rate * </label>
+                                            <input type="text" value="{{ formdata.origin_currency_rate }}" class="form-control" name="origin_currency_rate" id="origin_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="origin_amount">Origin Amount * </label>
+                                            <input type="text" value="{{ formdata.origin_amount }}" class="form-control" name="origin_amount" id="origin_amount" readonly required />
+                                        </div>
+                                    </div>
+                                    {% comment %}  
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="exchange_rate">Exchange Rate * </label>
+                                            <div class="input-group">
+                                                <input type="text" value="{{ formdata.exchange_rate }}" class="form-control" name="exchange_rate" id="exchange_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary-outline p-2" type="button" onclick="invertRate('exchange_rate')">Invert</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endcomment %}
+                                    <div class="row mb-2">
+                                        <div class="col-8 g-1">
+                                            <label for="beneficiary">Select Beneficiary </label>
+                                            <div class="input-group">
+                                                <select name="beneficiary" id="beneficiary" class="form-control">
+                                                    <option value="">No Beneficiary Selected</option>
+                                                    {% for beneficiary in beneficiaries %}
+                                                    <option value="{{ beneficiary.id }}"{% if beneficiary.id == formdata.beneficiary.id %} selected {% endif %}>{{ beneficiary }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <a class="btn btn-primary-outline p-2" href="{% url "clients:new_beneficiary" client.ClientID %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="deal_status">Deal Status *</label>
+                                            <select name="deal_status" class="form-control" id="deal_status" required>
+                                                {% for status in deal_statuses %}
+                                                <option value="{{ status.id }}"{% if status.id == formdata.deal_status.id %} selected {% endif %}>{{ status }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <button type="button" class="btn btn-lg btn-primary py-1 px-3" data-toggle="modal" data-target="#exampleModal" onclick="dealReview();">Review</button>
+
+
+                                <!-- Confirmation Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                    <div class="modal-content justify-content-center">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Review and confirm transaction details</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <div class="modal-body w-100" id="deal_review">
+                                            {% include "transactions/_transaction_review.html" %}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary ml-auto" onclick="printDiv('deal_review','Deal 1234')">Print/Export</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+                                            <button type="submit" class="btn btn-primary">Confirm</button>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+  
+                            </form>
+                            <!-- end form for validations -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+
+{% block script %}
+<script src="{% static "js/transactions.js" %}"></script>
+{% endblock script %}

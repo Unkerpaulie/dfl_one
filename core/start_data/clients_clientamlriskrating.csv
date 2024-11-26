@@ -1,0 +1,5 @@
+ClientAMLRiskRatingID,ClientAMLRiskRating1,Min,Max
+1,Low Risk,37,65
+2,Low Medium Risk,66,93
+3,Medium High Risk,94,120
+4,High Risk,121,1000

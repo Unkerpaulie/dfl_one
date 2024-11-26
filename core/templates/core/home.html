@@ -1,0 +1,65 @@
+{% extends "layout/base.html" %}
+{% load humanize %}
+{% load static %}
+{% block title %} - {{ page_title }}{% endblock title %}
+
+{% block content %}
+    <section class="section">
+        <div class="row">
+            <div class="col">
+                <div class="card stats" data-exclude="xs">
+                    <div class="card-block">
+                        <div class="title-block">
+                            <h4 class="title"> Total Portfolio Value </h4>
+                            <div class="title-description row my-3"> 
+                                <div class="col-md-4">
+                                    <span class="text-muted">Today's Date:</span>
+                                    <span class="text-info font-weight-bold">{{ today_date }}</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="text-muted">TTD on hand:</span>
+                                    <span class="text-info font-weight-bold">{{ ttd_on_hand|floatformat:2|intcomma }}</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="text-muted">Total TTD value:</span>
+                                    <span class="text-info font-weight-bold">{{ sum_total_value|floatformat:2|intcomma }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-sm stats-container">
+                            <table class="table table-striped smaller-text">
+                                <thead>
+                                    <tr>
+                                        <th>Currency</th>
+                                        <th>Opening Balance</th>
+                                        <th>Today's Purchases</th>
+                                        <th>Today's Sales</th>
+                                        <th>Closing Balance</th>
+                                        <th>Future Dated Purchases</th>
+                                        <th>Future Dated Sales</th>
+                                        <th>Adjusted Closing Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for currency in currency_data %}
+                                    <tr>
+                                        <td>{{ currency.currency }}</td>
+                                        <td>{{ currency.symbol }}{{ currency.opening|floatformat:2|intcomma }}</td>
+                                        <td>{{ currency.symbol }}{{ currency.today_purchase|floatformat:2|intcomma }}</td>
+                                        <td>{{ currency.symbol }}{{ currency.today_sale|floatformat:2|intcomma }}</td>
+                                        <td>{{ currency.symbol }}{{ currency.closing|floatformat:2|intcomma }}</td>
+                                        <td>{{ currency.symbol }}{{ currency.future_purchase|floatformat:2|intcomma }}</td>
+                                        <td>{{ currency.symbol }}{{ currency.future_sale|floatformat:2|intcomma }}</td>
+                                        <td>{{ currency.symbol }}{{ currency.adjusted_closing|floatformat:2|intcomma }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
