@@ -79,7 +79,7 @@ class Command(BaseCommand):
                             except ValueError:
                                 pass
 
-                app_class = self.get_app_model(a, m)
+                app_class = self.get_app_model(data_model['app'], m)
 
             
                 if not app_class:
