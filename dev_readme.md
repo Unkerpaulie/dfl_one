@@ -1,10 +1,10 @@
 ## Setup
 
-No 3rd party libraries needed in Django. However, the system itself uses faker for generating random data, and openpyxl for generating excel downloads:
+No 3rd party libraries needed in Django. However, the system itself uses faker for generating random data, and openpyxl for generating excel downloads, andofcourse, Django:
 
-`pip install faker, openpyxl`
+`pip install django, faker, openpyxl`
 
-Create the databse structure and superuser account:
+Create the database structure and superuser account:
 
 `python manage.py migrate`
 
@@ -21,7 +21,7 @@ Sets up the initial reference datasets like countries and client types. These po
 
 `python manage.py create_clients`
 
-This script creates 50 random clients to populate the client base
+This script creates 60 random clients to populate the client base
 
 `python manage.py create_beneficiaries`
 

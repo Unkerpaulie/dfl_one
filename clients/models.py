@@ -9,7 +9,6 @@ class ClientType(models.Model):
         return self.ClientType1
 
 class ClientSubType(models.Model):
-    ClientTypeSubID = models.IntegerField(primary_key=True)
     ClientTypeSubID = models.ForeignKey(ClientType, on_delete=models.CASCADE)
     ClientTypeSub1 = models.CharField(max_length=50)
 
