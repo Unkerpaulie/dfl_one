@@ -25,7 +25,7 @@ This script creates 60 random clients to populate the client base
 
 `python manage.py create_beneficiaries`
 
-This script creates between 0 and 3 random beneficiaries for each client created
+This script creates between 1 and 3 random beneficiaries for each client created
 
 ## Start the server and create initial currency stock
 
@@ -63,18 +63,22 @@ Return to the main website. The TTD on hand should be the amount you initially e
 
 ### 5. Create foriegn currency deposits
 
-From the **Clients** menu, select Client 0 and click the "New Transaction" icon. A Purchase transactin needs to be made for each foreign currency deposit. Set the Contract Date and Value Date before the current date. This way these deposits will represent the opening balances for today. The Settlment Currency for each transaction is TTD. The exchange rates for the currencies on the list relative to TTD are as follows:
+From the **Clients** menu, select Client 0 and click the "New Transaction" icon. A Purchase transactin needs to be made for each foreign currency deposit. Set the Contract Date and Value Date before the current date. This way these deposits will represent the opening balances for today. The Settlment Currency for each transaction is TTD. The exchange rates for the origin currencies on the list relative to TTD are as follows:
 - USD: 6.78
 - GBP: 8.54
-- EUR: 7.15
 - JPY: 0.044
+- EUR: 7.15
 - XCD: 2.51
 
-Select the foreign currency as Origin Currency and enter the rate as Origin Currency Rate. The Settlement Amount is then the desrieed amount multiplied by the Origin Currency rate. For example, if you need to deposit 1000000 USD and the exchange rate is 6.78, enter 6780000 as the Settlement amount. The Origin Amount of 1000000 will automatically be entered. Select the Beneficiary that was created. Save the transaction. The Payment details field is optional, but a comment may be entered. Save and repeat for each foreign currency deposit.
+Select the foreign currency as Origin Currency and enter the rate as Origin Currency Rate. The Settlement Amount is then the desrieed amount multiplied by the Origin Currency rate. For example, if you need to deposit 1000000 USD and the exchange rate is 6.78, enter 6780000 as the Settlement amount. The Origin Amount of 1000000 will automatically be entered. Select the Beneficiary that was created. Before saving the transaction, click review. A transaction sheet is generated which can be printed or exported. Click Confirm to save the transaction. The Payment details field is optional, but a comment may be entered. Save and repeat for each foreign currency deposit.
 
 ### 6. Confirm that all opening balances
 
 Select **Blotter** from the side menu and ensure that all the initial values are entered and are correct. The TTD on hand value will also decrease accordingly because of the initial purchases
+
+### 7. Create at least 1 trader
+
+As admin, you have access to the Settings menu on the sidebar. Click User Management to add a new User. Give the user a name and email address and set their role to Trader. 
 
 ## Daily transactions
 

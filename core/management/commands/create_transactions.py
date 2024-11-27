@@ -32,6 +32,7 @@ class Command(BaseCommand):
             t_type = random.choice(["P", "S"])
             client_id = random.choice(all_ids)
             foreign_currency = random.choice(currencies)
+
             if t_type == "P":
                 orig_currency = Currency.objects.filter(currency_code=foreign_currency["code"]).first()
                 orig_rate = foreign_currency["rate"]
@@ -59,7 +60,7 @@ class Command(BaseCommand):
                 settlement_currency_rate = set_rate,
                 settlement_amount = set_amount,
                 deal_status = DealStatus.objects.get(pk=2),
-                trader = User.objects.get(pk=random.choice([2, 3])),
+                trader = random.choice(User.objects.filter(role="trader")),
                 beneficiary = random.choice(Client.objects.get(ClientID=client_id).beneficiaries.all()),
                 payment_details = fake.sentence()
             )

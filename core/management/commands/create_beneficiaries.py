@@ -15,7 +15,7 @@ class Command(BaseCommand):
         country_ids = list(Country.objects.all().values_list("CountryID", flat=True))
         for i in all_ids:
             client = Client.objects.get(pk=i)
-            b_num = random.randint(0, 4)
+            b_num = random.randint(1, 4)
             for j in range(b_num):
                 add_intermediary = random.random() > 0.75
                 b = BeneficiaryBank(
