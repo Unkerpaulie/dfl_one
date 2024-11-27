@@ -20,7 +20,8 @@
                                 <button class="btn btn-primary btn-sm" onclick="exportTableToExcel('register-table', 'Deal Register')">Export to Excel</button>
                             </div>
                     </div>
-                        <div class="row row-sm table-responsive">
+                        <div class="row row-sm">
+                            {% if transactions %}
                             <div class="table-responsive">
 
                                 <table class="table table-striped smaller-text" id="register-table">
@@ -70,6 +71,9 @@
                                     </tbody>
                                 </table>
                             </div>
+                            {% else %}
+                            <h4 class="text-center">No transactions found.</h4>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -81,7 +85,7 @@
 {% block script %}
 <script>
     new DataTable("#register-table", {
-        order: [[1, 'desc']]
+        order: [[0, 'desc']]
     });
 
     function exportTableToExcel(tableID, filename) {

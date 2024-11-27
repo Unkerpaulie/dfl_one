@@ -43,7 +43,7 @@
                                 <tbody>
                                     {% for currency in currency_data %}
                                     <tr>
-                                        <td>{{ currency.currency }}</td>
+                                        <td><a href="{% url "core:register" currency.currency|lower %}">{{ currency.currency }}</a></td>
                                         <td>{{ currency.symbol }}{{ currency.opening|floatformat:2|intcomma }}</td>
                                         <td>{{ currency.symbol }}{{ currency.today_purchase|floatformat:2|intcomma }}</td>
                                         <td>{{ currency.symbol }}{{ currency.today_sale|floatformat:2|intcomma }}</td>

@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
+from django.db.models import Q
 from core.utils import get_blotter_data, get_currency_balance
 from .models import Currency
 from transactions.models import Transaction
@@ -36,11 +37,19 @@ def home(req):
 
 @login_required
 def register(req, currency_code):
-    currency = Currency.objects.filter(currency_code=currency_code).first()
+    currency = Currency.objects.filter(currency_code=currency_code.upper()).first()
     if not currency:
         messages.error(req, "Currency not found")
         return render(req, "core/home.html")
-    
+    transactions = Transaction.objects.filter(
+        Q(contract_date=date.today()), (Q(settlement_currency=currency) | Q(origin_currency=currency)))
+    context = {"page_title": f"{currency_code.upper()} Register"}
+    context["section"] = "register"
+    context["transactions"] = transactions
+    today_date = date.today()
+    context["today_date"] = today_date
+    return render(req, "core/register_table.html", context)
+   
 
 @login_required
 def register_all(req):
@@ -51,6 +60,7 @@ def register_all(req):
     today_date = date.today()
     context["today_date"] = today_date
     return render(req, "core/register_table.html", context)
+
 
 @login_required
 def temp_home(req):
