@@ -35,7 +35,10 @@ def new_transaction(req, client_id):
     context["client"] = client
     context["beneficiaries"] = beneficiaries
     context |= {"transaction_types": transaction_types, "currencies": currencies, "deal_statuses": deal_statuses}
-    context["deal_id"] = Transaction.objects.latest("id").id + 1
+    try:
+        context["deal_id"] = Transaction.objects.latest("id").id + 1 
+    except:
+        context["deal_id"] = 1 # if no transactions exist yet
 
 
     if req.method == "POST":        

@@ -41,21 +41,21 @@ You can go to <http://127.0.0.1:8000/admin/> or click your name in the top right
 
 ### 2. Create a starting currency stock entry
 
-In the **Currency stocks** table, create the following entry:
+In the **Currency stocks** table under **SETUP**, create the following entry:
 - Source transaction: -
 - Adjustment soure: Manual
 - Adjustment type: Increase
 - Currency: TTD
 - Currency rate: 1
 - Amount: 1000000000 (one billion)
-- Effective date: (cuurent date)
-- Comment: initial deposit (although this is optional)
+- Effective date: (current date)
+- Comment: "initial deposit" (although this is optional)
 - Entered by: (select your user email)
 - Last updated by: (same as above)
 
 ### 3. Create client 0
 
-The **Clients** table will be populated with random client information starting at ClientID 1. Click "Add Client" and create a client with ClientID 0. This is a special client entry only visible to the admin in the system, and allows the other currency stocks to be initialized. You can give it a client name like "Foreign Exchange Account" or something. Enter something for all the required fields, those don't matter what you put but you have to put something.
+The **Clients** table will be populated with random client information starting at ClientID 1. Click "Add Client" and create a client with ClientID 0. This is a special client entry only visible to the admin in the system, and allows the other currency stocks to be initialized. You can give it a client name like "Foreign Exchange Account" or something. Enter something for all the required fields, those don't matter what you put but you have to put something The fields PEP and USPerson should be set to 0.
 
 ### 4. Create a beneficiary for client 0
 

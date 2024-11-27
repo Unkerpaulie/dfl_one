@@ -33,12 +33,6 @@ class Command(BaseCommand):
     ]
 
     def get_app_model(self, app, model_name):
-        # app = filename.split("_")[0]
-        # model_name = filename.split("_")[1].split(".")[0]
-        # for dm in self.data_models:
-        #     if dm['app'] == app:
-        #         for mdl in dm["models"]:
-        #             if mdl.lower() == model_name:
         try:
             module_path = f"{app}.models"
             models_module = importlib.import_module(module_path)
@@ -66,7 +60,6 @@ class Command(BaseCommand):
         for data_model in self.data_models:
             for m in data_model["models"]:
                 f = f"{data_model['app']}_{m.lower()}.csv"
-        # for f in file_list:
                 f_path =  Path(self.directory) / f
                 data = self.csv_to_dict_list(f_path)
                 # convert any numeric values

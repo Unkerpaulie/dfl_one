@@ -40,9 +40,9 @@ class Command(BaseCommand):
             ClientAddressState=fake.state_abbr() if random.random() > 0.8 else "",
             ClientAddressZipCode=fake.postalcode() if random.random() > 0.8 else "",
             CountryID=Country.objects.get(pk=216) if random.random() > 0.1 else Country.objects.get(pk=random.randint(1, 239)),
-            ClientPhone="",
+            ClientPhone=fake.basic_phone_number(),
             ClientFax="",
-            ClientEmail="",
+            ClientEmail=fake.email() if random.random() > 0.5 else "",
             ClientWebsite="",
             ClientApprovalStatus="Final Approval"
         )
