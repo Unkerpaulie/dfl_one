@@ -63,10 +63,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         file_list = [file.name for file in Path(self.directory).iterdir() if file.suffix == '.csv']
-        for a in self.data_models:
-            for m in a["models"]:
+        for data_model in self.data_models:
+            for m in data_model["models"]:
         # for f in file_list:
-                f_path =  Path(self.directory) / f"{a}_{m.lower()}.csv"
+                f_path =  Path(self.directory) / f"{data_model['app']}_{m.lower()}.csv"
                 data = self.csv_to_dict_list(f_path)
                 # convert any numeric values
                 for row in data:
