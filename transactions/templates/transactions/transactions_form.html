@@ -96,20 +96,7 @@
                                             <input type="text" value="{{ formdata.origin_amount }}" class="form-control" name="origin_amount" id="origin_amount" readonly required />
                                         </div>
                                     </div>
-                                    {% comment %}  
-                                    <div class="row mb-2">
-                                        <div class="col">
-                                            <label for="exchange_rate">Exchange Rate * </label>
-                                            <div class="input-group">
-                                                <input type="text" value="{{ formdata.exchange_rate }}" class="form-control" name="exchange_rate" id="exchange_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-primary-outline p-2" type="button" onclick="invertRate('exchange_rate')">Invert</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% endcomment %}
-                                    <div class="row mb-2">
+                                    <div class="row">
                                         <div class="col-8 g-1">
                                             <label for="beneficiary">Select Beneficiary </label>
                                             <div class="input-group">
@@ -133,16 +120,23 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="payment_details">Payment Details </label>
+                                                <input type="text" value="{{ formdata.payment_details }}" class="form-control" name="payment_details" id="payment_details" />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </fieldset>
-                                <button type="button" class="btn btn-lg btn-primary py-1 px-3" data-toggle="modal" data-target="#exampleModal" onclick="dealReview();">Review</button>
+                                <button type="button" class="btn btn-lg btn-primary py-1 px-3 mt-1" data-toggle="modal" data-target="#reviewModal" onclick="dealReview();">Review</button>
 
 
                                 <!-- Confirmation Modal -->
-                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg">
                                     <div class="modal-content justify-content-center">
                                         <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Review and confirm transaction details</h5>
+                                        <h5 class="modal-title" id="reviewModalLabel">Review and confirm transaction details</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>

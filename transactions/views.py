@@ -47,12 +47,13 @@ def new_transaction(req, client_id):
         transaction_type = req.POST.get("transaction_type")
         settlement_currency = int(req.POST.get("settlement_currency"))
         settlement_currency_rate = float(req.POST.get("settlement_currency_rate"))
-        settlement_amount = req.POST.get("settlement_amount")
+        settlement_amount = float(req.POST.get("settlement_amount"))
         origin_currency = int(req.POST.get("origin_currency"))
         origin_currency_rate = float(req.POST.get("origin_currency_rate"))
         origin_amount = req.POST.get("origin_amount")
         beneficiary = int(req.POST.get("beneficiary"))
         deal_status = int(req.POST.get("deal_status"))
+        payment_details = req.POST.get("payment_details")
 
         transaction = Transaction(
             client=client, 
@@ -67,7 +68,9 @@ def new_transaction(req, client_id):
             origin_amount=origin_amount, 
             deal_status=DealStatus.objects.get(id=deal_status), 
             trader=req.user, 
-            beneficiary=BeneficiaryBank.objects.get(id=beneficiary)
+            last_updated_by=req.user, 
+            beneficiary=BeneficiaryBank.objects.get(id=beneficiary),
+            payment_details=payment_details
         )
         transaction.save()
         # update currency stock
@@ -128,7 +131,8 @@ def edit_transaction(req, client_id, transaction_id):
         "origin_currency_rate": transaction.origin_currency_rate,
         "origin_amount": transaction.origin_amount,
         "deal_status": transaction.deal_status,
-        "beneficiary": transaction.beneficiary
+        "beneficiary": transaction.beneficiary,
+        "payment_details": transaction.payment_details
     }
 
     if req.method == "POST":
@@ -137,12 +141,13 @@ def edit_transaction(req, client_id, transaction_id):
         transaction_type = req.POST.get("transaction_type")
         settlement_currency = int(req.POST.get("settlement_currency"))
         settlement_currency_rate = float(req.POST.get("settlement_currency_rate"))
-        settlement_amount = req.POST.get("settlement_amount")
+        settlement_amount = float(req.POST.get("settlement_amount"))
         origin_currency = int(req.POST.get("origin_currency"))
         origin_currency_rate = float(req.POST.get("origin_currency_rate"))
         origin_amount = req.POST.get("origin_amount")
         deal_status = int(req.POST.get("deal_status"))
         beneficiary = int(req.POST.get("beneficiary"))
+        payment_details = req.POST.get("payment_details")
         
         transaction.contract_date = contract_date
         transaction.value_date = value_date
@@ -156,6 +161,8 @@ def edit_transaction(req, client_id, transaction_id):
         transaction.deal_status = DealStatus.objects.get(id=deal_status)
         # transaction.trader = req.user
         transaction.beneficiary = BeneficiaryBank.objects.get(id=beneficiary)
+        transaction.payment_details = payment_details
+        transaction.last_updated_by = req.user
         transaction.save()
         # update currency stock decrease
         decrease_stock = CurrencyStock.objects.filter(source_transaction=transaction, adjustment_type=-1).first()

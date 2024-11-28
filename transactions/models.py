@@ -20,10 +20,11 @@ class Transaction(models.Model):
     # exchange_rate = models.DecimalField(max_digits=16, decimal_places=10)
     # exchange_rate = settlement_currency_rate / origin_currency_rate
     deal_status = models.ForeignKey(DealStatus, on_delete=models.CASCADE)
-    trader = models.ForeignKey(User, on_delete=models.CASCADE)
     beneficiary = models.ForeignKey(BeneficiaryBank, on_delete=models.CASCADE, null=True, blank=True)
     payment_details = models.CharField(max_length=255, null=True, blank=True)
+    trader = models.ForeignKey(User, related_name="trader", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    last_updated_by = models.ForeignKey(User, related_name="updater", on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
