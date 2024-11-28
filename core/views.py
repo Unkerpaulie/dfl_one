@@ -41,24 +41,22 @@ def register(req, currency_code):
     if not currency:
         messages.error(req, "Currency not found")
         return render(req, "core/home.html")
+    today_date = date.today()
     transactions = Transaction.objects.filter(
-        Q(contract_date=date.today()), (Q(settlement_currency=currency) | Q(origin_currency=currency)))
-    context = {"page_title": f"{currency_code.upper()} Register"}
+        Q(contract_date=today_date), (Q(settlement_currency=currency) | Q(origin_currency=currency)))
+    context = {"page_title": f"{currency_code.upper()} Register - {today_date.strftime("%d %b, %Y")}"}
     context["section"] = "register"
     context["transactions"] = transactions
-    today_date = date.today()
-    context["today_date"] = today_date
     return render(req, "core/register_table.html", context)
    
 
 @login_required
 def register_all(req):
-    transactions = Transaction.objects.filter(contract_date=date.today())
-    context = {"page_title": "All Register"}
+    today_date = date.today()
+    transactions = Transaction.objects.filter(contract_date=today_date)
+    context = {"page_title": f"All Register - {today_date.strftime("%d %b, %Y")}"}
     context["section"] = "register"
     context["transactions"] = transactions
-    today_date = date.today()
-    context["today_date"] = today_date
     return render(req, "core/register_table.html", context)
 
 

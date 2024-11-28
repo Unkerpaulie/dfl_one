@@ -9,17 +9,8 @@
             <div class="col">
                 <div class="card stats" data-exclude="xs">
                     <div class="card-block">
-                        <div class="title-block row">
-                            <div class="col-md-4">
-                                <span class="text-muted">Today's Date:</span>
-                                <span class="text-info font-weight-bold">{{ today_date }}</span>
-                            </div>
-                            <div class="col-md-4">
-                            </div>
-                            <div class="col-md-4">
-                                <button class="btn btn-primary btn-sm" onclick="exportTableToExcel('register-table', 'Deal Register')">Export to Excel</button>
-                            </div>
-                    </div>
+                        <div class="title-block">
+                        </div>
                         <div class="row row-sm">
                             {% if transactions %}
                             <div class="table-responsive">
@@ -83,12 +74,21 @@
 
 {% endblock content %}
 {% block script %}
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
     new DataTable("#register-table", {
+        layout: {
+            topStart: {
+                buttons: ['excel', 'pdfHtml5']
+            }
+        },
         order: [[0, 'desc']]
     });
 
-    function exportTableToExcel(tableID, filename) {
+    {% comment %} function exportTableToExcel(tableID, filename) {
         var downloadLink;
         var dataType = 'application/vnd.ms-excel';
         var tableSelect = document.getElementById(tableID);
@@ -117,6 +117,6 @@
             //triggering the function
             downloadLink.click();
         }
-    }
+    } {% endcomment %}
 </script>
 {% endblock script %}
