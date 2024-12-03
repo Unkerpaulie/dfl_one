@@ -72,8 +72,15 @@ function dealReview() {
     const form_elements = document.getElementById("transaction_form").elements;
     const bank_charges = "95";
     const value_date = new Date(form_elements["value_date"].value);
+    value_date.setDate(value_date.getUTCDate());
+    value_date.setMonth(value_date.getUTCMonth());
+    value_date.setFullYear(value_date.getUTCFullYear());
     const contract_date = new Date(form_elements["contract_date"].value);
+    contract_date.setDate(contract_date.getUTCDate());
+    contract_date.setMonth(contract_date.getUTCMonth());
+    contract_date.setFullYear(contract_date.getUTCFullYear());
     const value_date_formatted = value_date.toLocaleString('default',{dateStyle:'long'});
+    console.log(value_date_formatted);
     const contract_date_formatted = contract_date.toLocaleString('default',{dateStyle:'long'});
     const transaction_type = form_elements["transaction_type"].options[form_elements["transaction_type"].selectedIndex].text;
     const settlement_currency = form_elements["settlement_currency"].options[form_elements["settlement_currency"].selectedIndex].text;
@@ -83,6 +90,7 @@ function dealReview() {
     const origin_amount = form_elements["origin_amount"].value;
     const origin_currency_rate = Math.round(form_elements["origin_currency_rate"].value * 10000) / 10000;
     const total_amount = Number(settlement_amount) + Number(bank_charges);
+    const payment_details = form_elements["payment_details"].value;
     
     const client_id = form_elements["client_id"].value;
     const client_name = form_elements["client_name"].value;
@@ -158,6 +166,7 @@ function dealReview() {
             document.getElementById("review-client_name3").innerText = client_name;
             document.getElementById("review-client_name4").innerText = client_name;
             document.getElementById("review-trader").innerText = trader;
+            document.getElementById("review-payment_details").innerText = payment_details;
             document.getElementById("review-deal_id").innerText = deal_id;
 
         }
@@ -168,7 +177,7 @@ function dealReview() {
     document.getElementById("review-bank_charges").innerText = bank_charges;
     document.getElementById("review-settlement_currency").innerText = settlement_currency;
     document.getElementById("review-settlement_currency2").innerText = settlement_currency;
-    document.getElementById("review-settlement_currency3").innerText = settlement_currency;
+    // document.getElementById("review-settlement_currency3").innerText = settlement_currency;
     // document.getElementById("review-settlement_currency4").innerText = settlement_currency;
     document.getElementById("review-settlement_amount").innerText = settlement_amount;
     document.getElementById("review-settlement_amount2").innerText = settlement_amount;
@@ -180,7 +189,7 @@ function dealReview() {
     document.getElementById("review-total_amount").innerText = total_amount;
     document.getElementById("review-total_amount2").innerText = total_amount;
     document.getElementById("review-settlement_currency_rate").innerText = settlement_currency_rate;
-    document.getElementById("review-transaction_type").innerText = transaction_type;
+    // document.getElementById("review-transaction_type").innerText = transaction_type;
     document.getElementById("review-value_date").innerText = value_date_formatted;
     document.getElementById("review-value_date2").innerText = value_date_formatted;
     document.getElementById("review-value_date3").innerText = value_date_formatted;

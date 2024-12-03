@@ -32,6 +32,7 @@ class Command(BaseCommand):
             t_type = random.choice(["P", "S"])
             client_id = random.choice(all_ids)
             foreign_currency = random.choice(currencies)
+            trader = random.choice(User.objects.filter(role="trader"))
 
             if t_type == "P":
                 orig_currency = Currency.objects.filter(currency_code=foreign_currency["code"]).first()
@@ -49,20 +50,21 @@ class Command(BaseCommand):
                 orig_amount = round(set_amount * set_rate, 2)
             # create transaction object
             t = Transaction(
-                client = Client.objects.get(ClientID=client_id),
-                contract_date = date.today(),
-                value_date = date.today() + timedelta(days=random.randint(1, 3)) if random.random() > 0.7 else date.today(),
-                transaction_type = t_type,
-                origin_currency = orig_currency,
-                origin_currency_rate = orig_rate,
-                origin_amount = orig_amount,
-                settlement_currency = set_currency,
-                settlement_currency_rate = set_rate,
-                settlement_amount = set_amount,
-                deal_status = DealStatus.objects.get(pk=2),
-                trader = random.choice(User.objects.filter(role="trader")),
-                beneficiary = random.choice(Client.objects.get(ClientID=client_id).beneficiaries.all()),
-                payment_details = fake.sentence()
+                client=Client.objects.get(ClientID=client_id),
+                contract_date=date.today(),
+                value_date=date.today() + timedelta(days=random.randint(1, 3)) if random.random() > 0.7 else date.today(),
+                transaction_type=t_type,
+                origin_currency=orig_currency,
+                origin_currency_rate=orig_rate,
+                origin_amount=orig_amount,
+                settlement_currency=set_currency,
+                settlement_currency_rate=set_rate,
+                settlement_amount=set_amount,
+                deal_status=DealStatus.objects.get(pk=2),
+                trader=trader,
+                last_updated_by=trader,
+                beneficiary=random.choice(Client.objects.get(ClientID=client_id).beneficiaries.all()),
+                payment_details=fake.sentence()
             )
             t.save()
             self.stdout.write(self.style.SUCCESS(f"{i+1}: {t}"))
