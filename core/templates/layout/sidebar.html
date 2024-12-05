@@ -37,6 +37,9 @@
                         <li{% if page_title == "User Management" %} class="active"{% endif %}>
                             <a href="{% url "setup:list_users" %}"> User Managment </a>
                         </li>
+                        <li{% if page_title == "Update Bank Fee" %} class="active"{% endif %}>
+                            <a href="{% url "setup:update_bank_fee" %}"> Update Bank Fee </a>
+                        </li>
                         <li{% if page_title == "Currency List" %} class="active"{% endif %}>
                             <a href="{% url "setup:list_currencies" %}"> Currency List </a>
                         </li>

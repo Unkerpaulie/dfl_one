@@ -5,6 +5,7 @@ app_name = "setup"
 
 
 urlpatterns = [
+    path('restricted/', views.non_admin_redirect, name="restricted"),
     path('users/', views.list_users, name="list_users"),
     path('users/add/', views.add_user, name="add_user"),
     path('users/<int:user_id>/reset/', views.reset_user_password, name="reset_user_password"),
@@ -17,4 +18,5 @@ urlpatterns = [
     path('currencies/<int:currency_id>/edit/', views.edit_currency, name="edit_currency"),
     path('inventory/', views.show_currency_inventory, name="show_currency_inventory"),
     path('inventory/<int:currency_id>/adjust/', views.adjust_currency, name="adjust_currency"),
+    path('bank_fee/', views.update_bank_fee, name="update_bank_fee"),
 ]

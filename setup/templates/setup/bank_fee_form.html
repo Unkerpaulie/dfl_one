@@ -13,15 +13,13 @@
                             <form action="" method="post">
                                 {% csrf_token %}
                                 <fieldset class="border my-2 px-2">
-                                    <legend class="w-auto px-2"><small>Currency Info</small></legend>
+                                    <legend class="w-auto px-2"><small>Bank Fee</small></legend>
                                     <div class="row mb-2">
-                                        <div class="col-8">
-                                            <label for="currency_name">Country/Region * </label>
-                                            <input type="text" value="{{ formdata.currency_name }}" class="form-control" name="currency_name" required />
+                                        <div class="col-6">
+                                            <label for="bank_fee">Bank Fee * </label>
+                                            <input type="text" value="{{ formdata.bank_fee }}" class="form-control" name="bank_fee" required />
                                         </div>
-                                        <div class="col-4">
-                                            <label for="currency_code">Currency Code * </label>
-                                            <input type="text" value="{{ formdata.currency_code }}" class="form-control" name="currency_code" required />
+                                        <div class="col-6">
                                         </div>
                                     </div>
                                 </fieldset>

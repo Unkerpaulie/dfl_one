@@ -1,14 +1,22 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.forms.models import model_to_dict
+from django.urls import reverse_lazy
 from core.models import DealStatus, Currency, IdentificationType
 from account.models import User
-from setup.models import CurrencyStock
+from setup.models import CurrencyStock, BankFee
 from core.utils import get_currency_balance
 
+def check_admin(user):
+   return user.is_authenticated and user.role == "admin"
+
+def non_admin_redirect(request):
+    messages.warning(request, "You must log in with an admin account to view this page.")
+    return redirect('core:home')  # Replace 'home' with your actual home page URL pattern
+
 # list users
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def list_users(req):
     users = User.objects.all()
     context = {"page_title": "User Management"}
@@ -17,7 +25,7 @@ def list_users(req):
     return render(req, 'setup/list_users.html', context)
 
 # add user  
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def add_user(req):
     context = {"page_title": "Add User"}
     context["section"] = "setup"
@@ -42,7 +50,7 @@ def add_user(req):
         return render(req, 'setup/user_form.html', context)
 
 # reset user password
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def reset_user_password(req, user_id):
     if req.method == 'POST':
         user = User.objects.get(id=user_id)
@@ -54,7 +62,7 @@ def reset_user_password(req, user_id):
         return redirect("setup:list_users")
 
 
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def edit_user(req, user_id):
     user = User.objects.get(id=user_id)
     context = {"page_title": "Edit User"}
@@ -88,7 +96,7 @@ def edit_user(req, user_id):
 
 
 # list currencies
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def list_currencies(req):
     currencies = Currency.objects.all()
     context = {"page_title": "Currency List"}
@@ -96,7 +104,7 @@ def list_currencies(req):
     context |= {'currencies': currencies}
     return render(req, 'setup/list_currencies.html', context)
 
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def add_currency(req):
     context = {"page_title": "Add Currency"}
     context["section"] = "setup"
@@ -119,7 +127,7 @@ def add_currency(req):
     else:
         return render(req, 'setup/currency_form.html', context)
 
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def edit_currency(req, currency_id):
     currency = Currency.objects.get(id=currency_id)
     context = {"page_title": "Edit Currency"}
@@ -142,7 +150,7 @@ def edit_currency(req, currency_id):
 
 
 # list deal status
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def list_deal_status(req):
     deal_status = DealStatus.objects.all()
     context = {"page_title": "Deal Statuses"}
@@ -150,7 +158,7 @@ def list_deal_status(req):
     context |= {'deal_status': deal_status}
     return render(req, 'setup/list_deal_status.html', context)
 
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def add_deal_status(req):
     context = {"page_title": "Add Deal Status"}
     context["section"] = "setup"
@@ -167,7 +175,7 @@ def add_deal_status(req):
     else:
         return render(req, 'setup/deal_status_form.html', context)
 
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def edit_deal_status(req, deal_status_id):
     deal_status = DealStatus.objects.get(id=deal_status_id)
     context = {"page_title": "Edit Deal Status"}
@@ -183,7 +191,7 @@ def edit_deal_status(req, deal_status_id):
         return render(req, 'setup/deal_status_form.html', context)
 
 # list identification types
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def list_identification_types(req):
     identification_types = IdentificationType.objects.all()
     context = {"page_title": "Identification Types"}
@@ -191,7 +199,7 @@ def list_identification_types(req):
     context |= {'identification_types': identification_types}
     return render(req, 'setup/list_identification_types.html', context)
 
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def add_identification_type(req):
     context = {"page_title": "Add Identification Type"}
     context["section"] = "setup"
@@ -208,7 +216,7 @@ def add_identification_type(req):
     else:
         return render(req, 'setup/identification_type_form.html', context)
 
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def edit_identification_type(req, identification_type_id):
     identification_type = IdentificationType.objects.get(id=identification_type_id)
     context = {"page_title": "Edit Identification Type"}
@@ -224,7 +232,7 @@ def edit_identification_type(req, identification_type_id):
         context |= {'identification_type': identification_type}
         return render(req, 'setup/identification_type_form.html', context)
 
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def show_currency_inventory(req):
     currencies = Currency.objects.all()
     context = {"page_title": "Currency Inventory"}
@@ -238,7 +246,7 @@ def show_currency_inventory(req):
         context["stock"] += [this_cur]
     return render(req, 'setup/currency_stock.html', context)
 
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def add_currency_adjustment(req):    
     currencies = Currency.objects.all()
     context = {"page_title": "Add Currency Adjustment"}
@@ -268,7 +276,7 @@ def add_currency_adjustment(req):
         return render(req, 'setup/currency_adjust.html', context)
 
         
-@login_required
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def adjust_currency(req, currency_id):    
     currency = Currency.objects.get(id=currency_id)
     context = {"page_title": "Adjust Currency"}
@@ -296,4 +304,20 @@ def adjust_currency(req, currency_id):
             return render(req, 'setup/currency_adjust.html', context)
     else:
         return render(req, 'setup/currency_adjust.html', context)
+
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
+def update_bank_fee(req):
+    fee = BankFee.objects.get(id=1)
+    context = {"page_title": "Update Bank Fee"}
+    context["section"] = "setup"
+    context["formdata"] = {'bank_fee': fee.bank_fee}
+    if req.method == 'POST':
+        bank_fee = req.POST['bank_fee']
+        fee.bank_fee = bank_fee
+        fee.save()
+        messages.success(req, 'Bank fee updated successfully')
+        return redirect("setup:update_bank_fee")
+    else:
+        context |= {'fee': fee}
+        return render(req, 'setup/bank_fee_form.html', context)
 

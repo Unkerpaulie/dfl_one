@@ -62,7 +62,25 @@
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col">
-                                            <label for="settlement_currency">Settlement Currency * (deduct from us)</label>
+                                            <label for="origin_currency">Currency * </label>
+                                            <select name="origin_currency" class="form-control" id="origin_currency" onchange="checkForTT('origin_currency')" required>
+                                                {% for currency in currencies %}
+                                                <option value="{{ currency.id }}"{% if currency.id == formdata.origin_currency.id %} selected {% endif %}>{{ currency }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label for="origin_currency_rate">Currency Rate * </label>
+                                            <input type="text" value="{{ formdata.origin_currency_rate }}" class="form-control" name="origin_currency_rate" id="origin_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="origin_amount">Amount * </label>
+                                            <input type="text" value="{{ formdata.origin_amount }}" class="form-control" name="origin_amount" id="origin_amount" readonly required />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="settlement_currency">Settlement Currency * </label>
                                             <select name="settlement_currency" class="form-control" id="settlement_currency" onchange="checkForTT('settlement_currency')" required>
                                                 {% for currency in currencies %}
                                                 <option value="{{ currency.id }}"{% if currency.id == formdata.settlement_currency.id %} selected {% endif %}>{{ currency }}</option>
@@ -78,30 +96,12 @@
                                             <input type="text" value="{{ formdata.settlement_amount }}" class="form-control" name="settlement_amount" id="settlement_amount" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
                                         </div>
                                     </div>
-                                    <div class="row mb-2">
-                                        <div class="col">
-                                            <label for="origin_currency">Origin Currency * (add to us)</label>
-                                            <select name="origin_currency" class="form-control" id="origin_currency" onchange="checkForTT('origin_currency')" required>
-                                                {% for currency in currencies %}
-                                                <option value="{{ currency.id }}"{% if currency.id == formdata.origin_currency.id %} selected {% endif %}>{{ currency }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="col">
-                                            <label for="origin_currency_rate">Origin Currency Rate * </label>
-                                            <input type="text" value="{{ formdata.origin_currency_rate }}" class="form-control" name="origin_currency_rate" id="origin_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
-                                        </div>
-                                        <div class="col">
-                                            <label for="origin_amount">Origin Amount * </label>
-                                            <input type="text" value="{{ formdata.origin_amount }}" class="form-control" name="origin_amount" id="origin_amount" readonly required />
-                                        </div>
-                                    </div>
                                     <div class="row">
                                         <div class="col-8 g-1">
                                             <label for="beneficiary">Select Beneficiary </label>
                                             <div class="input-group">
                                                 <select name="beneficiary" id="beneficiary" class="form-control">
-                                                    <option value="">No Beneficiary Selected</option>
+                                                    <option value="cash">Cash Settlement</option>
                                                     {% for beneficiary in beneficiaries %}
                                                     <option value="{{ beneficiary.id }}"{% if beneficiary.id == formdata.beneficiary.id %} selected {% endif %}>{{ beneficiary }}</option>
                                                     {% endfor %}

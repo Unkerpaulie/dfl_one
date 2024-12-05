@@ -25,3 +25,10 @@ class CurrencyStock(models.Model):
 
     def __str__(self):
         return f"{self.created_at.date()}: {self.currency} {self.adjustment_type} x {self.amount} ({self.adjustment_source})"
+
+
+class BankFee(models.Model):
+    bank_fee = models.DecimalField(max_digits=6, decimal_places=2)
+
+    def __str__(self):
+        return str(self.bank_fee)
