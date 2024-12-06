@@ -19,6 +19,7 @@ class Transaction(models.Model):
     settlement_currency_rate = models.DecimalField(max_digits=10, decimal_places=4)
     # exchange_rate = models.DecimalField(max_digits=16, decimal_places=10)
     # exchange_rate = settlement_currency_rate / foreign_currency_rate
+    bank_fee = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     deal_status = models.ForeignKey(DealStatus, on_delete=models.CASCADE)
     beneficiary = models.ForeignKey(BeneficiaryBank, on_delete=models.CASCADE, null=True, blank=True)
     payment_details = models.CharField(max_length=255, null=True, blank=True)

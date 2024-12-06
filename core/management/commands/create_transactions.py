@@ -35,31 +35,32 @@ class Command(BaseCommand):
             trader = random.choice(User.objects.filter(role="trader"))
 
             if t_type == "P":
-                orig_currency = Currency.objects.filter(currency_code=foreign_currency["code"]).first()
-                orig_rate = foreign_currency["rate"]
-                orig_amount = random.randint(10, 250) * 100
+                fx_currency = Currency.objects.filter(currency_code=foreign_currency["code"]).first()
+                fx_rate = foreign_currency["rate"]
+                fx_amount = random.randint(10, 250) * 100
                 set_currency = Currency.objects.filter(currency_code="TTD").first()
                 set_rate = 1
-                set_amount = round(orig_amount * orig_rate, 2)
+                set_amount = round(fx_amount * fx_rate, 2)
             else:
                 set_currency = Currency.objects.filter(currency_code=foreign_currency["code"]).first()
                 set_rate = foreign_currency["rate"]
                 set_amount = random.randint(10, 250) * 100
-                orig_currency = Currency.objects.filter(currency_code="TTD").first()
-                orig_rate = 1
-                orig_amount = round(set_amount * set_rate, 2)
+                set_currency = Currency.objects.filter(currency_code="TTD").first()
+                set_rate = 1
+                set_amount = round(set_amount * set_rate, 2)
             # create transaction object
             t = Transaction(
                 client=Client.objects.get(ClientID=client_id),
                 contract_date=date.today(),
                 value_date=date.today() + timedelta(days=random.randint(1, 3)) if random.random() > 0.7 else date.today(),
                 transaction_type=t_type,
-                foreign_currency=orig_currency,
-                foreign_currency_rate=orig_rate,
-                foreign_amount=orig_amount,
+                foreign_currency=fx_currency,
+                foreign_currency_rate=fx_rate,
+                foreign_amount=fx_amount,
                 settlement_currency=set_currency,
                 settlement_currency_rate=set_rate,
                 settlement_amount=set_amount,
+                bank_fee=0,
                 deal_status=DealStatus.objects.get(pk=2),
                 trader=trader,
                 last_updated_by=trader,
@@ -69,31 +70,31 @@ class Command(BaseCommand):
             t.save()
             self.stdout.write(self.style.SUCCESS(f"{i+1}: {t}"))
             # update currecncy stock
-            # deduct settlement currency amount from currency stock
-            decrease_stock = CurrencyStock(
+            # adjust settlement currency stock
+            foreign_stock = CurrencyStock(
                 source_transaction=t,
                 currency=t.settlement_currency,
                 currency_rate=t.settlement_currency_rate,
                 amount=t.settlement_amount,
                 effective_date=t.value_date,
                 adjustment_source = "X",
-                adjustment_type = -1,
+                adjustment_type = 1 if t_type == "P" else -1,
                 entered_by=t.trader,
                 last_updated_by=t.trader
             )
-            decrease_stock.save()
-            self.stdout.write(self.style.SUCCESS(f"Decreased stock: {decrease_stock}"))
-            # add foreign currency amount to currency stock
-            increase_stock = CurrencyStock(
+            foreign_stock.save()
+            self.stdout.write(self.style.SUCCESS(f"{'Purchased' if t_type == 'P' else 'Sold'}: {foreign_stock}"))
+            # adjust foreign currency stock
+            settle_stock = CurrencyStock(
                 source_transaction=t,
                 currency=t.foreign_currency,
                 currency_rate=t.foreign_currency_rate,
                 amount=t.foreign_amount,
                 effective_date=t.value_date,
                 adjustment_source = "X",
-                adjustment_type = 1,
+                adjustment_type = -1 if t_type == "P" else 1,
                 entered_by=t.trader,
                 last_updated_by=t.trader
             )
-            increase_stock.save()
-            self.stdout.write(self.style.SUCCESS(f"Increased stock: {increase_stock}"))
+            settle_stock.save()
+            self.stdout.write(self.style.SUCCESS(f"Settled for: {settle_stock}"))

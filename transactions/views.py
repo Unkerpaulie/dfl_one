@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Transaction
 from clients.models import Client, BeneficiaryBank
 from core.models import Currency, DealStatus
-from setup.models import CurrencyStock
+from setup.models import CurrencyStock, BankFee
 
 
 # Create your views here.
@@ -30,10 +30,12 @@ def new_transaction(req, client_id):
     transaction_types = Transaction.transaction_types
     currencies = Currency.objects.all()
     deal_statuses = DealStatus.objects.all()
+    bank_fee = BankFee.objects.get(pk=1)
     context = {"page_title": f"New Transaction for {client.ClientName}"}
     context["section"] = "transactions"
     context["client"] = client
     context["beneficiaries"] = beneficiaries
+    context["bank_fee"] = bank_fee.bank_fee
     context |= {"transaction_types": transaction_types, "currencies": currencies, "deal_statuses": deal_statuses}
     try:
         context["deal_id"] = Transaction.objects.latest("id").id + 1 
@@ -51,6 +53,7 @@ def new_transaction(req, client_id):
         foreign_currency = int(req.POST.get("foreign_currency"))
         foreign_currency_rate = float(req.POST.get("foreign_currency_rate"))
         foreign_amount = req.POST.get("foreign_amount")
+        bank_fee = float(req.POST.get("bank_fee"))
         beneficiary = int(req.POST.get("beneficiary"))
         deal_status = int(req.POST.get("deal_status"))
         payment_details = req.POST.get("payment_details")
@@ -66,6 +69,7 @@ def new_transaction(req, client_id):
             foreign_currency=Currency.objects.get(id=foreign_currency), 
             foreign_currency_rate=foreign_currency_rate, 
             foreign_amount=foreign_amount, 
+            bank_fee=bank_fee, 
             deal_status=DealStatus.objects.get(id=deal_status), 
             trader=req.user, 
             last_updated_by=req.user, 
@@ -74,32 +78,32 @@ def new_transaction(req, client_id):
         )
         transaction.save()
         # update currency stock
-        # deduct settlement currency amount from currency stock
-        decrease_stock = CurrencyStock(
-            source_transaction=transaction,
-            currency=Currency.objects.get(id=settlement_currency),
-            currency_rate=settlement_currency_rate,
-            amount=settlement_amount,
-            effective_date=value_date,
-            adjustment_source = "X",
-            adjustment_type = -1,
-            entered_by=req.user,
-            last_updated_by=req.user
-        )
-        decrease_stock.save()
-        # add foreign currency amount to currency stock
-        increase_stock = CurrencyStock(
+        # adjust foreign currency stock
+        foreign_stock = CurrencyStock(
             source_transaction=transaction,
             currency=Currency.objects.get(id=foreign_currency),
             currency_rate=foreign_currency_rate,
             amount=foreign_amount,
             effective_date=value_date,
             adjustment_source = "X",
-            adjustment_type = 1,
+            adjustment_type = 1 if transaction.transaction_type == "P" else -1,
             entered_by=req.user,
             last_updated_by=req.user
         )
-        increase_stock.save()
+        foreign_stock.save()
+        # adjust settlement currency stock
+        settlement_stock = CurrencyStock(
+            source_transaction=transaction,
+            currency=Currency.objects.get(id=settlement_currency),
+            currency_rate=settlement_currency_rate,
+            amount=settlement_amount,
+            effective_date=value_date,
+            adjustment_source = "X",
+            adjustment_type = -1 if transaction.transaction_type == "P" else 1,
+            entered_by=req.user,
+            last_updated_by=req.user
+        )
+        settlement_stock.save()
         
         messages.success(req, "Transaction added successfully")
         return redirect("transactions:transactions_list")
@@ -113,11 +117,13 @@ def edit_transaction(req, client_id, transaction_id):
     transaction_types = Transaction.transaction_types
     currencies = Currency.objects.all()
     deal_statuses = DealStatus.objects.all()
+    bank_fee = BankFee.objects.get(pk=1)
     context = {"page_title": f"Edit Transaction for {client.ClientName}"}
     context["section"] = "transactions"
     context["client"] = client
     context["transaction"] = transaction
     context["beneficiaries"] = beneficiaries
+    context["bank_fee"] = bank_fee.bank_fee
     context |= {"transaction_types": transaction_types, "currencies": currencies, "deal_statuses": deal_statuses}
     context["deal_id"] = transaction_id
     context["formdata"] = {
@@ -130,6 +136,7 @@ def edit_transaction(req, client_id, transaction_id):
         "foreign_currency": transaction.foreign_currency,
         "foreign_currency_rate": transaction.foreign_currency_rate,
         "foreign_amount": transaction.foreign_amount,
+        "bank_fee": transaction.bank_fee,
         "deal_status": transaction.deal_status,
         "beneficiary": transaction.beneficiary,
         "payment_details": transaction.payment_details
@@ -145,6 +152,7 @@ def edit_transaction(req, client_id, transaction_id):
         foreign_currency = int(req.POST.get("foreign_currency"))
         foreign_currency_rate = float(req.POST.get("foreign_currency_rate"))
         foreign_amount = req.POST.get("foreign_amount")
+        bank_fee = float(req.POST.get("bank_fee"))
         deal_status = int(req.POST.get("deal_status"))
         beneficiary = int(req.POST.get("beneficiary"))
         payment_details = req.POST.get("payment_details")
@@ -158,28 +166,31 @@ def edit_transaction(req, client_id, transaction_id):
         transaction.foreign_currency = Currency.objects.get(id=foreign_currency)
         transaction.foreign_currency_rate = foreign_currency_rate
         transaction.foreign_amount = foreign_amount
+        transaction.bank_fee = bank_fee
         transaction.deal_status = DealStatus.objects.get(id=deal_status)
         # transaction.trader = req.user
         transaction.beneficiary = BeneficiaryBank.objects.get(id=beneficiary)
         transaction.payment_details = payment_details
         transaction.last_updated_by = req.user
         transaction.save()
-        # update currency stock decrease
-        decrease_stock = CurrencyStock.objects.filter(source_transaction=transaction, adjustment_type=-1).first()
-        decrease_stock.currency=Currency.objects.get(id=settlement_currency)
-        decrease_stock.currency_rate=settlement_currency_rate
-        decrease_stock.amount=settlement_amount
-        decrease_stock.effective_date=value_date
-        decrease_stock.last_updated_by=req.user
-        decrease_stock.save()
-        # update currency stock increase
-        increase_stock = CurrencyStock.objects.filter(source_transaction=transaction, adjustment_type=1).first()
-        increase_stock.currency=Currency.objects.get(id=foreign_currency)
-        decrease_stock.currency_rate=foreign_currency_rate
-        increase_stock.amount=foreign_amount
-        increase_stock.effective_date=value_date
-        increase_stock.last_updated_by=req.user
-        increase_stock.save()
+        # update foreign currency stock
+        foreign_stock = CurrencyStock.objects.filter(source_transaction=transaction).first()
+        foreign_stock.currency=Currency.objects.get(id=settlement_currency)
+        foreign_stock.currency_rate=settlement_currency_rate
+        foreign_stock.amount=settlement_amount
+        foreign_stock.adjustment_type = 1 if transaction_type == "P" else -1
+        foreign_stock.effective_date=value_date
+        foreign_stock.last_updated_by=req.user
+        foreign_stock.save()
+        # update settlement currency stock
+        settlement_stock = CurrencyStock.objects.filter(source_transaction=transaction).last()
+        settlement_stock.currency=Currency.objects.get(id=foreign_currency)
+        settlement_stock.currency_rate=foreign_currency_rate
+        settlement_stock.amount=foreign_amount
+        settlement_stock.adjustment_type = -1 if transaction_type == "P" else 1
+        settlement_stock.effective_date=value_date
+        settlement_stock.last_updated_by=req.user
+        settlement_stock.save()
         messages.success(req, "Transaction updated successfully")
         return redirect("transactions:transactions_list")
     return render(req, "transactions/transactions_form.html", context)

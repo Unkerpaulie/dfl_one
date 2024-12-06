@@ -9,7 +9,6 @@ $(document).ready(function() {
 
 document.addEventListener("DOMContentLoaded", function() {
     checkForTT('settlement_currency'); 
-    checkForTT('origin_currency');
 });
 
 function invertRate(id) {
@@ -19,24 +18,28 @@ function invertRate(id) {
 }
 
 function checkForTT(elem) {
-    var select_thing = document.getElementById(elem);
+    const select_thing = document.getElementById(elem);
     if (select_thing.options.selectedIndex == 0) {
         document.getElementById(`${elem}_rate`).value = 1;
-        document.getElementById(`${elem}_rate`).readOnly = true;
+        document.getElementById(`${elem}_div`).style.visibility = "hidden";
     } else {
-        document.getElementById(`${elem}_rate`).readOnly = false;
+        document.getElementById(`${elem}_rate`).value = "";
+        document.getElementById(`${elem}_div`).style.visibility = "visible";
     }
     calcSettlemetAmount();
 }
 
 function calcSettlemetAmount() {
-    var settlement_amount = document.getElementById("settlement_amount").value;
+    var foreign_amount = document.getElementById("foreign_amount").value;
     // var exchange_rate = document.getElementById("exchange_rate").value;
     var settlement_currency_rate = document.getElementById("settlement_currency_rate").value;
-    var origin_currency_rate = document.getElementById("origin_currency_rate").value;
-    var exchange_rate = settlement_currency_rate / origin_currency_rate;
-    var origin_amount = settlement_amount * exchange_rate;
-    document.getElementById("origin_amount").value = origin_amount.toFixed(2);
+    var foreign_currency_rate = document.getElementById("foreign_currency_rate").value;
+    if (!foreign_currency_rate || !settlement_currency_rate) {
+        document.getElementById("settlement_amount").value = 0;
+    } else {
+        var settlement_amount = foreign_amount * (foreign_currency_rate / settlement_currency_rate);
+        document.getElementById("settlement_amount").value = settlement_amount.toFixed(2);
+    }
 }
 
 function printDiv(divId, title) {
@@ -86,9 +89,9 @@ function dealReview() {
     const settlement_currency = form_elements["settlement_currency"].options[form_elements["settlement_currency"].selectedIndex].text;
     const settlement_amount = form_elements["settlement_amount"].value;
     const settlement_currency_rate = Math.round(form_elements["settlement_currency_rate"].value * 10000) / 10000;
-    const origin_currency = form_elements["origin_currency"].options[form_elements["origin_currency"].selectedIndex].text;
-    const origin_amount = form_elements["origin_amount"].value;
-    const origin_currency_rate = Math.round(form_elements["origin_currency_rate"].value * 10000) / 10000;
+    const foreign_currency = form_elements["foreign_currency"].options[form_elements["foreign_currency"].selectedIndex].text;
+    const foreign_amount = form_elements["foreign_amount"].value;
+    const foreign_currency_rate = Math.round(form_elements["foreign_currency_rate"].value * 10000) / 10000;
     const total_amount = Number(settlement_amount) + Number(bank_charges);
     const payment_details = form_elements["payment_details"].value;
     
@@ -182,10 +185,10 @@ function dealReview() {
     document.getElementById("review-settlement_amount").innerText = settlement_amount;
     document.getElementById("review-settlement_amount2").innerText = settlement_amount;
     // document.getElementById("review-settlement_amount3").innerText = settlement_amount;
-    document.getElementById("review-origin_currency").innerText = origin_currency;
-    document.getElementById("review-origin_currency2").innerText = origin_currency;
-    document.getElementById("review-origin_currency3").innerText = origin_currency;
-    document.getElementById("review-origin_amount").innerText = origin_amount;
+    document.getElementById("review-foreign_currency").innerText = foreign_currency;
+    document.getElementById("review-foreign_currency2").innerText = foreign_currency;
+    document.getElementById("review-foreign_currency3").innerText = foreign_currency;
+    document.getElementById("review-foreign_amount").innerText = foreign_amount;
     document.getElementById("review-total_amount").innerText = total_amount;
     document.getElementById("review-total_amount2").innerText = total_amount;
     document.getElementById("review-settlement_currency_rate").innerText = settlement_currency_rate;

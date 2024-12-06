@@ -63,7 +63,7 @@
                                     <div class="row mb-2">
                                         <div class="col">
                                             <label for="foreign_currency">Foreign Currency * </label>
-                                            <select name="foreign_currency" class="form-control" id="foreign_currency" onchange="checkForTT('foreign_currency')" required>
+                                            <select name="foreign_currency" class="form-control" id="foreign_currency" required>
                                                 {% for currency in currencies %}
                                                 {% if currency.id != 1 %}
                                                 <option value="{{ currency.id }}"{% if currency.id == formdata.foreign_currency.id %} selected {% endif %}>{{ currency }}</option>
@@ -72,12 +72,12 @@
                                             </select>
                                         </div>
                                         <div class="col">
-                                            <label for="foreign_amount">Amount * </label>
-                                            <input type="text" value="{{ formdata.foreign_amount }}" class="form-control" name="foreign_amount" id="foreign_amount" required />
-                                        </div>
-                                        <div class="col">
                                             <label for="foreign_currency_rate">Rate * </label>
                                             <input type="text" value="{{ formdata.foreign_currency_rate }}" class="form-control" name="foreign_currency_rate" id="foreign_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="foreign_amount">Amount * </label>
+                                            <input type="text" value="{{ formdata.foreign_amount }}" class="form-control" name="foreign_amount" id="foreign_amount" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
                                         </div>
                                     </div>
                                     <div class="row mb-2">
@@ -89,18 +89,35 @@
                                                 {% endfor %}
                                             </select>
                                         </div>
-                                        <div class="col">
-                                            <label for="settlement_amount">Settlement Amount * </label>
-                                            <input type="text" value="{{ formdata.settlement_amount }}" class="form-control" name="settlement_amount" id="settlement_amount" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                        <div class="col" id="settlement_currency_div">
+                                            <label for="settlement_currency_rate">Settlement Currency Rate * </label>
+                                            <input type="text" value="{{ formdata.settlement_currency_rate }}" id="settlement_currency_rate" class="form-control" name="settlement_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
                                         </div>
                                         <div class="col">
-                                            <label for="settlement_currency_rate">Settlement Currency Rate * </label>
-                                            <input type="text" value="{{ formdata.settlement_currency_rate }}" class="form-control" name="settlement_currency_rate" id="settlement_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                            <label for="settlement_amount">Settlement Amount * </label>
+                                            <input type="text" value="{{ formdata.settlement_amount }}" class="form-control" name="settlement_amount" id="settlement_amount" readonly required />
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-8 g-1">
-                                            <label for="beneficiary">Select Beneficiary </label>
+                                        <div class="col-8 pt-3">
+                                            <label>
+                                                <input type="hidden" value="0" name="bank_fee">
+                                                <input type="checkbox" class="checkbox" name="bank_fee" value="{{ bank_fee }}" {% if formdata.bank_fee > 0 %} checked {% endif %}> <span>Apply TTD{{ bank_fee }} Bank Fee</span> 
+                                            </label>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <label for="deal_status">Deal Status *</label>
+                                            <select name="deal_status" class="form-control" id="deal_status" required>
+                                                {% for status in deal_statuses %}
+                                                <option value="{{ status.id }}"{% if status.id == formdata.deal_status.id %} selected {% endif %}>{{ status }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col g-1">
+                                            <label for="beneficiary">Instructions for payment to Client </label>
                                             <div class="input-group">
                                                 <select name="beneficiary" id="beneficiary" class="form-control">
                                                     <option value="cash">Cash Settlement</option>
@@ -112,14 +129,6 @@
                                                     <a class="btn btn-primary-outline p-2" href="{% url "clients:new_beneficiary" client.ClientID %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <label for="deal_status">Deal Status *</label>
-                                            <select name="deal_status" class="form-control" id="deal_status" required>
-                                                {% for status in deal_statuses %}
-                                                <option value="{{ status.id }}"{% if status.id == formdata.deal_status.id %} selected {% endif %}>{{ status }}</option>
-                                                {% endfor %}
-                                            </select>
                                         </div>
                                     </div>
                                     <div class="row mb-2">
