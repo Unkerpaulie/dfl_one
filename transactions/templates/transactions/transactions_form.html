@@ -62,20 +62,22 @@
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col">
-                                            <label for="origin_currency">Currency * </label>
-                                            <select name="origin_currency" class="form-control" id="origin_currency" onchange="checkForTT('origin_currency')" required>
+                                            <label for="foreign_currency">Foreign Currency * </label>
+                                            <select name="foreign_currency" class="form-control" id="foreign_currency" onchange="checkForTT('foreign_currency')" required>
                                                 {% for currency in currencies %}
-                                                <option value="{{ currency.id }}"{% if currency.id == formdata.origin_currency.id %} selected {% endif %}>{{ currency }}</option>
+                                                {% if currency.id != 1 %}
+                                                <option value="{{ currency.id }}"{% if currency.id == formdata.foreign_currency.id %} selected {% endif %}>{{ currency }}</option>
+                                                {% endif %}
                                                 {% endfor %}
                                             </select>
                                         </div>
                                         <div class="col">
-                                            <label for="origin_currency_rate">Currency Rate * </label>
-                                            <input type="text" value="{{ formdata.origin_currency_rate }}" class="form-control" name="origin_currency_rate" id="origin_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                            <label for="foreign_amount">Amount * </label>
+                                            <input type="text" value="{{ formdata.foreign_amount }}" class="form-control" name="foreign_amount" id="foreign_amount" required />
                                         </div>
                                         <div class="col">
-                                            <label for="origin_amount">Amount * </label>
-                                            <input type="text" value="{{ formdata.origin_amount }}" class="form-control" name="origin_amount" id="origin_amount" readonly required />
+                                            <label for="foreign_currency_rate">Rate * </label>
+                                            <input type="text" value="{{ formdata.foreign_currency_rate }}" class="form-control" name="foreign_currency_rate" id="foreign_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
                                         </div>
                                     </div>
                                     <div class="row mb-2">
@@ -88,12 +90,12 @@
                                             </select>
                                         </div>
                                         <div class="col">
-                                            <label for="settlement_currency_rate">Settlement Currency Rate * </label>
-                                            <input type="text" value="{{ formdata.settlement_currency_rate }}" class="form-control" name="settlement_currency_rate" id="settlement_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
-                                        </div>
-                                        <div class="col">
                                             <label for="settlement_amount">Settlement Amount * </label>
                                             <input type="text" value="{{ formdata.settlement_amount }}" class="form-control" name="settlement_amount" id="settlement_amount" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
+                                        </div>
+                                        <div class="col">
+                                            <label for="settlement_currency_rate">Settlement Currency Rate * </label>
+                                            <input type="text" value="{{ formdata.settlement_currency_rate }}" class="form-control" name="settlement_currency_rate" id="settlement_currency_rate" onkeyup="calcSettlemetAmount();" onchange="calcSettlemetAmount();" required />
                                         </div>
                                     </div>
                                     <div class="row">

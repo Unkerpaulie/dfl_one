@@ -43,7 +43,7 @@ def register(req, currency_code):
         return render(req, "core/home.html")
     today_date = date.today()
     transactions = Transaction.objects.filter(
-        Q(contract_date=today_date), (Q(settlement_currency=currency) | Q(origin_currency=currency)))
+        Q(contract_date=today_date), (Q(settlement_currency=currency) | Q(foreign_currency=currency)))
     context = {"page_title": f"{currency_code.upper()} Register - {today_date.strftime('%d %b, %Y')}"}
     context["section"] = "register"
     context["transactions"] = transactions

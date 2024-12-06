@@ -48,9 +48,9 @@ def new_transaction(req, client_id):
         settlement_currency = int(req.POST.get("settlement_currency"))
         settlement_currency_rate = float(req.POST.get("settlement_currency_rate"))
         settlement_amount = float(req.POST.get("settlement_amount"))
-        origin_currency = int(req.POST.get("origin_currency"))
-        origin_currency_rate = float(req.POST.get("origin_currency_rate"))
-        origin_amount = req.POST.get("origin_amount")
+        foreign_currency = int(req.POST.get("foreign_currency"))
+        foreign_currency_rate = float(req.POST.get("foreign_currency_rate"))
+        foreign_amount = req.POST.get("foreign_amount")
         beneficiary = int(req.POST.get("beneficiary"))
         deal_status = int(req.POST.get("deal_status"))
         payment_details = req.POST.get("payment_details")
@@ -63,9 +63,9 @@ def new_transaction(req, client_id):
             settlement_currency=Currency.objects.get(id=settlement_currency),
             settlement_currency_rate=settlement_currency_rate, 
             settlement_amount=settlement_amount, 
-            origin_currency=Currency.objects.get(id=origin_currency), 
-            origin_currency_rate=origin_currency_rate, 
-            origin_amount=origin_amount, 
+            foreign_currency=Currency.objects.get(id=foreign_currency), 
+            foreign_currency_rate=foreign_currency_rate, 
+            foreign_amount=foreign_amount, 
             deal_status=DealStatus.objects.get(id=deal_status), 
             trader=req.user, 
             last_updated_by=req.user, 
@@ -87,12 +87,12 @@ def new_transaction(req, client_id):
             last_updated_by=req.user
         )
         decrease_stock.save()
-        # add origin currency amount to currency stock
+        # add foreign currency amount to currency stock
         increase_stock = CurrencyStock(
             source_transaction=transaction,
-            currency=Currency.objects.get(id=origin_currency),
-            currency_rate=origin_currency_rate,
-            amount=origin_amount,
+            currency=Currency.objects.get(id=foreign_currency),
+            currency_rate=foreign_currency_rate,
+            amount=foreign_amount,
             effective_date=value_date,
             adjustment_source = "X",
             adjustment_type = 1,
@@ -127,9 +127,9 @@ def edit_transaction(req, client_id, transaction_id):
         "settlement_currency": transaction.settlement_currency,
         "settlement_currency_rate": transaction.settlement_currency_rate,
         "settlement_amount": transaction.settlement_amount,
-        "origin_currency": transaction.origin_currency,
-        "origin_currency_rate": transaction.origin_currency_rate,
-        "origin_amount": transaction.origin_amount,
+        "foreign_currency": transaction.foreign_currency,
+        "foreign_currency_rate": transaction.foreign_currency_rate,
+        "foreign_amount": transaction.foreign_amount,
         "deal_status": transaction.deal_status,
         "beneficiary": transaction.beneficiary,
         "payment_details": transaction.payment_details
@@ -142,9 +142,9 @@ def edit_transaction(req, client_id, transaction_id):
         settlement_currency = int(req.POST.get("settlement_currency"))
         settlement_currency_rate = float(req.POST.get("settlement_currency_rate"))
         settlement_amount = float(req.POST.get("settlement_amount"))
-        origin_currency = int(req.POST.get("origin_currency"))
-        origin_currency_rate = float(req.POST.get("origin_currency_rate"))
-        origin_amount = req.POST.get("origin_amount")
+        foreign_currency = int(req.POST.get("foreign_currency"))
+        foreign_currency_rate = float(req.POST.get("foreign_currency_rate"))
+        foreign_amount = req.POST.get("foreign_amount")
         deal_status = int(req.POST.get("deal_status"))
         beneficiary = int(req.POST.get("beneficiary"))
         payment_details = req.POST.get("payment_details")
@@ -155,9 +155,9 @@ def edit_transaction(req, client_id, transaction_id):
         transaction.settlement_currency = Currency.objects.get(id=settlement_currency)
         transaction.settlement_currency_rate = settlement_currency_rate
         transaction.settlement_amount = settlement_amount
-        transaction.origin_currency = Currency.objects.get(id=origin_currency)
-        transaction.origin_currency_rate = origin_currency_rate
-        transaction.origin_amount = origin_amount
+        transaction.foreign_currency = Currency.objects.get(id=foreign_currency)
+        transaction.foreign_currency_rate = foreign_currency_rate
+        transaction.foreign_amount = foreign_amount
         transaction.deal_status = DealStatus.objects.get(id=deal_status)
         # transaction.trader = req.user
         transaction.beneficiary = BeneficiaryBank.objects.get(id=beneficiary)
@@ -174,9 +174,9 @@ def edit_transaction(req, client_id, transaction_id):
         decrease_stock.save()
         # update currency stock increase
         increase_stock = CurrencyStock.objects.filter(source_transaction=transaction, adjustment_type=1).first()
-        increase_stock.currency=Currency.objects.get(id=origin_currency)
-        decrease_stock.currency_rate=origin_currency_rate
-        increase_stock.amount=origin_amount
+        increase_stock.currency=Currency.objects.get(id=foreign_currency)
+        decrease_stock.currency_rate=foreign_currency_rate
+        increase_stock.amount=foreign_amount
         increase_stock.effective_date=value_date
         increase_stock.last_updated_by=req.user
         increase_stock.save()

@@ -10,7 +10,7 @@ class CurrencyStock(models.Model):
     adjustment_source = models.CharField(max_length=1, choices=ADJUSTMENT_SOURCES)
     adjustment_type = models.IntegerField(choices=ADJUSTMENTS)
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
-    currency_rate = models.DecimalField(max_digits=16, decimal_places=10)
+    currency_rate = models.DecimalField(max_digits=10, decimal_places=4)
     amount = models.DecimalField(max_digits=16, decimal_places=2)
     effective_date = models.DateField()
     comment = models.CharField(max_length=200, null=True, blank=True)

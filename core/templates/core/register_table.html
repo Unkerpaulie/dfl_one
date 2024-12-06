@@ -14,7 +14,6 @@
                         <div class="row row-sm">
                             {% if transactions %}
                             <div class="table-responsive">
-
                                 <table class="table table-striped smaller-text" id="register-table">
                                     <thead>
                                         <tr>
@@ -45,9 +44,9 @@
                                             <td>{{ transaction.value_date }}</td>
                                             <td>{{ transaction.client }}</td>
                                             <td>{{ transaction.get_transaction_type_display }}</td>
-                                            <td>{{ transaction.origin_currency }}</td>
-                                            <td>{{ transaction.origin_amount|floatformat:2|intcomma }}</td>
-                                            <td>{{ transaction.origin_currency_rate|floatformat:2|intcomma }}</td>
+                                            <td>{{ transaction.foreign_currency }}</td>
+                                            <td>{{ transaction.foreign_amount|floatformat:2|intcomma }}</td>
+                                            <td>{{ transaction.foreign_currency_rate|floatformat:4|intcomma }}</td>
                                             <td>{{ transaction.settlement_currency }}</td>
                                             <td>{{ transaction.settlement_amount|floatformat:2|intcomma }}</td>
                                             <td>{{ transaction.deal_status }}</td>

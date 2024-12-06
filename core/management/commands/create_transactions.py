@@ -54,9 +54,9 @@ class Command(BaseCommand):
                 contract_date=date.today(),
                 value_date=date.today() + timedelta(days=random.randint(1, 3)) if random.random() > 0.7 else date.today(),
                 transaction_type=t_type,
-                origin_currency=orig_currency,
-                origin_currency_rate=orig_rate,
-                origin_amount=orig_amount,
+                foreign_currency=orig_currency,
+                foreign_currency_rate=orig_rate,
+                foreign_amount=orig_amount,
                 settlement_currency=set_currency,
                 settlement_currency_rate=set_rate,
                 settlement_amount=set_amount,
@@ -83,12 +83,12 @@ class Command(BaseCommand):
             )
             decrease_stock.save()
             self.stdout.write(self.style.SUCCESS(f"Decreased stock: {decrease_stock}"))
-            # add origin currency amount to currency stock
+            # add foreign currency amount to currency stock
             increase_stock = CurrencyStock(
                 source_transaction=t,
-                currency=t.origin_currency,
-                currency_rate=t.origin_currency_rate,
-                amount=t.origin_amount,
+                currency=t.foreign_currency,
+                currency_rate=t.foreign_currency_rate,
+                amount=t.foreign_amount,
                 effective_date=t.value_date,
                 adjustment_source = "X",
                 adjustment_type = 1,

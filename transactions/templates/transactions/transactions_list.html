@@ -28,7 +28,7 @@
                                 <td>{{ transaction.client }}</td>
                                 <td>{{ transaction.contract_date }}</td>
                                 <td>
-                                    {{ transaction.origin_currency }} {{ transaction.origin_amount|floatformat:2|intcomma }}
+                                    {{ transaction.foreign_currency }} {{ transaction.foreign_amount|floatformat:2|intcomma }}
                                     <i class="fa fa-long-arrow-right"></i> 
                                     {{ transaction.settlement_currency }}{{ transaction.settlement_amount|floatformat:2|intcomma }}
                                 </td>

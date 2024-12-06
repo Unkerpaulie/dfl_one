@@ -34,3 +34,5 @@ def get_blotter_data(currency, blotter_date):
 
 def get_register_data(currency):
     transactions = Transaction.objects.filter(currency=currency)
+
+    
