@@ -29,13 +29,19 @@ This script creates between 1 and 3 random beneficiaries for each client created
 
 ## Start the server and create initial currency stock
 
+==Important Update!==
+
+The initial currency stock entry, client 0, and beneficiary for client 0, and the initial foreign currency deposits, can be created using the following steps, may all be created automantically with the following comand:
+
+`python manage.py create_start_stock`
+
 The following instructions need to occur only once when the system is launched
 
 ### 1. Log in and go to admin panel
 
 `python manage.py runserver`
 
-Note: When you first log in to thesystem, you will be prompted to change your password. 
+Note: When you first log in to the system, you will be prompted to change your password. 
 
 You can go to <http://127.0.0.1:8000/admin/> or click your name in the top right corner of the app and click "Admin Panel" from the menu.
 

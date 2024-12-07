@@ -5,7 +5,7 @@ from transactions.models import Transaction
 
 class CurrencyStock(models.Model):
     ADJUSTMENTS = [(1, 'Increase'), (-1, 'Decrease')]
-    ADJUSTMENT_SOURCES = [("M", 'Manual'), ("X", 'Exchange')]
+    ADJUSTMENT_SOURCES = [("M", 'Manual'), ("X", 'Exchange'), ("F", "Fake")]
     source_transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, null=True, blank=True)
     adjustment_source = models.CharField(max_length=1, choices=ADJUSTMENT_SOURCES)
     adjustment_type = models.IntegerField(choices=ADJUSTMENTS)

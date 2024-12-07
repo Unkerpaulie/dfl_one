@@ -43,6 +43,9 @@ class Country(models.Model):
     CountryName = models.CharField(max_length=200)
     CountryCode = models.CharField(max_length=5)
 
+    class Meta:
+        verbose_name_plural = "Countries"
+        
     def __str__(self):
         return self.CountryName
 
@@ -69,9 +72,6 @@ class Client(models.Model):
     ClientWebsite = models.CharField(max_length=200, blank=True, null=True)
     ClientApprovalStatus = models.CharField(max_length=50, blank=True, null=True)
 
-    class Meta:
-        verbose_name_plural = "Countries"
-        
     def __str__(self):
         return self.ClientName
 

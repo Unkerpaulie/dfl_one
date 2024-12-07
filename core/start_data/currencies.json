@@ -1,0 +1,27 @@
+[
+    {
+        "code": "USD",
+        "rate": 6.78,
+        "start": 10000000
+    },
+    {
+        "code": "EUR",
+        "rate": 7.14,
+        "start": 10000000
+    },
+    {
+        "code": "GBP",
+        "rate": 8.51,
+        "start": 10000000
+    },
+    {
+        "code": "XCD",
+        "rate": 2.76,
+        "start": 10000000
+    },
+    {
+        "code": "JPY",
+        "rate": 0.4386,
+        "start": 10000000
+    }
+]

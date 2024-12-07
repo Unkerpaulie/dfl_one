@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-import random
+import random, json
+from pathlib import Path
 from datetime import date, timedelta
 from clients.models import *
 from transactions.models import Transaction
@@ -12,26 +13,23 @@ from faker import Faker
 class Command(BaseCommand):
     help = 'Create fake transactions'
 
+    # get currency data from json file
+    directory = "core/start_data"
+    currency_file = Path(directory) / "currencies.json"
+    with open(currency_file, "r") as f:
+        currencies = json.load(f)
 
     def handle(self, *args, **kwargs):
         fake = Faker()
         # get list client ids with beneficiaries
         all_ids = list(Client.objects.exclude(pk=0).exclude(beneficiaries=None).values_list("ClientID", flat=True))
 
-        currencies = [
-            {"code": "USD", "rate": 6.78},
-            {"code": "EUR", "rate": 7.14},
-            {"code": "GBP", "rate": 8.51},
-            {"code": "XCD", "rate": 2.76},
-            {"code": "JPY", "rate": 0.4386},
-        ]
-
         num_transactions = random.randint(50, 150)
         for i in range(num_transactions):
             # generate random transaction set up
             t_type = random.choice(["P", "S"])
             client_id = random.choice(all_ids)
-            foreign_currency = random.choice(currencies)
+            foreign_currency = random.choice(self.currencies)
             trader = random.choice(User.objects.filter(role="trader"))
 
             if t_type == "P":
@@ -60,7 +58,7 @@ class Command(BaseCommand):
                 settlement_currency=set_currency,
                 settlement_currency_rate=set_rate,
                 settlement_amount=set_amount,
-                bank_fee=0,
+                bank_fee=777,
                 deal_status=DealStatus.objects.get(pk=2),
                 trader=trader,
                 last_updated_by=trader,
@@ -70,28 +68,28 @@ class Command(BaseCommand):
             t.save()
             self.stdout.write(self.style.SUCCESS(f"{i+1}: {t}"))
             # update currecncy stock
-            # adjust settlement currency stock
+            # adjust foreign currency stock
             foreign_stock = CurrencyStock(
                 source_transaction=t,
-                currency=t.settlement_currency,
-                currency_rate=t.settlement_currency_rate,
-                amount=t.settlement_amount,
+                currency=t.foreign_currency,
+                currency_rate=t.foreign_currency_rate,
+                amount=t.foreign_amount,
                 effective_date=t.value_date,
-                adjustment_source = "X",
+                adjustment_source = "F",
                 adjustment_type = 1 if t_type == "P" else -1,
                 entered_by=t.trader,
                 last_updated_by=t.trader
             )
             foreign_stock.save()
             self.stdout.write(self.style.SUCCESS(f"{'Purchased' if t_type == 'P' else 'Sold'}: {foreign_stock}"))
-            # adjust foreign currency stock
+            # adjust settlement currency stock
             settle_stock = CurrencyStock(
                 source_transaction=t,
-                currency=t.foreign_currency,
-                currency_rate=t.foreign_currency_rate,
-                amount=t.foreign_amount,
+                currency=t.settlement_currency,
+                currency_rate=t.settlement_currency_rate,
+                amount=t.settlement_amount,
                 effective_date=t.value_date,
-                adjustment_source = "X",
+                adjustment_source = "F",
                 adjustment_type = -1 if t_type == "P" else 1,
                 entered_by=t.trader,
                 last_updated_by=t.trader
