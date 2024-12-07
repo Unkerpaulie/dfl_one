@@ -141,10 +141,10 @@ class Command(BaseCommand):
             )
 
     def handle(self, *args, **kwargs):
-        self.create_client_0()
-        self.set_tt_start()
+        # self.create_client_0()
+        # self.set_tt_start()
         for currency in self.currencies:
-            self.add_currency_start_stock(currency)
+            self.add_start_stock_transaction(currency)
         # optional create fake traders
         self.create_fake_traders(3)
 

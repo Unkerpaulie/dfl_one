@@ -11,6 +11,7 @@ Create the database structure and superuser account:
 `python manage.py createsuperuser`
 
 * the superuser, and all users, sign in with email and password instead of username. 
+* standard superuser email is 'admin@dflbusiness.com'
 * When creating a superuser, type 'admin' as the role. The other roles are 'trader' and 'reviewer'
 
 ## Load initial data (custom commands)
@@ -19,13 +20,43 @@ Create the database structure and superuser account:
 
 Sets up the initial reference datasets like countries and client types. These populate pulldown menus in forms
 
-`python manage.py create_clients`
+`python manage.py create_fake_clients`
 
 This script creates 60 random clients to populate the client base
 
+Alternatively, real clients can be added to the system by importing data from a CSV file. In the core directory, create a subfolder named 'client_names' and add a CSV file named 'Clients.csv with the following columns in this order:
+
+- ClientID
+- DateOpened
+- ClientType_id
+- ClientSubType_id
+- ClientName
+- ClientStatusID_id
+- ClientAMLRiskRatingID_id
+- PEP
+- USPerson
+- ClientAccountStatus_id
+- ClientAddress1
+- ClientAddress2
+- ClientAddressCity
+- ClientAddressState
+- ClientAddressZipCode
+- CountryID_id
+- ClientPhone
+- ClientFax
+- ClientEmail
+- ClientWebsite
+- ClientApprovalStatus
+
+Once that file exists and all information is valid, run the following command:
+
+`python manage.py load_clients`
+
+Generate fake beneficiaries for each client. This script creates between 1 and 3 random beneficiaries for each client created:
+
 `python manage.py create_beneficiaries`
 
-This script creates between 1 and 3 random beneficiaries for each client created
+
 
 ## Start the server and create initial currency stock
 
