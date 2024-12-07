@@ -29,6 +29,12 @@ class Command(BaseCommand):
                 "Currency",
                 "DealStatus",
             ]
+        },
+        {
+            "app": "setup",
+            "models": [
+                "BankFee",
+            ]
         }
     ]
 

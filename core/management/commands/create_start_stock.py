@@ -78,7 +78,7 @@ class Command(BaseCommand):
         t = Transaction(
             client=Client.objects.get(ClientID=0),
             contract_date=date.today(),
-            value_date=date.today() + timedelta(days=random.randint(1, 3)) if random.random() > 0.7 else date.today(),
+            value_date=date.today() - timedelta(days=2),
             transaction_type="P",
             foreign_currency=Currency.objects.filter(currency_code=currency["code"]).first(),
             foreign_currency_rate=currency["rate"],
@@ -139,12 +139,13 @@ class Command(BaseCommand):
                 is_superuser=False,
                 is_active=True,
             )
+            self.stdout.write(self.style.SUCCESS(f"Created Trader: {first_name} {last_name}"))
 
     def handle(self, *args, **kwargs):
-        # self.create_client_0()
-        # self.set_tt_start()
-        # for currency in self.currencies:
-        #     self.add_start_stock_transaction(currency)
+        self.create_client_0()
+        self.set_tt_start()
+        for currency in self.currencies:
+            self.add_start_stock_transaction(currency)
         # optional create fake traders
         self.create_fake_traders(3)
 

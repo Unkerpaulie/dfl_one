@@ -30,7 +30,7 @@ def new_transaction(req, client_id):
     transaction_types = Transaction.transaction_types
     currencies = Currency.objects.all()
     deal_statuses = DealStatus.objects.all()
-    bank_fee = BankFee.objects.get(pk=1)
+    bank_fee = BankFee.objects.get(pk=1) # default bank fee
     context = {"page_title": f"New Transaction for {client.ClientName}"}
     context["section"] = "transactions"
     context["client"] = client
@@ -117,13 +117,13 @@ def edit_transaction(req, client_id, transaction_id):
     transaction_types = Transaction.transaction_types
     currencies = Currency.objects.all()
     deal_statuses = DealStatus.objects.all()
-    bank_fee = BankFee.objects.get(pk=1)
+    # bank_fee = BankFee.objects.get(pk=1)
     context = {"page_title": f"Edit Transaction for {client.ClientName}"}
     context["section"] = "transactions"
     context["client"] = client
     context["transaction"] = transaction
     context["beneficiaries"] = beneficiaries
-    context["bank_fee"] = bank_fee.bank_fee
+    context["bank_fee"] = transaction.bank_fee
     context |= {"transaction_types": transaction_types, "currencies": currencies, "deal_statuses": deal_statuses}
     context["deal_id"] = transaction_id
     context["formdata"] = {
