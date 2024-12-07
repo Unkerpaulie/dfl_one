@@ -125,7 +125,7 @@ class Command(BaseCommand):
         settle_stock.save()
         self.stdout.write(self.style.SUCCESS(f"Settled for: {settle_stock}"))
 
-    def create_fake_trader(self, n):
+    def create_fake_traders(self, n):
         for i in range(n):
             first_name=self.fake.first_name()
             last_name=self.fake.last_name()
@@ -143,8 +143,8 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # self.create_client_0()
         # self.set_tt_start()
-        for currency in self.currencies:
-            self.add_start_stock_transaction(currency)
+        # for currency in self.currencies:
+        #     self.add_start_stock_transaction(currency)
         # optional create fake traders
         self.create_fake_traders(3)
 
