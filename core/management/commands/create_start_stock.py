@@ -94,7 +94,7 @@ class Command(BaseCommand):
             payment_details=f"Initial {currency['code']} Stock of {currency['start']}"
         )
         t.save()
-        self.stdout.write(self.style.SUCCESS(f"Initial {currency['code']} Stock of {currency['start']} creates"))
+        self.stdout.write(self.style.SUCCESS(f"Initial {currency['code']} Stock of {currency['start']} created"))
         # update currecncy stock
         # adjust foreign currency stock
         foreign_stock = CurrencyStock(

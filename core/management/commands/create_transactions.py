@@ -31,33 +31,20 @@ class Command(BaseCommand):
             client_id = random.choice(all_ids)
             foreign_currency = random.choice(self.currencies)
             trader = random.choice(User.objects.filter(role="trader"))
+            amount = random.randint(10, 250) * 100
 
-            if t_type == "P":
-                fx_currency = Currency.objects.filter(currency_code=foreign_currency["code"]).first()
-                fx_rate = foreign_currency["rate"]
-                fx_amount = random.randint(10, 250) * 100
-                set_currency = Currency.objects.filter(currency_code="TTD").first()
-                set_rate = 1
-                set_amount = round(fx_amount * fx_rate, 2)
-            else:
-                set_currency = Currency.objects.filter(currency_code=foreign_currency["code"]).first()
-                set_rate = foreign_currency["rate"]
-                set_amount = random.randint(10, 250) * 100
-                set_currency = Currency.objects.filter(currency_code="TTD").first()
-                set_rate = 1
-                set_amount = round(set_amount * set_rate, 2)
             # create transaction object
             t = Transaction(
                 client=Client.objects.get(ClientID=client_id),
                 contract_date=date.today(),
                 value_date=date.today() + timedelta(days=random.randint(1, 3)) if random.random() > 0.7 else date.today(),
                 transaction_type=t_type,
-                foreign_currency=fx_currency,
-                foreign_currency_rate=fx_rate,
-                foreign_amount=fx_amount,
-                settlement_currency=set_currency,
-                settlement_currency_rate=set_rate,
-                settlement_amount=set_amount,
+                foreign_currency=Currency.objects.filter(currency_code=foreign_currency["code"]).first(),
+                foreign_currency_rate=foreign_currency["rate"],
+                foreign_amount=amount,
+                settlement_currency=Currency.objects.filter(currency_code="TTD").first(),
+                settlement_currency_rate=1,
+                settlement_amount=foreign_currency["rate"] * amount,
                 bank_fee=777,
                 deal_status=DealStatus.objects.get(pk=2),
                 trader=trader,
