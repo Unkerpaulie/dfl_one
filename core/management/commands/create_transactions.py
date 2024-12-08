@@ -21,21 +21,21 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         fake = Faker()
-        # get list client ids with beneficiaries
-        all_ids = list(Client.objects.exclude(pk=0).exclude(beneficiaries=None).values_list("ClientID", flat=True))
+        # get list clients with beneficiaries
+        all_clients = list(Client.objects.exclude(pk=0).exclude(beneficiaries=None).all())
 
         num_transactions = random.randint(50, 150)
         for i in range(num_transactions):
             # generate random transaction set up
             t_type = random.choice(["P", "S"])
-            client_id = random.choice(all_ids)
+            client = random.choice(all_clients)
             foreign_currency = random.choice(self.currencies)
             trader = random.choice(User.objects.filter(role="trader"))
             amount = random.randint(10, 250) * 100
 
             # create transaction object
             t = Transaction(
-                client=Client.objects.get(ClientID=client_id),
+                client=client,
                 contract_date=date.today(),
                 value_date=date.today() + timedelta(days=random.randint(1, 3)) if random.random() > 0.7 else date.today(),
                 transaction_type=t_type,
@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 deal_status=DealStatus.objects.get(pk=2),
                 trader=trader,
                 last_updated_by=trader,
-                beneficiary=random.choice(Client.objects.get(ClientID=client_id).beneficiaries.all()),
+                beneficiary=random.choice(client.beneficiaries.all()),
                 payment_details=fake.sentence()
             )
             t.save()

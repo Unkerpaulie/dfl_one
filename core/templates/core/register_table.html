@@ -10,6 +10,16 @@
                 <div class="card stats" data-exclude="xs">
                     <div class="card-block">
                         <div class="title-block">
+                            <div class="select-currency mr-auto">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select Currency: {{ selected_currency }}</button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="{% url "core:register_all" %}">All</a>
+                                        {% for currency in currencies %}
+                                        <a class="dropdown-item" href="{% url "core:register" currency.currency_code|lower %}">{{ currency.currency_code }}</a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
                         </div>
                         <div class="row row-sm">
                             {% if transactions %}

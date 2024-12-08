@@ -37,6 +37,7 @@ def home(req):
 
 @login_required
 def register(req, currency_code):
+    currencies = Currency.objects.all().exclude(currency_code="TTD")
     currency = Currency.objects.filter(currency_code=currency_code.upper()).first()
     if not currency:
         messages.error(req, "Currency not found")
@@ -46,17 +47,21 @@ def register(req, currency_code):
         Q(contract_date=today_date), (Q(settlement_currency=currency) | Q(foreign_currency=currency)))
     context = {"page_title": f"{currency_code.upper()} Register - {today_date.strftime('%d %b, %Y')}"}
     context["section"] = "register"
+    context["selected_currency"] = currency_code.upper()
     context["transactions"] = transactions
+    context["currencies"] = currencies
     return render(req, "core/register_table.html", context)
    
 
 @login_required
 def register_all(req):
+    currencies = Currency.objects.all().exclude(currency_code="TTD")
     today_date = date.today()
     transactions = Transaction.objects.filter(contract_date=today_date)
     context = {"page_title": f"All Register - {today_date.strftime('%d %b, %Y')}"}
     context["section"] = "register"
     context["transactions"] = transactions
+    context["currencies"] = currencies
     return render(req, "core/register_table.html", context)
 
 

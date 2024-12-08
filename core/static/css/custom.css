@@ -10,3 +10,40 @@
     background-size: contain;
     background-position: top;
 }
+
+/* .select-currency { */
+    .select-currency::after {
+      display: block;
+      clear: both;
+      content: ""; }
+    .select-currency a {
+      text-decoration: none !important; }
+    .select-currency ul {
+      margin: 0;
+      padding: 0;
+      list-style: none; }
+    .select-currency > ul {
+      display: table; }
+    .select-currency > ul > li {
+      display: table-cell;
+      position: relative; }
+      .select-currency > ul > li:before {
+        display: block;
+        content: " ";
+        width: 1px;
+        height: 24px;
+        top: 50%;
+        margin-top: -12px;
+        background-color: #8b9cb1;
+        position: absolute;
+        left: 0; }
+      .select-currency > ul > li:first-child:before {
+        display: none; }
+    .select-currency > ul > li > a {
+      padding: 0 15px;
+      color: #4f5f6f; }
+      .select-currency > ul > li > a:hover {
+        color: #85CE36; }
+    .select-currency .dropdown-menu {
+      margin-top: 15px; }
+    /* } */
