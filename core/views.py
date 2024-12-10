@@ -1,5 +1,5 @@
 from datetime import date
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
@@ -40,8 +40,8 @@ def register(req, currency_code):
     currencies = Currency.objects.all().exclude(currency_code="TTD")
     currency = Currency.objects.filter(currency_code=currency_code.upper()).first()
     if not currency:
-        messages.error(req, "Currency not found")
-        return render(req, "core/home.html")
+        messages.warning(req, "Currency not found")
+        return redirect("core:home")
     today_date = date.today()
     transactions = Transaction.objects.filter(
         Q(contract_date=today_date), (Q(settlement_currency=currency) | Q(foreign_currency=currency)))
@@ -60,6 +60,7 @@ def register_all(req):
     transactions = Transaction.objects.filter(contract_date=today_date)
     context = {"page_title": f"All Register - {today_date.strftime('%d %b, %Y')}"}
     context["section"] = "register"
+    context["selected_currency"] = "ALL"
     context["transactions"] = transactions
     context["currencies"] = currencies
     return render(req, "core/register_table.html", context)

@@ -44,7 +44,7 @@ def add_user(req):
             messages.warning(req, 'User password is "ChangeMe!". User must change their password at next login')
             return redirect("setup:list_users")
         except:
-            messages.error(req, 'Error adding user')
+            messages.warning(req, 'Error adding user')
             return render(req, 'setup/user_form.html', context)
     else:
         return render(req, 'setup/user_form.html', context)
@@ -122,7 +122,7 @@ def add_currency(req):
             messages.success(req, 'Currency added successfully')
             return redirect("setup:list_currencies")
         except:
-            messages.error(req, 'Error adding currency')
+            messages.warning(req, 'Error adding currency')
             return render(req, 'setup/currency_form.html', context)
     else:
         return render(req, 'setup/currency_form.html', context)
@@ -170,7 +170,7 @@ def add_deal_status(req):
             messages.success(req, 'Deal status added successfully')
             return redirect("setup:list_deal_status")
         except:
-            messages.error(req, 'Error adding deal status')
+            messages.warning(req, 'Error adding deal status')
             return render(req, 'setup/deal_status_form.html', context)
     else:
         return render(req, 'setup/deal_status_form.html', context)
@@ -211,7 +211,7 @@ def add_identification_type(req):
             messages.success(req, 'Identification type added successfully')
             return redirect("setup:list_identification_types")
         except:
-            messages.error(req, 'Error adding identification type')
+            messages.warning(req, 'Error adding identification type')
             return render(req, 'setup/identification_type_form.html', context)
     else:
         return render(req, 'setup/identification_type_form.html', context)
@@ -270,7 +270,7 @@ def add_currency_adjustment(req):
             messages.success(req, 'Currency adjustment added successfully')
             return redirect("setup:show_currency_inventory")
         except:
-            messages.error(req, 'Error adding currency adjustment')
+            messages.warning(req, 'Error adding currency adjustment')
             return render(req, 'setup/currency_adjust.html', context)
     else:
         return render(req, 'setup/currency_adjust.html', context)
@@ -300,7 +300,7 @@ def adjust_currency(req, currency_id):
             messages.success(req, 'Currency adjustment added successfully')
             return redirect("setup:show_currency_inventory")
         except:
-            messages.error(req, 'Error adding currency adjustment')
+            messages.warning(req, 'Error adding currency adjustment')
             return render(req, 'setup/currency_adjust.html', context)
     else:
         return render(req, 'setup/currency_adjust.html', context)
