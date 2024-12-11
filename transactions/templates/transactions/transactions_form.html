@@ -98,7 +98,7 @@
                                             <input type="text" value="{{ formdata.settlement_amount }}" class="form-control" name="settlement_amount" id="settlement_amount" readonly required />
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row mb-2">
                                         <div class="col-8 pt-3">
                                             <label>
                                                 <input type="hidden" value="0" name="bank_fee">
@@ -115,20 +115,46 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col g-1">
-                                            <label for="beneficiary">Instructions for payment to Client </label>
+                                    <div class="row mb-2">
+                                        <div class="col-8 g-1">
+                                            <label for="out_payment">Outbound Payment Instructions </label>
                                             <div class="input-group">
-                                                <select name="beneficiary" id="beneficiary" class="form-control">
+                                                <select name="out_payment" id="out_payment" class="form-control" onchange="check_for_fd(this, 'fd_certificate_number');">
                                                     <option value="cash">Cash Settlement</option>
+                                                    <option value="fixed">Fixed Deposit</option>
                                                     {% for beneficiary in beneficiaries %}
-                                                    <option value="{{ beneficiary.id }}"{% if beneficiary.id == formdata.beneficiary.id %} selected {% endif %}>{{ beneficiary }}</option>
+                                                    <option value="bb-{{ beneficiary.id }}"{% if beneficiary.id == formdata.beneficiary.id %} selected {% endif %}>{{ beneficiary }}</option>
                                                     {% endfor %}
                                                 </select>
                                                 <div class="input-group-append">
                                                     <a class="btn btn-primary-outline p-2" href="{% url "clients:new_beneficiary" client.ClientID %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="col-4" id="fd_certificate_number_div">
+                                            <label for="fd_certificate_number">Fixed Deposit Certificate Number</label>
+                                            <input type="text" value="{{ formdata.fd_certificate_number }}" class="form-control" name="fd_certificate_number" id="fd_certificate_number" />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-8 g-1">
+                                            <label for="in_payment">Inbound Payment Instructions </label>
+                                            <div class="input-group">
+                                                <select name="in_payment" id="in_payment" class="form-control" onchange="check_for_fd(this, 'fd_certificate_number');">
+                                                    <option value="cash">Cash Settlement</option>
+                                                    <option value="fixed">Fixed Deposit</option>
+                                                    {% for beneficiary in beneficiaries %}
+                                                    <option value="bb-{{ beneficiary.id }}"{% if beneficiary.id == formdata.beneficiary.id %} selected {% endif %}>{{ beneficiary }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <a class="btn btn-primary-outline p-2" href="{% url "clients:new_beneficiary" client.ClientID %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4" id="fd_certificate_number_div">
+                                            <label for="fd_certificate_number">Fixed Deposit Certificate Number</label>
+                                            <input type="text" value="{{ formdata.fd_certificate_number }}" class="form-control" name="fd_certificate_number" id="fd_certificate_number" />
                                         </div>
                                     </div>
                                     <div class="row mb-2">
