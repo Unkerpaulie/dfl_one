@@ -2,7 +2,7 @@
 
 No 3rd party libraries needed in Django. However, the system itself uses faker for generating random data, and openpyxl for generating excel downloads, andofcourse, Django:
 
-`pip install django, faker, openpyxl`
+`pip install django, faker`
 
 Create the database structure and superuser account:
 
