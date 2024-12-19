@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -16,10 +16,10 @@ def home(req):
     currencies = Currency.objects.all().exclude(currency_code="TTD")
     tt_currency = Currency.objects.filter(currency_code="TTD").first()
     ttd_on_hand = get_currency_balance(tt_currency)
-    context = {"page_title": "Consolidated Blotter"}
+    today_date = date.today()
+    context = {"page_title": f"Consolidated Blotter - {today_date.strftime('%d %b, %Y')}"}
     context["section"] = "home"
     context["ttd_on_hand"] = ttd_on_hand
-    today_date = date.today()
     context["today_date"] = today_date
     # currency, opening balance, today's purchases, today's sales, pending purchases, pending sales, current balance, 
     context["currency_data"] = []
@@ -37,9 +37,10 @@ def home(req):
 @login_required
 def blotter_detail(req, currency_code):
     currency = Currency.objects.filter(currency_code=currency_code.upper()).first()
-    context = {"page_title": f"{currency_code.upper()} Blotter"}
+    today_date = date.today()
+    context = {"page_title": f"{currency_code.upper()} Blotter - {today_date.strftime('%d %b, %Y')}"}
     context["section"] = "home"
-    context["details"] = get_blotter_details(currency, date.today())
+    context["details"] = get_blotter_details(currency, today_date)
     return render(req, "core/blotter_table.html", context)
 
 

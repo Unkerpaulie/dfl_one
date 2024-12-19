@@ -40,18 +40,22 @@ def get_register_data(currency):
 
 def get_blotter_details(currency, blotter_date):
     opening_adjustments = CurrencyStock.objects.filter(currency=currency, effective_date__lt=blotter_date)
-    t_list = Transaction.objects.filter(
-        (Q(contract_date=blotter_date) | Q(value_date=blotter_date)) &
-        (Q(foreign_currency=currency) | Q(settlement_currency=currency)) 
-    ).order_by("id")
+    today_adjustments = CurrencyStock.objects.filter(currency=currency, effective_date=blotter_date)
+    future_adjustments = CurrencyStock.objects.filter(currency=currency, effective_date__gt=blotter_date)
+    t_list = Transaction.objects.filter(Q(pk__in=today_adjustments.values_list("source_transaction", flat=True)) | Q(pk__in=future_adjustments.values_list("source_transaction", flat=True))).order_by("id")
     opening = sum([c.adjustment_type * c.amount for c in opening_adjustments])
     details = []
     closing = opening
     adj_closing = opening
     for t in t_list:
         record = {}
-        record["id"] = t.id
         record["opening"] = closing
+        record["id"] = t.id
+        record["client"] = t.client
+        record["trader"] = t.trader
+        record["contract_date"] = t.contract_date
+        record["entry_time"] = t.created_at.time()
+        record["rate"] = t.foreign_currency_rate
         record["purchase"] = t.foreign_amount if t.transaction_type == "P" and t.value_date == blotter_date else 0
         record["sale"] = t.settlement_amount if t.transaction_type == "S" and t.value_date == blotter_date else 0
         record["closing"] = closing + record["purchase"] - record["sale"]
