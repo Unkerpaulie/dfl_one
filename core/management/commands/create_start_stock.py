@@ -125,6 +125,10 @@ class Command(BaseCommand):
         settle_stock.save()
         self.stdout.write(self.style.SUCCESS(f"Settled for: {settle_stock}"))
 
+    def set_deal_number(self, num):
+        Transaction.objects.last().update(id=num-1)
+
+
     def create_fake_traders(self, n):
         for i in range(n):
             first_name=self.fake.first_name()
@@ -147,5 +151,6 @@ class Command(BaseCommand):
         for currency in self.currencies:
             self.add_start_stock_transaction(currency)
         # optional create fake traders
+        self.set_deal_number(5000)
         self.create_fake_traders(3)
 

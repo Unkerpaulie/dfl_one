@@ -4,13 +4,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
 from django.db.models import Q
-from core.utils import get_blotter_data, get_currency_balance
+from core.utils import get_blotter_data, get_currency_balance, get_blotter_details
 from .models import Currency
 from transactions.models import Transaction
 from setup.models import CurrencyStock
 
 
-# home page is actually dashboard 1
+# home page is consolidated blotter
 @login_required
 def home(req):
     currencies = Currency.objects.all().exclude(currency_code="TTD")
@@ -33,6 +33,14 @@ def home(req):
     # context |= {"ttd_on_hand": ttd_on_hand, "today_date": today_date, "sum_total_value": sum_total_value}
 
     return render(req, "core/home.html", context)
+
+@login_required
+def blotter_detail(req, currency_code):
+    currency = Currency.objects.filter(currency_code=currency_code.upper()).first()
+    context = {"page_title": f"{currency_code.upper()} Blotter"}
+    context["section"] = "home"
+    context["details"] = get_blotter_details(currency, date.today())
+    return render(req, "core/blotter_table.html", context)
 
 
 @login_required

@@ -1,0 +1,73 @@
+{% extends "layout/base.html" %}
+{% load humanize %}
+{% load static %}
+{% block title %} - {{ page_title }}{% endblock title %}
+
+{% block content %}
+    <section class="section">
+        <div class="row">
+            <div class="col">
+                <div class="card stats" data-exclude="xs">
+                    <div class="card-block">
+                        <div class="title-block">
+                        </div>
+                        <div class="row row-sm">
+                            {% if details %}
+                            <div class="table-responsive">
+                                <table class="table table-striped smaller-text" id="blotter-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Deal #</th>
+                                            <th>Opening Balance</th>
+                                            <th>Purchases</th>
+                                            <th>Sals</th>
+                                            <th>Closing Balance</th>
+                                            <th>Future Dated Purchases</th>
+                                            <th>Future Dated Sals</th>
+                                            <th>Adjusted Closing Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for detail in details %}
+                                        <tr>
+                                            <td>{{ detail.id }}</td>
+                                            <td>{{ detail.opening|floatformat:2|intcomma }}</td>
+                                            <td>{{ detail.purchase|floatformat:2|intcomma }}</td>
+                                            <td>{{ detail.sale|floatformat:2|intcomma }}</td>
+                                            <td>{{ detail.closing|floatformat:2|intcomma }}</td>
+                                            <td>{{ detail.future_purchase|floatformat:2|intcomma }}</td>
+                                            <td>{{ detail.future_sale|floatformat:2|intcomma }}</td>
+                                            <td>{{ detail.adj_closing|floatformat:2|intcomma }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <h4 class="text-center">No transactions found.</h4>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+{% block script %}
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+    new DataTable("#blotter-table", {
+        layout: {
+            topStart: {
+                buttons: ['excel', 'pdfHtml5']
+            }
+        },
+        order: [[0, 'desc']]
+    });
+
+</script>
+{% endblock script %}

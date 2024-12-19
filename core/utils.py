@@ -1,3 +1,4 @@
+from django.db.models import Q
 from core.models import Currency
 from setup.models import CurrencyStock
 from transactions.models import Transaction
@@ -10,6 +11,7 @@ def get_currency_balance(currency):
 
 def get_blotter_data(currency, blotter_date):
     # currency = Currency.objects.get(id=currency_id)
+    num_transactions = Transaction.objects.filter(foreign_currency=currency, contract_date=blotter_date).count()
     opening_adjustments = CurrencyStock.objects.filter(currency=currency, effective_date__lt=blotter_date)
     today_adjustments = CurrencyStock.objects.filter(currency=currency, effective_date=blotter_date)
     future_adjustments = CurrencyStock.objects.filter(currency=currency, effective_date__gt=blotter_date)
@@ -29,10 +31,36 @@ def get_blotter_data(currency, blotter_date):
         'closing': closing,
         'future_purchase': sum(future_purchase),
         'future_sale': sum(future_sale),
-        'adjusted_closing': adjusted_closing
+        'adjusted_closing': adjusted_closing,
+        'num_transactions': num_transactions
     }
 
 def get_register_data(currency):
     transactions = Transaction.objects.filter(currency=currency)
 
-    
+def get_blotter_details(currency, blotter_date):
+    opening_adjustments = CurrencyStock.objects.filter(currency=currency, effective_date__lt=blotter_date)
+    t_list = Transaction.objects.filter(
+        (Q(contract_date=blotter_date) | Q(value_date=blotter_date)) &
+        (Q(foreign_currency=currency) | Q(settlement_currency=currency)) 
+    ).order_by("id")
+    opening = sum([c.adjustment_type * c.amount for c in opening_adjustments])
+    details = []
+    closing = opening
+    adj_closing = opening
+    for t in t_list:
+        record = {}
+        record["id"] = t.id
+        record["opening"] = closing
+        record["purchase"] = t.foreign_amount if t.transaction_type == "P" and t.value_date == blotter_date else 0
+        record["sale"] = t.settlement_amount if t.transaction_type == "S" and t.value_date == blotter_date else 0
+        record["closing"] = closing + record["purchase"] - record["sale"]
+        record["future_purchase"] = t.foreign_amount if t.transaction_type == "P" and t.value_date != blotter_date else 0
+        record["future_sale"] = t.settlement_amount if t.transaction_type == "S" and t.value_date != blotter_date else 0
+        record["adj_closing"] = adj_closing + record["future_purchase"] - record["future_sale"]
+        closing = record["closing"]
+        adj_closing = record["adj_closing"]
+
+        details.append(record)
+    return details
+

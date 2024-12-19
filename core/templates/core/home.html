@@ -40,13 +40,14 @@
                                         <th>Future Dated Purchases</th>
                                         <th>Future Dated Sales</th>
                                         <th>Adjusted Closing Balance</th>
+                                        <th>Number of Transactions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for currency in currency_data %}
                                     <tr>
-                                        {% comment %} <td><a href="{% url "core:register" currency.currency|lower %}">{{ currency.currency }}</a></td> {% endcomment %}
-                                        <td>{{ currency.currency }}</td>
+                                        <td><a href="{% url "core:blotter_detail" currency.currency|lower %}">{{ currency.currency }}</a></td>
+                                        {% comment %} <td>{{ currency.currency }}</td> {% endcomment %}
                                         <td>{{ currency.symbol }}{{ currency.opening|floatformat:2|intcomma }}</td>
                                         <td>{{ currency.symbol }}{{ currency.today_purchase|floatformat:2|intcomma }}</td>
                                         <td>{{ currency.symbol }}{{ currency.today_sale|floatformat:2|intcomma }}</td>
@@ -54,6 +55,7 @@
                                         <td>{{ currency.symbol }}{{ currency.future_purchase|floatformat:2|intcomma }}</td>
                                         <td>{{ currency.symbol }}{{ currency.future_sale|floatformat:2|intcomma }}</td>
                                         <td>{{ currency.symbol }}{{ currency.adjusted_closing|floatformat:2|intcomma }}</td>
+                                        <td>{{ currency.num_transactions }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
