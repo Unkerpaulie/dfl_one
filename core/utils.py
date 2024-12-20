@@ -57,10 +57,10 @@ def get_blotter_details(currency, blotter_date):
         record["entry_time"] = t.created_at.time()
         record["rate"] = t.foreign_currency_rate
         record["purchase"] = t.foreign_amount if t.transaction_type == "P" and t.value_date == blotter_date else 0
-        record["sale"] = t.settlement_amount if t.transaction_type == "S" and t.value_date == blotter_date else 0
+        record["sale"] = t.foreign_amount if t.transaction_type == "S" and t.value_date == blotter_date else 0
         record["closing"] = closing + record["purchase"] - record["sale"]
         record["future_purchase"] = t.foreign_amount if t.transaction_type == "P" and t.value_date != blotter_date else 0
-        record["future_sale"] = t.settlement_amount if t.transaction_type == "S" and t.value_date != blotter_date else 0
+        record["future_sale"] = t.foreign_amount if t.transaction_type == "S" and t.value_date != blotter_date else 0
         record["adj_closing"] = adj_closing + record["future_purchase"] - record["future_sale"]
         closing = record["closing"]
         adj_closing = record["adj_closing"]
