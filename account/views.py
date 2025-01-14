@@ -7,7 +7,7 @@ from .models import User
 
 def user_login(req):
     if req.method == 'POST':
-        email = req.POST.get('email')
+        email = req.POST.get('email').lower()
         password = req.POST.get('password')
         
         # Authenticate the user
