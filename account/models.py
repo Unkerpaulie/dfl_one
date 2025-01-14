@@ -6,7 +6,7 @@ class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
+        email = self.normalize_email(email).lower()
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -42,6 +42,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+    def save(self, *args, **kwargs):
+        self.email = self.email.lower()  # Ensure email is always saved as lowercase
+        super().save(*args, **kwargs)
     
     class Meta:
         unique_together = ('email',)  # Ensures no duplicate emails
