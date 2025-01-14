@@ -9,6 +9,10 @@ db.sqlite3-journal
 *.sqlite3-journal
 media
 
+# virtual environment
+.venv
+venv/
+
 # ignore jupyter notebook files 
 *.ipynb
 .ipynb_checkpoints

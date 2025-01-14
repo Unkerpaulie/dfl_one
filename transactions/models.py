@@ -29,7 +29,4 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if self.transaction_type == "P":
-            return f"Purchased {self.foreign_currency}{self.foreign_amount} from {self.client.ClientName} on {self.value_date}"
-        else:
-            return f"Sold {self.settlement_currency}{self.settlement_amount} to {self.client.ClientName} on {self.value_date}"
+        return f"{'Purchased' if self.transaction_type == 'P' else 'Sold'} {self.foreign_currency}{self.foreign_amount} from {self.client.ClientName} on {self.value_date}"
