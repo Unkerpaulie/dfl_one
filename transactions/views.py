@@ -54,7 +54,12 @@ def new_transaction(req, client_id):
         foreign_currency_rate = float(req.POST.get("foreign_currency_rate"))
         foreign_amount = req.POST.get("foreign_amount")
         bank_fee = float(req.POST.get("bank_fee"))
-        beneficiary = int(req.POST.get("beneficiary"))
+        out_payment = req.POST.get("out_payment")
+        # out_payment values: cash, fixed, bb-
+        cash_settlement = out_payment == "cash"
+        fixed_deposit = out_payment == "fixed"
+        fixed_deposit_cert = req.POST.get("fd_certificate_number")
+        beneficiary = BeneficiaryBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("bb-") else None
         deal_status = int(req.POST.get("deal_status"))
         payment_details = req.POST.get("payment_details")
 
@@ -73,7 +78,10 @@ def new_transaction(req, client_id):
             deal_status=DealStatus.objects.get(id=deal_status), 
             trader=req.user, 
             last_updated_by=req.user, 
-            beneficiary=BeneficiaryBank.objects.get(id=beneficiary),
+            cash_settlement=cash_settlement,
+            fixed_deposit=fixed_deposit,
+            fixed_deposit_cert=fixed_deposit_cert,
+            beneficiary=beneficiary,
             payment_details=payment_details
         )
         transaction.save()
