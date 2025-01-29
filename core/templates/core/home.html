@@ -40,7 +40,8 @@
                                         <th>Future Dated Purchases</th>
                                         <th>Future Dated Sales</th>
                                         <th>Adjusted Closing Balance</th>
-                                        <th>Number of Transactions</th>
+
+                                        <!-- <th>Number of Transactions</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -55,7 +56,7 @@
                                         <td>{{ currency.symbol }}{{ currency.future_purchase|floatformat:2|intcomma }}</td>
                                         <td>{{ currency.symbol }}{{ currency.future_sale|floatformat:2|intcomma }}</td>
                                         <td>{{ currency.symbol }}{{ currency.adjusted_closing|floatformat:2|intcomma }}</td>
-                                        <td>{{ currency.num_transactions }}</td>
+                                        <!-- <td>{{ currency.num_transactions }}</td> -->
                                     </tr>
                                     {% endfor %}
                                 </tbody>
