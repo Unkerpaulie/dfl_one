@@ -1,82 +1,128 @@
 from django.db import models
+from django.dispatch import Signal
+from core.models import Country, IdentificationType
 
 
-class ClientType(models.Model):
-    ClientTypeID = models.IntegerField(primary_key=True)
-    ClientType1 = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.ClientType1
-
-class ClientSubType(models.Model):
-    ClientTypeSubID = models.ForeignKey(ClientType, on_delete=models.CASCADE)
-    ClientTypeSub1 = models.CharField(max_length=50)
+class ClientList(models.Model):
+    client_name = models.CharField(max_length=200)
+    client_type = models.CharField(max_length=1, choices=[("I", "Individual"), ("C", "Corporate")])
+    legacy_id = models.CharField(max_length=20, null=True, blank=True)
 
     def __str__(self):
-        return self.ClientTypeSub1
+        return f"{self.client_name} ({self.get_client_type_display()})"
 
-class ClientStatus(models.Model):
-    ClientStatusID = models.IntegerField(primary_key=True)
-    Status = models.CharField(max_length=50)
+
+class IndividualClient(models.Model):
+    client_list_entry = models.OneToOneField(ClientList, related_name="source_individual", on_delete=models.CASCADE, null=True, blank=True)
+    # choice lists
+    mar_statuses = [
+        ("S", "Single"),
+        ("M", "Married"),
+        ("D", "Divorced"),
+        ("W", "Widowed"),
+        ("O", "Other"),
+    ]
+    emp_statuses = [("E", "Employed"), ("S", "Self-Employed"), ("O", "Other")]
+    trans_freq = [("M", "Monthly"), ("Q", "Quarterly"), ("Y", "Annually")]
+    legacy_id = models.CharField(max_length=20, null=True, blank=True)
+    first_name = models.CharField(max_length=150)
+    middle_name = models.CharField(max_length=150, null=True, blank=True)
+    surname = models.CharField(max_length=150)
+    date_of_birth = models.DateField()
+    gender = models.CharField(max_length=1, choices=[("M", "Male"), ("F", "Female")])
+    marital_status = models.CharField(max_length=1, choices=mar_statuses)
+    residential_address = models.CharField(max_length=200)
+    residential_address2 = models.CharField(max_length=200, null=True, blank=True)
+    residential_city = models.CharField(max_length=150)
+    residential_country = models.ForeignKey(Country, related_name="clients_residing_here", on_delete=models.CASCADE)
+    mailing_address = models.CharField(max_length=200, null=True, blank=True)
+    mailing_address2 = models.CharField(max_length=200, null=True, blank=True)
+    mailing_city = models.CharField(max_length=150, null=True, blank=True)
+    mailing_country = models.ForeignKey(Country, related_name="clients_mailed_here", on_delete=models.CASCADE, null=True, blank=True)
+    country_of_birth = models.ForeignKey(Country, related_name="clients_born_here", on_delete=models.CASCADE)
+    nationality = models.ForeignKey(Country, related_name="clients_nationality", on_delete=models.CASCADE)
+    dual_citizen = models.BooleanField(default=False)
+    dual_nationality = models.ForeignKey(Country, related_name="clients_dual_nationality", on_delete=models.CASCADE, null=True, blank=True)
+    primary_phone = models.CharField(max_length=15)
+    secondary_phone = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField(max_length=200)
+    telephone_preferred = models.BooleanField(default=False)
+    email_preferred = models.BooleanField(default=False)
+    primary_income_source = models.CharField(max_length=200)
+    employment_status = models.CharField(max_length=1, choices=emp_statuses)
+    position_held = models.CharField(max_length=200, null=True, blank=True)
+    employer = models.CharField(max_length=200, null=True, blank=True)
+    employer_address = models.CharField(max_length=200, null=True, blank=True)
+    business_type = models.CharField(max_length=200, null=True, blank=True)
+    transaction_frequency = models.CharField(max_length=1, choices=trans_freq)
+    politically_exposed = models.BooleanField(default=False)
+    political_details = models.CharField(max_length=200, null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.first_name} {self.surname}"
+
+
+class CorporateClient(models.Model):
+    # choice lists
+    client_list_entry = models.OneToOneField(ClientList, related_name="source_corporation", on_delete=models.CASCADE, null=True, blank=True)
+    entity_types = [
+        ("L", "Limited Liability"),
+        ("P", "Partnership"),
+        ("T", "Trust"),
+        ("S", "Sole Trader"),
+        ("G", "Government Enterprise"),
+        ("O", "Other"),
+    ]
+    trans_freq = [("M", "Monthly"), ("Q", "Quarterly"), ("Y", "Annually")]
+
+    legacy_id = models.CharField(max_length=20, null=True, blank=True)
+    registered_name = models.CharField(max_length=250)
+    registration_number = models.CharField(max_length=15)
+    date_of_incorporation = models.DateField()
+    country_of_incorporation = models.ForeignKey(Country, related_name="clients_incorporated_here", on_delete=models.CASCADE)
+    bir_number = models.CharField(max_length=15)
+    vat_registration = models.CharField(max_length=15)
+    parent_company = models.CharField(max_length=250, null=True, blank=True)
+    registered_address = models.CharField(max_length=200)
+    registered_address2 = models.CharField(max_length=200, null=True, blank=True)
+    registered_city = models.CharField(max_length=150)
+    registered_country = models.ForeignKey(Country, related_name="clients_registered_here", on_delete=models.CASCADE)
+    mailing_address = models.CharField(max_length=200, null=True, blank=True)
+    mailing_address2 = models.CharField(max_length=200, null=True, blank=True)
+    mailing_city = models.CharField(max_length=150, null=True, blank=True)
+    mailing_country = models.ForeignKey(Country, related_name="corp_clients_mailed_here", on_delete=models.CASCADE, null=True, blank=True)
+    contact_person = models.CharField(max_length=150)
+    primary_phone = models.CharField(max_length=15)
+    secondary_phone = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField(max_length=200)
+    website = models.EmailField(max_length=200, null=True, blank=True)
+    telephone_preferred = models.BooleanField(default=False)
+    email_preferred = models.BooleanField(default=False)
+    website = models.CharField(max_length=250)
+    entity_type = models.CharField(max_length=1, choices=entity_types)
+    business_type = models.CharField(max_length=200, null=True, blank=True)
+    transaction_frequency = models.CharField(max_length=1, choices=trans_freq)
+    politically_exposed = models.BooleanField(default=False)
+    political_details = models.CharField(max_length=200, null=True, blank=True)
+   
+    def __str__(self):
+        return self.registered_name
+
+
+class IdentificationInfo(models.Model):
+    client = models.ForeignKey(IndividualClient, on_delete=models.CASCADE)
+    id_type = models.ForeignKey(IdentificationType, on_delete=models.CASCADE)
+    id_number = models.CharField(max_length=20)
+    id_country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    issue_date = models.DateField(null=True, blank=True)
+    expiry_date = models.DateField()
 
     def __str__(self):
-        return self.Status
+        return f"{self.client} {self.id_type}"
 
-class ClientAMLRiskRating(models.Model):
-    ClientAMLRiskRatingID = models.IntegerField(primary_key=True)
-    ClientAMLRiskRating1 = models.CharField(max_length=50)
-    Min = models.IntegerField()
-    Max = models.IntegerField()
-
-    def __str__(self):
-        return self.ClientAMLRiskRating1
-
-class ClientAccountStatus(models.Model):
-    ClientAccountStatusID = models.IntegerField(primary_key=True)
-    ClientAccountStatus1 = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.ClientAccountStatus1
-
-class Country(models.Model):
-    CountryID = models.IntegerField(primary_key=True)
-    CountryName = models.CharField(max_length=200)
-    CountryCode = models.CharField(max_length=5)
-
-    class Meta:
-        verbose_name_plural = "Countries"
-        
-    def __str__(self):
-        return self.CountryName
-
-class Client(models.Model):
-    ClientID = models.IntegerField(primary_key=True)
-    DateOpened = models.DateField()
-    ClientType = models.ForeignKey(ClientType, on_delete=models.CASCADE)
-    ClientSubType = models.ForeignKey(ClientSubType, on_delete=models.CASCADE)
-    ClientName = models.CharField(max_length=200)
-    ClientStatusID = models.ForeignKey(ClientStatus, on_delete=models.CASCADE)
-    ClientAMLRiskRatingID = models.ForeignKey(ClientAMLRiskRating, on_delete=models.CASCADE)
-    PEP = models.IntegerField()
-    USPerson = models.IntegerField()
-    ClientAccountStatus = models.ForeignKey(ClientAccountStatus, on_delete=models.CASCADE)
-    ClientAddress1 = models.CharField(max_length=200)
-    ClientAddress2 = models.CharField(max_length=200, blank=True, null=True)
-    ClientAddressCity = models.CharField(max_length=200)
-    ClientAddressState = models.CharField(max_length=50, blank=True, null=True)
-    ClientAddressZipCode = models.CharField(max_length=15, blank=True, null=True)
-    CountryID = models.ForeignKey(Country, on_delete=models.CASCADE)
-    ClientPhone = models.CharField(max_length=50, blank=True, null=True)
-    ClientFax = models.CharField(max_length=15, blank=True, null=True)
-    ClientEmail = models.CharField(max_length=200, blank=True, null=True)
-    ClientWebsite = models.CharField(max_length=200, blank=True, null=True)
-    ClientApprovalStatus = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self):
-        return self.ClientName
-
+    
 class BeneficiaryBank(models.Model):
-    client = models.ForeignKey(Client, related_name="beneficiaries", on_delete=models.CASCADE)
+    client = models.ForeignKey(ClientList, related_name="beneficiaries", on_delete=models.CASCADE)
     bank_name = models.CharField(max_length=100)
     bank_address = models.CharField(max_length=200)
     bank_address2 = models.CharField(max_length=200, null=True, blank=True)

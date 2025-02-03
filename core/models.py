@@ -29,4 +29,14 @@ class DealStatus(models.Model):
     def __str__(self):
         return self.status_name
     
-    
+
+class Country(models.Model):
+    country = models.CharField(max_length=200)
+    country_code = models.CharField(max_length=5)
+
+    class Meta:
+        verbose_name_plural = "Countries"
+        
+    def __str__(self):
+        return self.CountryName
+
