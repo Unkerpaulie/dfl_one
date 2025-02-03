@@ -19,3 +19,6 @@ venv/
 
 # client data
 client_names/
+
+# windows scripts
+*.bat
