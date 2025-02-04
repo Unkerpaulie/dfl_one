@@ -11,10 +11,10 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         fake = Faker()
         # get list client ids
-        all_ids = list(Client.objects.all().values_list("ClientID", flat=True))
+        all_ids = list(ClientList.objects.all().values_list("ClientID", flat=True))
         country_ids = list(Country.objects.all().values_list("CountryID", flat=True))
         for i in all_ids:
-            client = Client.objects.get(pk=i)
+            client = ClientList.objects.get(pk=i)
             b_num = random.randint(1, 4)
             for j in range(b_num):
                 add_intermediary = random.random() > 0.75

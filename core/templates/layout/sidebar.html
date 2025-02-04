@@ -49,6 +49,9 @@
                         <li{% if page_title == "Deal Statuses" %} class="active"{% endif %}>
                             <a href="{% url "setup:list_deal_status" %}"> Deal Statuses </a>
                         </li>
+                        <li{% if page_title == "Identification Types" %} class="active"{% endif %}>
+                            <a href="{% url "setup:list_identification_types" %}"> Identification Types </a>
+                        </li>
                     </ul>
                 </li>
                 {% endif %}

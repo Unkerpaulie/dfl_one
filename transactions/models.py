@@ -1,5 +1,5 @@
 from django.db import models
-from clients.models import Client, BeneficiaryBank
+from clients.models import ClientList, BeneficiaryBank
 from core.models import Currency, DealStatus
 from account.models import User
 
@@ -7,7 +7,7 @@ from account.models import User
 class Transaction(models.Model):
     transaction_types = [("P", "Purchase"), ("S", "Sale")]
 
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    client = models.ForeignKey(ClientList, on_delete=models.CASCADE)
     contract_date = models.DateField()
     value_date = models.DateField()
     transaction_type = models.CharField(max_length=1, choices=transaction_types)

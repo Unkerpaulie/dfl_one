@@ -4,7 +4,7 @@ from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Transaction
-from clients.models import Client, BeneficiaryBank
+from clients.models import ClientList, BeneficiaryBank
 from core.models import Currency, DealStatus
 from setup.models import CurrencyStock, BankFee
 
@@ -15,7 +15,7 @@ def transactions_list(req):
     if req.user.role == "admin":
         transactions = Transaction.objects.all()
     else:
-        transactions = Transaction.objects.all().exclude(client=Client.objects.get(pk=0))
+        transactions = Transaction.objects.all().exclude(client=ClientList.objects.get(pk=0))
         
     context = {"page_title": "Transactions List"}
     context["transactions"] = transactions
@@ -24,7 +24,7 @@ def transactions_list(req):
 
 @login_required
 def new_transaction(req, client_id):
-    client = Client.objects.get(pk=client_id)
+    client = ClientList.objects.get(pk=client_id)
     # beneficiaries = BeneficiaryBank.objects.filter(client=client)
     beneficiaries = client.beneficiaries.all()
     transaction_types = Transaction.transaction_types

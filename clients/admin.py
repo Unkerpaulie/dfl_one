@@ -1,11 +1,8 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(Client)
-admin.site.register(ClientType)
-admin.site.register(ClientSubType)
-admin.site.register(ClientStatus)
-admin.site.register(ClientAccountStatus)
-admin.site.register(ClientAMLRiskRating)
-admin.site.register(Country)
+admin.site.register(ClientList)
+admin.site.register(IndividualClient)
+admin.site.register(CorporateClient)
+admin.site.register(IdentificationInfo)
 admin.site.register(BeneficiaryBank)
