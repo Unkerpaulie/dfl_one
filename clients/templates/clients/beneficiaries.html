@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="title-block">
-        <a href="{% url "clients:new_beneficiary" client.ClientID %}" class="btn btn-primary btn-lg">Add Benefiary</a>
+        <a href="{% if client.client_list_entry.client_type == 'I' %}{% url 'clients:new_i_beneficiary' client.id %}{% else %}{% url 'clients:new_c_beneficiary' client.id %}{% endif %}" class="btn btn-primary btn-lg">Add Benefiary</a>
     </div>
     <section class="section">
         <div class="container">
@@ -27,7 +27,7 @@
                                 <td>{{ beneficiary.bank_name }}</td>
                                 <td>{{ beneficiary.account_number }}</td>
                                 <td>
-                                    <a href="{% url "clients:edit_beneficiary" client.ClientID beneficiary.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Beneficiary Info"><i class="fa fa-edit"></i></a>
+                                    <a href="{% if client.client_list_entry.client_type == 'I' %}{% url 'clients:edit_i_beneficiary' client.id beneficiary.id %}{% else %}{% url 'clients:edit_c_beneficiary' client.id beneficiary.id %}{% endif %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Beneficiary Info"><i class="fa fa-edit"></i></a>
                                 </td>
                             </tr>
                             {% endfor %}

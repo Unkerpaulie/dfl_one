@@ -11,8 +11,8 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         fake = Faker()
         # get list client ids
-        all_ids = list(ClientList.objects.all().values_list("ClientID", flat=True))
-        country_ids = list(Country.objects.all().values_list("CountryID", flat=True))
+        all_ids = list(ClientList.objects.all().values_list("id", flat=True))
+        country_ids = list(Country.objects.all().values_list("id", flat=True))
         for i in all_ids:
             client = ClientList.objects.get(pk=i)
             b_num = random.randint(1, 4)

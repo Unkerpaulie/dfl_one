@@ -28,15 +28,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for client in clients %}
+                            {% for client_list_entry in clients %}
                             <tr>
-                                <th scope="row">{{ client.id }}</th>
-                                <td>{{ client.client_name }}</td>
-                                <td>{{ client.get_client_type_display }}</td>
+                                <th scope="row">{{ client_list_entry.id }}</th>
+                                <td>{{ client_list_entry.client_name }}</td>
+                                <td>{{ client_list_entry.get_client_type_display }}</td>
                                 <td>
-                                    <a href="{% if client.client_type == 'I' %}{% url 'clients:edit_individual' client.id %}{% else %}{% url 'clients:edit_corporate' client.id %}{% endif %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Client Info">
+                                    <a href="{% if client_list_entry.client_type == 'I' %}{% url 'clients:edit_individual' client_list_entry.id %}{% else %}{% url 'clients:edit_corporate' client_list_entry.id %}{% endif %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Client Info">
                                         <i class="fa fa-edit"></i>
                                     </a>
+                                    <a href="{% if client_list_entry.client_type == 'I' %}{% url 'clients:beneficiaries_i' client_list_entry.id %}{% else %}{% url 'clients:beneficiaries_c' client_list_entry.id %}{% endif %}" class="btn btn-sm btn-oval btn-dark mx-1" title="Beneficiaries"><i class="fa fa-university"></i></a>
                                 </td>
                             </tr>
                             {% endfor %}
