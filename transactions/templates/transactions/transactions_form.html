@@ -36,8 +36,8 @@
                         <div class="x_content">
                             <form action="" method="post" id="transaction_form">
                                 {% csrf_token %}
-                                <input type="hidden" name="client_id" value="{{ client.ClientID }}">
-                                <input type="hidden" name="client_name" value="{{ client.ClientName }}">
+                                <input type="hidden" name="client_id" value="{{ client.id }}">
+                                <input type="hidden" name="client_name" value="{{ client.client_name }}">
                                 <input type="hidden" name="deal_id" value="{{ deal_id }}">
                                 <input type="hidden" name="trader" value="{{ user.first_name }} {{ user.last_name }}">
                                 <fieldset class="border my-2 px-2">
@@ -127,7 +127,7 @@
                                                     {% endfor %}
                                                 </select>
                                                 <div class="input-group-append">
-                                                    <a class="btn btn-primary-outline p-2" href="{% url "clients:new_beneficiary" client.ClientID %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
+                                                    <a class="btn btn-primary-outline p-2" href="{% if client.client_type == 'I' %}{% url 'clients:new_i_beneficiary' client.id %}{% else %}{% url 'clients:new_c_beneficiary' client.id %}{% endif %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -149,7 +149,7 @@
                                                     {% endfor %}
                                                 </select>
                                                 <div class="input-group-append">
-                                                    <a class="btn btn-primary-outline p-2" href="{% url "clients:new_beneficiary" client.ClientID %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
+                                                    <a class="btn btn-primary-outline p-2" href="{% if client.client_list_entry.client_type == 'I' %}{% url 'clients:new_i_beneficiary' client.id %}{% else %}{% url 'clients:new_c_beneficiary' client.id %}{% endif %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
                                                 </div>
                                             </div>
                                         </div>

@@ -35,7 +35,7 @@
                                 </td>
                                 {% if user.role == "admin" %}
                                 <td>
-                                    <a href="{% url "transactions:edit_transaction" transaction.client.ClientID transaction.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Transaction"><i class="fa fa-edit"></i></a>
+                                    <a href="{% url "transactions:edit_transaction" transaction.client.id transaction.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Transaction"><i class="fa fa-edit"></i></a>
                                 </td>
                                 {% endif %}
                             </tr>

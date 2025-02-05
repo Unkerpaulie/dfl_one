@@ -32,4 +32,4 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{'Purchased' if self.transaction_type == 'P' else 'Sold'} {self.foreign_currency}{self.foreign_amount} from {self.client.ClientName} on {self.value_date}"
+        return f"{'Purchased' if self.transaction_type == 'P' else 'Sold'} {self.foreign_currency}{self.foreign_amount} from {self.client.client_name} on {self.value_date}"

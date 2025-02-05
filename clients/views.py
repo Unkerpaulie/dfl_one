@@ -157,7 +157,7 @@ def new_individual(req):
 
 @login_required
 def edit_individual(req, client_id):
-    client = IndividualClient.objects.get(pk=client_id)
+    client = IndividualClient.objects.get(client_list_entry=client_id)
     context = {"page_title": f"Edit Individual Client {client.first_name} {client.surname}"}
     context["section"] = "clients"
     context['form_purpose'] = "edit"
@@ -415,7 +415,7 @@ def new_corporate(req):
 
 @login_required
 def edit_corporate(req, client_id):
-    client = CorporateClient.objects.get(pk=client_id)
+    client = CorporateClient.objects.get(client_list_entry=client_id)
     context = {"page_title": f"Edit Corporate Client {client.registered_name}"}
     context["section"] = "clients"
     context['form_purpose'] = "edit"

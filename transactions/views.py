@@ -31,7 +31,7 @@ def new_transaction(req, client_id):
     currencies = Currency.objects.all()
     deal_statuses = DealStatus.objects.all()
     bank_fee = BankFee.objects.get(pk=1) # default bank fee
-    context = {"page_title": f"New Transaction for {client.ClientName}"}
+    context = {"page_title": f"New Transaction for {client.client_name}"}
     context["section"] = "transactions"
     context["client"] = client
     context["beneficiaries"] = beneficiaries
@@ -41,7 +41,6 @@ def new_transaction(req, client_id):
         context["deal_id"] = Transaction.objects.latest("id").id + 1 
     except:
         context["deal_id"] = 1 # if no transactions exist yet
-
 
     if req.method == "POST":        
         contract_date = req.POST.get("contract_date")
@@ -126,7 +125,7 @@ def edit_transaction(req, client_id, transaction_id):
     currencies = Currency.objects.all()
     deal_statuses = DealStatus.objects.all()
     # bank_fee = BankFee.objects.get(pk=1)
-    context = {"page_title": f"Edit Transaction for {client.ClientName}"}
+    context = {"page_title": f"Edit Transaction for {client.client_name}"}
     context["section"] = "transactions"
     context["client"] = client
     context["transaction"] = transaction
