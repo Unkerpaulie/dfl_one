@@ -3,6 +3,17 @@
 {% block title %} - {{ page_title }}{% endblock title %}
 
 {% block content %}
+    <div class="title-block">
+        <div class="select-currency mr-auto">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">New Client: {{ selected_currency }}</button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url "clients:new_individual" %}">Individual</a>
+                    <a class="dropdown-item" href="{% url "clients:new_corporate" %}">Corporate</a>
+                </div>
+            </div>
+        </div>
+    </div>
     <section class="section">
         <div class="container">
             <div class="card">
@@ -13,20 +24,19 @@
                                 <th>Client ID</th>
                                 <th>Client Name</th>
                                 <th>Client Type</th>
-                                <th>Contact</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for client in clients %}
                             <tr>
-                                <th scope="row">{{ client.ClientID }}</th>
-                                <td>{{ client.ClientName }}</td>
-                                <td>{{ client.ClientType }}</td>
-                                <td>{{ client.ClientPhone }}</td>
+                                <th scope="row">{{ client.id }}</th>
+                                <td>{{ client.client_name }}</td>
+                                <td>{{ client.get_client_type_display }}</td>
                                 <td>
-                                    <a href="{% url "transactions:new_transaction" client.ClientID %}" class="btn btn-sm btn-oval btn-primary mx-1" title="New Transaction"><i class="fa fa-money"></i></a>
-                                    <a href="{% url "clients:beneficiaries" client.ClientID %}" class="btn btn-sm btn-oval btn-dark mx-1" title="Beneficiaries"><i class="fa fa-university"></i></a>
+                                    <a href="{% if client.client_type == 'I' %}{% url 'clients:edit_individual' client.id %}{% else %}{% url 'clients:edit_corporate' client.id %}{% endif %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Client Info">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
                                 </td>
                             </tr>
                             {% endfor %}
