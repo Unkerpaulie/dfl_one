@@ -27,7 +27,7 @@ class Command(BaseCommand):
         trans_freq = [s[0] for s in IndividualClient.trans_freq]
         entity_types = [s[0] for s in CorporateClient.entity_types]
         countries = Country.objects.all()
-        tt = Country.objects.get(country_code="TT")
+        tt = Country.objects.filter(country_code="TT").first()
         id_types = IdentificationType.objects.all()
 
         # create individual clients 75% of the time

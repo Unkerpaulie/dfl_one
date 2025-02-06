@@ -22,9 +22,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         fake = Faker()
         # get list clients with beneficiaries
-        all_clients = list(Client.objects.exclude(pk=0).exclude(beneficiaries=None).all())
+        all_clients = list(ClientList.objects.exclude(pk=0).exclude(beneficiaries=None).all())
 
-        num_transactions = random.randint(50, 150)
+        num_transactions = random.randint(30, 60)
         for i in range(num_transactions):
             # generate random transaction set up
             t_type = random.choice(["P", "S"])
