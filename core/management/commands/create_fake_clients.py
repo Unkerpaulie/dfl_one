@@ -25,6 +25,7 @@ class Command(BaseCommand):
         mar_statuses = [s[0] for s in IndividualClient.mar_statuses]
         emp_statuses = [s[0] for s in IndividualClient.emp_statuses]
         trans_freq = [s[0] for s in IndividualClient.trans_freq]
+        entity_types = [s[0] for s in CorporateClient.entity_types]
         countries = Country.objects.all()
         tt = Country.objects.get(country_code="TT")
         id_types = IdentificationType.objects.all()
@@ -107,7 +108,7 @@ class Command(BaseCommand):
                 website=fake.url(),
                 telephone_preferred=random.choice([True, False]),
                 email_preferred=random.choice([True, False]),
-                entity_type=fake.word(),
+                entity_type=random.choice(entity_types),
                 business_type=fake.word(),
                 transaction_frequency=random.choice(trans_freq),
                 politically_exposed=random.choice([True, False]),

@@ -38,5 +38,5 @@ class Country(models.Model):
         verbose_name_plural = "Countries"
         
     def __str__(self):
-        return self.CountryName
+        return self.country
 

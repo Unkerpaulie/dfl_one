@@ -23,38 +23,55 @@ class Command(BaseCommand):
     tt_start_amount = 1000000000
 
     def create_client_0(self):
-        Client.objects.create(
-            ClientID=0,
-            DateOpened=date(2020, 5, 17),
-            ClientType=ClientType.objects.get(pk=2),
-            ClientSubType=ClientSubType.objects.get(pk=4),
-            ClientName="Development Finance Limited",
-            ClientStatusID=ClientStatus.objects.get(pk=7),
-            ClientAMLRiskRatingID=ClientAMLRiskRating.objects.get(pk=1),
-            PEP=0,
-            USPerson=0,
-            ClientAccountStatus=ClientAccountStatus.objects.get(pk=2),
-            ClientAddress1="10 Cipriani Blvd",
-            ClientAddressCity="Port of Spain",
-            CountryID=Country.objects.get(pk=216),
-            ClientPhone="(868) 625-0007",
-            ClientEmail="info@dflbusiness.com",
-            ClientApprovalStatus="Final Approval"
+        client0 = CorporateClient(
+            id=0,
+            registered_name="Development Finance Limited",
+            date_of_incorporation=date(2000, 1, 1),
+            country_of_incorporation=Country.objects.get(country_code="TT"),
+            registration_number="8798798",
+            bir_number="8798798",
+            vat_registration="8798798",
+            parent_company=None,
+            registered_address="10 Cipriani Blvd",
+            registered_address2="",
+            registered_city="Port of Spain",
+            registered_country=Country.objects.get(country_code="TT"),
+            contact_person="Gary Awai",
+            primary_phone="(868) 625-0007",
+            secondary_phone=None,
+            email="info@dflbusiness.com",
+            website="https://dflbusiness.com/",
+            telephone_preferred=False,
+            email_preferred=False,
+            entity_type="L",
+            business_type="Finance",
+            transaction_frequency="M",
+            politically_exposed=False,
+            political_details=None
         )
+        # create client list entry
+        client_list = ClientList(
+            id=0,
+            client_name=client0.registered_name,
+            client_type="C",
+            legacy_id=0
+        )
+        client_list.save()
+        client0.save()
         self.stdout.write(self.style.SUCCESS("DFL FX Client Account created"))
 
         # create client beneficiary bank
         BeneficiaryBank.objects.create(
-            client=Client.objects.get(pk=0),
+            client=ClientList.objects.get(pk=0),
             bank_name="DFL FX Account",
             bank_address="10 Cipriani Blvd",
             bank_city="Port of Spain",
-            bank_country=Country.objects.get(pk=216),
+            bank_country=Country.objects.get(country_code="TT"),
             account_number="1234567890",
             recipient_name="DFL FX Account",
             recipient_address="10 Cipriani Blvd",
             recipient_city="Port of Spain",
-            recipient_country=Country.objects.get(pk=216),
+            recipient_country=Country.objects.get(country_code="TT"),
             special_instructions="Trade into FX account"
         )
         self.stdout.write(self.style.SUCCESS("DFL FX Beneficiary Bank created"))
@@ -76,7 +93,7 @@ class Command(BaseCommand):
     def add_start_stock_transaction(self, currency):
         # create transaction object
         t = Transaction(
-            client=Client.objects.get(ClientID=0),
+            client=ClientList.objects.get(pk=0),
             contract_date=date.today(),
             value_date=date.today() - timedelta(days=2),
             transaction_type="P",
@@ -90,7 +107,7 @@ class Command(BaseCommand):
             deal_status=DealStatus.objects.get(pk=2),
             trader=User.objects.get(pk=1),
             last_updated_by=User.objects.get(pk=1),
-            beneficiary=Client.objects.get(ClientID=0).beneficiaries.first(),
+            beneficiary=ClientList.objects.get(pk=0).beneficiaries.first(),
             payment_details=f"Initial {currency['code']} Stock of {currency['start']}"
         )
         t.save()
@@ -126,7 +143,9 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Settled for: {settle_stock}"))
 
     def set_deal_number(self, num):
-        Transaction.objects.last().update(id=num-1)
+        last = Transaction.objects.last()
+        last.id = num-1
+        last.save()
 
 
     def create_fake_traders(self, n):
