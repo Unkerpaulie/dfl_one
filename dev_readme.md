@@ -16,110 +16,41 @@ Create the database structure and superuser account:
 
 ## Load initial data (custom commands)
 
-`python manage.py load_from_csv`
+`python manage.py load_system`
 
 Sets up the initial reference datasets like countries and client types. These populate pulldown menus in forms
 
 `python manage.py create_fake_clients`
 
-This script creates 60 random clients to populate the client base
+This script creates 25 random clients to populate the client base
 
-Alternatively, real clients can be added to the system by importing data from a CSV file. In the core directory, create a subfolder named 'client_names' and add a CSV file named 'Clients.csv with exactly the following columns in this order:
-
-- ClientID
-- DateOpened
-- ClientType_id
-- ClientSubType_id
-- ClientName
-- ClientStatusID_id
-- ClientAMLRiskRatingID_id
-- PEP
-- USPerson
-- ClientAccountStatus_id
-- ClientAddress1
-- ClientAddress2
-- ClientAddressCity
-- ClientAddressState
-- ClientAddressZipCode
-- CountryID_id
-- ClientPhone
-- ClientFax
-- ClientEmail
-- ClientWebsite
-- ClientApprovalStatus
-
-Once that file exists and all information is valid, run the following command:
-
-`python manage.py load_clients`
-
-Generate fake beneficiaries for each client. This script creates between 1 and 3 random beneficiaries for each client created:
+Generate fake beneficiaries for each client. This script creates between 1 and 4 random beneficiaries for each client created:
 
 `python manage.py create_beneficiaries`
 
+Alternatively, real clients can be added to the system by entering real clients and their beneficiaries using the data entry forms on the application
 
 
-## Start the server and create initial currency stock
-
-==Important Update!==
-
-The initial currency stock entry, client 0, and beneficiary for client 0, and the initial foreign currency deposits, can be created using the following steps, may all be created automantically with the following comand:
+## Create initial currency stock
 
 `python manage.py create_start_stock`
 
-The following instructions need to occur only once when the system is launched
+This script does the following:
+* create DFL as client 0
+* create the initial TT pool total
+* create initial starting amounts for each currency
+* set the starting deal number
+* create 3 fake traders
 
-### 1. Log in and go to admin panel
+The following instructions need to occur only once when the system is launched. This will be modified once real data is going to be used
+
+## Run the server
 
 `python manage.py runserver`
 
-Note: When you first log in to the system, you will be prompted to change your password. 
-
-You can go to <http://127.0.0.1:8000/admin/> or click your name in the top right corner of the app and click "Admin Panel" from the menu.
-
-### 2. Create a starting currency stock entry
-
-In the **Currency stocks** table under **SETUP**, create the following entry:
-- Source transaction: -
-- Adjustment soure: Manual
-- Adjustment type: Increase
-- Currency: TTD
-- Currency rate: 1
-- Amount: 1000000000 (one billion)
-- Effective date: (current date)
-- Comment: "initial deposit" (although this is optional)
-- Entered by: (select your user email)
-- Last updated by: (same as above)
-
-### 3. Create client 0
-
-The **Clients** table will be populated with random client information starting at ClientID 1. Click "Add Client" and create a client with ClientID 0. This is a special client entry only visible to the admin in the system, and allows the other currency stocks to be initialized. You can give it a client name like "Foreign Exchange Account" or something. Enter something for all the required fields, those don't matter what you put but you have to put something The fields PEP and USPerson should be set to 0.
-
-### 4. Create a beneficiary for client 0
-
-Return to the main website. The TTD on hand should be the amount you initially entered in **Currency stock**. Click the **Clients** link on the sidebar. As admin, you'll find client 0 that you created. To the right, click the icon to add beneficiary. Here you'll create a foreign currency beneficiary. Fill all the necessary fields and save.
-
-### 5. Create foriegn currency deposits
-
-From the **Clients** menu, select Client 0 and click the "New Transaction" icon. A Purchase transactin needs to be made for each foreign currency deposit. Set the Contract Date and Value Date before the current date. This way these deposits will represent the opening balances for today. The Settlment Currency for each transaction is TTD. The exchange rates for the foreign currencies on the list relative to TTD are stored in 'core/start_data/currencies.json'.
-
-Select the foreign currency as Foreign Currency and enter the rate as Foreign Currency Rate. The Settlement Amount is then the desrieed amount multiplied by the Currency rate. For example, if you need to deposit 1000000 USD and the exchange rate is 6.78, enter 6780000 as the Settlement amount. The Amount of 1000000 will automatically be entered. Select the Beneficiary that was created. Before saving the transaction, click review. A transaction sheet is generated which can be printed or exported. Click Confirm to save the transaction. The Payment details field is optional, but a comment may be entered. Save and repeat for each foreign currency deposit.
-
-### 6. Confirm that all opening balances
-
-Select **Blotter** from the side menu and ensure that all the initial values are entered and are correct. The TTD on hand value will also decrease accordingly because of the initial purchases
-
-### 7. Create at least 1 trader
-
-As admin, you have access to the Settings menu on the sidebar. Click User Management to add a new User. Give the user a name and email address and set their role to Trader. 
-
-## Daily transactions
-
-The system is designed for data entry of actual fireign exchange transactions. However, for testing purposes we can generate random transactions
+## Create fake transactions daily
 
 `python manage.py create_transactions`
-
-Run this script each day to generate between 50 and 100 random transactions for each client. The transactions are randomly generated using a combination of reference data and random number generation.
-
 
 ## Other utilities
 
