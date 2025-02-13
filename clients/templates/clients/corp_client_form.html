@@ -40,7 +40,7 @@
                                             <input type="date" class="form-control" name="date_of_incorporation" value="{{ formdata.date_of_incorporation|date:'Y-m-d' }}" required />
                                         </div>
                                         <div class="col">
-                                            <label for="country_of_incoropration">Country of Incorporation *</label>
+                                            <label for="country_of_incorporation">Country of Incorporation *</label>
                                             <select name="country_of_incorporation" class="form-control" required>
                                                 {% if form_purpose == "new" %}
                                                 {% for country in countries %}

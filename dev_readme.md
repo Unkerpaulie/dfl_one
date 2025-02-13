@@ -1,8 +1,19 @@
 ## Setup
 
-No 3rd party libraries needed in Django. However, the system itself uses faker for generating random data, and openpyxl for generating excel downloads, andofcourse, Django:
+No 3rd party libraries needed in Django. However, the system itself uses faker for generating random data, and openpyxl for generating excel downloads, and of course, Django:
 
-`pip install django, faker`
+### *Optional* Install locally
+Create a virtual environment
+
+`python -m venv venv`
+
+On Windows, activate the venv
+
+`venv\Scripts\Activate`
+
+### Install dependencies
+
+`pip install django faker Pillow`
 
 Create the database structure and superuser account:
 

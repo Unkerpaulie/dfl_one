@@ -53,14 +53,14 @@
                                             <select name="bank_country" class="form-control" required>
                                                 {% if form_purpose == "new" %}
                                                 {% for country in countries %}
-                                                <option value="{{ country.CountryID }}"{% if country.CountryCode == "TT" %} selected{% endif %}>{{ country.CountryName }}</option>
+                                                <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
                                                 {% endfor %}
                                                 {% else %}
                                                 {% for country in countries %}
-                                                <option value="{{ country.CountryID }}" {% if country.CountryCode == formdata.bank_country.CountryCode %} selected {% endif %}>{{ country.CountryName }}</option>
+                                                <option value="{{ country.id }}" {% if country.country_code == formdata.bank_country.country_code %} selected {% endif %}>{{ country.country }}</option>
                                                 {% endfor %}
                                                 {% endif %}
-                                        </select>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -76,7 +76,7 @@
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col">
-                                            <label for="aba_code">ABA Number</label>
+                                            <label for="aba_code">ABA/Transit Number</label>
                                             <input type="text" value="{{ formdata.aba_code }}" name="aba_code" class="form-control" /> 
                                         </div>
                                         <div class="col">
@@ -125,11 +125,11 @@
                                             <select name="recipient_country" class="form-control" required>
                                                 {% if form_purpose == "new" %}
                                                 {% for country in countries %}
-                                                <option value="{{ country.CountryID }}"{% if country.CountryCode == "TT" %} selected{% endif %}>{{ country.CountryName }}</option>
+                                                <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
                                                 {% endfor %}
                                                 {% else %}
                                                 {% for country in countries %}
-                                                <option value="{{ country.CountryID }}" {% if country.CountryCode == formdata.recipient_country.CountryCode %} selected {% endif %}>{{ country.CountryName }}</option>
+                                                <option value="{{ country.id }}" {% if country.country_code == formdata.recipient_country.country_code %} selected {% endif %}>{{ country.country }}</option>
                                                 {% endfor %}
                                                 {% endif %}
                                         </select>
@@ -185,11 +185,11 @@
                                             <select name="intermediary_bank_country" class="form-control">
                                                 {% if form_purpose == "new" %}
                                                 {% for country in countries %}
-                                                <option value="{{ country.CountryID }}"{% if country.CountryCode == "TT" %} selected{% endif %}>{{ country.CountryName }}</option>
+                                                <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
                                                 {% endfor %}
                                                 {% else %}
                                                 {% for country in countries %}
-                                                <option value="{{ country.CountryID }}" {% if country.CountryCode == formdata.intermediary_bank_country.CountryCode %} selected {% endif %}>{{ country.CountryName }}</option>
+                                                <option value="{{ country.id }}" {% if country.country_code == formdata.intermediary_bank_country.country_code %} selected {% endif %}>{{ country.country }}</option>
                                                 {% endfor %}
                                                 {% endif %}
                                         </select>
@@ -207,7 +207,7 @@
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col">
-                                            <label for="intermediary_aba_code">Intermediary ABA Number</label>
+                                            <label for="intermediary_aba_code">Intermediary ABA/Transit Number</label>
                                             <input type="text" value="{{ formdata.intermediary_aba_code }}" name="intermediary_aba_code" class="form-control" /> 
                                         </div>
                                         <div class="col">
