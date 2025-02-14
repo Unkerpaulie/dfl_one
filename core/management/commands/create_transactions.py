@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import date, timedelta
 from clients.models import *
 from transactions.models import Transaction
-from setup.models import CurrencyStock, Currency
+from setup.models import CurrencyStock, Currency, BankFee
 from core.models import DealStatus
 from account.models import User
 from faker import Faker
@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 settlement_currency=Currency.objects.filter(currency_code="TTD").first(),
                 settlement_currency_rate=1,
                 settlement_amount=foreign_currency["rate"] * amount,
-                bank_fee=777,
+                bank_fee=BankFee.objects.get(pk=1).bank_fee,
                 deal_status=DealStatus.objects.get(pk=2),
                 trader=trader,
                 last_updated_by=trader,

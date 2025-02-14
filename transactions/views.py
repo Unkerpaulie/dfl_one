@@ -30,17 +30,14 @@ def new_transaction(req, client_id):
     transaction_types = Transaction.transaction_types
     currencies = Currency.objects.all()
     deal_statuses = DealStatus.objects.all()
-    bank_fee = BankFee.objects.get(pk=1) # default bank fee
+    bank_fee = BankFee.objects.get(pk=1)
     context = {"page_title": f"New Transaction for {client.client_name}"}
     context["section"] = "transactions"
     context["client"] = client
     context["beneficiaries"] = beneficiaries
     context["bank_fee"] = bank_fee.bank_fee
     context |= {"transaction_types": transaction_types, "currencies": currencies, "deal_statuses": deal_statuses}
-    try:
-        context["deal_id"] = Transaction.objects.latest("id").id + 1 
-    except:
-        context["deal_id"] = 1 # if no transactions exist yet
+    context["deal_id"] = Transaction.objects.latest("id").id + 1 
 
     if req.method == "POST":        
         contract_date = req.POST.get("contract_date")
@@ -57,7 +54,7 @@ def new_transaction(req, client_id):
         # out_payment values: cash, fixed, bb-
         cash_settlement = out_payment == "cash"
         fixed_deposit = out_payment == "fixed"
-        fixed_deposit_cert = req.POST.get("fd_certificate_number")
+        fixed_deposit_cert = req.POST.get("fixed_deposit_cert")
         beneficiary = BeneficiaryBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("bb-") else None
         deal_status = int(req.POST.get("deal_status"))
         payment_details = req.POST.get("payment_details")
@@ -122,6 +119,7 @@ def edit_transaction(req, client_id, transaction_id):
     client = transaction.client
     beneficiaries = client.beneficiaries.all()
     transaction_types = Transaction.transaction_types
+    bank_fee = BankFee.objects.get(pk=1)
     currencies = Currency.objects.all()
     deal_statuses = DealStatus.objects.all()
     # bank_fee = BankFee.objects.get(pk=1)
@@ -133,18 +131,28 @@ def edit_transaction(req, client_id, transaction_id):
     context["bank_fee"] = transaction.bank_fee
     context |= {"transaction_types": transaction_types, "currencies": currencies, "deal_statuses": deal_statuses}
     context["deal_id"] = transaction_id
+    out_payment = None
+    if transaction.cash_settlement:
+        out_payment = "cash"
+    elif transaction.fixed_deposit:
+        out_payment = "fixed"
+    elif transaction.beneficiary is not None:
+        out_payment = f"bb-{transaction.beneficiary.id}"
     context["formdata"] = {
         "contract_date": transaction.contract_date,
         "value_date": transaction.value_date,
         "transaction_type": transaction.transaction_type,
-        "settlement_currency": transaction.settlement_currency,
-        "settlement_currency_rate": transaction.settlement_currency_rate,
-        "settlement_amount": transaction.settlement_amount,
         "foreign_currency": transaction.foreign_currency,
         "foreign_currency_rate": transaction.foreign_currency_rate,
         "foreign_amount": transaction.foreign_amount,
+        "settlement_currency": transaction.settlement_currency,
+        "settlement_currency_rate": transaction.settlement_currency_rate,
+        "settlement_amount": transaction.settlement_amount,
         "bank_fee": transaction.bank_fee,
         "deal_status": transaction.deal_status,
+        "cash_settlement": transaction.cash_settlement,
+        "fixed_deposit": transaction.fixed_deposit,
+        "fixed_deposit_cert": transaction.fixed_deposit_cert,
         "beneficiary": transaction.beneficiary,
         "payment_details": transaction.payment_details
     }
@@ -161,25 +169,34 @@ def edit_transaction(req, client_id, transaction_id):
         foreign_amount = req.POST.get("foreign_amount")
         bank_fee = float(req.POST.get("bank_fee"))
         deal_status = int(req.POST.get("deal_status"))
-        beneficiary = int(req.POST.get("beneficiary"))
+        out_payment = req.POST.get("out_payment")
+        cash_settlement = out_payment == "cash"
+        fixed_deposit = out_payment == "fixed"
+        fixed_deposit_cert = req.POST.get("fixed_deposit_cert")
+        beneficiary = BeneficiaryBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("bb-") else None
         payment_details = req.POST.get("payment_details")
         
+        # update transaction data from form
         transaction.contract_date = contract_date
         transaction.value_date = value_date
         transaction.transaction_type = transaction_type
-        transaction.settlement_currency = Currency.objects.get(id=settlement_currency)
-        transaction.settlement_currency_rate = settlement_currency_rate
-        transaction.settlement_amount = settlement_amount
         transaction.foreign_currency = Currency.objects.get(id=foreign_currency)
         transaction.foreign_currency_rate = foreign_currency_rate
         transaction.foreign_amount = foreign_amount
+        transaction.settlement_currency = Currency.objects.get(id=settlement_currency)
+        transaction.settlement_currency_rate = settlement_currency_rate
+        transaction.settlement_amount = settlement_amount
         transaction.bank_fee = bank_fee
         transaction.deal_status = DealStatus.objects.get(id=deal_status)
         # transaction.trader = req.user
-        transaction.beneficiary = BeneficiaryBank.objects.get(id=beneficiary)
+        transaction.cash_settlement = cash_settlement
+        transaction.fixed_deposit = fixed_deposit
+        transaction.fixed_deposit_cert = fixed_deposit_cert
+        transaction.beneficiary = BeneficiaryBank.objects.filter(id=beneficiary).first()
         transaction.payment_details = payment_details
         transaction.last_updated_by = req.user
         transaction.save()
+
         # update foreign currency stock
         foreign_stock = CurrencyStock.objects.filter(source_transaction=transaction).first()
         foreign_stock.currency=Currency.objects.get(id=settlement_currency)

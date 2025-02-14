@@ -9,7 +9,7 @@ $(document).ready(function() {
 
 document.addEventListener("DOMContentLoaded", function() {
     checkForTT('settlement_currency'); 
-    check_for_fd(document.getElementById("out_payment"), "fd_certificate_number");
+    check_for_fd(document.getElementById("out_payment"), "fixed_deposit_cert");
 });
 
 // not currently in use
@@ -40,7 +40,7 @@ function hide_div(elem) {
 }
 
 function check_for_fd(selector, elem) {
-    if (selector[selector.selectedIndex].value == "fixed") {
+    if (selector.value == "fixed") {
         show_div(elem);
     } else {
         hide_div(elem);
@@ -81,7 +81,6 @@ function printDiv(divId, title) {
     return true;
 }
 
-
 function dealReview() {
     // get values from form
     const form_elements = document.getElementById("transaction_form").elements;
@@ -104,7 +103,7 @@ function dealReview() {
     const foreign_currency_rate = Math.round(form_elements["foreign_currency_rate"].value * 10000) / 10000;
     // const bank_fee = "95";
     const bank_fee = form_elements["bank_fee"].value;
-    console.log(bank_fee);
+    console.log(value_date_formatted);
     const total_amount = Number(settlement_amount) + Number(bank_fee);
     const payment_details = form_elements["payment_details"].value;
     
