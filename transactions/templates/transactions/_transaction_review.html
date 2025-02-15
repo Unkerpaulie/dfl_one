@@ -5,111 +5,19 @@
 
         <div class="content-section smaller-text mt-5 pt-5 px-3">
             <h6 class="text-center mb-4"><u>FOREIGN EXCHANGE DEAL</u></h6>
-            <div class="row">
-                <div class="col">
-                    <p>Contract Date: <span id="review-contract_date"></span></p>
-                    <p><span id="review-client_name"></span><br>
-                        {{ client.ClientAddress1 }}, {{ client.ClientAddress2 }}<br>
-                        {{ client.ClientAddressCity }}
-                    </p>
-                </div>
-                <div class="col"></div>
-                <div class="col">
-                    <p>Deal No: <span id="review-deal_id"></span></p>
-                </div>
+            <div id="review-contract_heading">
             </div>
-            <div><p>Attn: <span id="review-client_name2"></span></p></div>
-            <div>We now confirm details of the above transaction as follows:</div>
-            <!-- Transaction Details -->
+
             <div id="review-summary_box">
             </div>
 
-            <div id="review-bank_details_box">
-                <p><strong>Our settlement of the stated value date is subject to receipt of the TTD funds on <u><span id="review-value_date2"></span></u>.</strong></p>
-                <p>Upon receipt of <span id="review-origin_currency3"></span> funds, Development Finance Limited will transfer <span id="review-y"></span> <span id="review-settlement_amount2"></span> to:</p>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        Intermediary Bank:<br>
-                        <br>
-                        <strong>SWIFT:</strong><br>
-                    </div>
-                    <div class="col-9">
-                        <strong><span id="review-intermediary_bank_name"></span></strong><br>
-                        <span id="review-intermediary_bank_address"></span> <span id="review-intermediary_bank_address2"></span>, 
-                        <span id="review-intermediary_bank_city"></span>, <span id="review-intermediary_bank_state"></span> <span id="review-intermediary_bank_zip"></span><br>
-                        <strong><span id="review-intermediary_swift_code"></strong><br>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        Beneficiary Bank:<br>
-                        <br>
-                        <strong>SWIFT:</strong><br>
-                    </div>
-                    <div class="col-9">
-                        <strong><span id="review-bank_name"></span></strong><br>
-                        <span id="review-bank_address"></span> <span id="review-bank_address2"></span>, 
-                        <span id="review-bank_city"></span>, <span id="review-bank_state"></span> <span id="review-bank_zip"></span><br>
-                        <strong><span id="review-swift_code"></strong>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        Beneficiary Customer:<br>
-                        <br>
-                        <br>
-                        <strong>ACC #:</strong><br>
-                    </div>
-                    <div class="col-9">
-                        <strong><span id="review-recipient_name"></span></strong><br>
-                        <span id="review-recipient_address"></span> <span id="review-recipient_address2"></span>, <br>
-                        <span id="review-recipient_city"></span>, <span id="review-recipient_state"></span> <span id="review-recipient_zip"></span><br>
-                        <strong><span id="review-account_number"></strong><br>
-                    </div>
-                </div>
+            <div id="review-inbound_payment">
             </div>
-            <div class="row mb-3">
-                <div class="col-3">
-                    Payment Details::<br>
-                </div>
-                <div class="col-9">
-                    <span id="review-payment_details"></span><br>
-                </div>
+
+            <div id="review-outbound_payment">
             </div>
-            <div>
-                <p>
-                    <span id="review-client_name3"></span> will send <span id="review-settlement_currency2"></span> <span id="review-total_amount2"></span> to Development Finance Limited on <span id="review-value_date3"></span>, as follows:
-                </p>
-            </div>
-            <div class="row mb-3">
-                <div class="col-3"></div>
-                <div class="col-9">
-                    RBC Royal Bank<br>
-                    Independence Sq.<br>
-                    Account # 1000-040-134874-3-2
-                </div>
-            </div>
-            <div>
-                <p>
-                    Dealers: <span id="review-trader"></span><br>
-                    Kindly confirm your agreement by signing, stamping, and returning a copy of this confirmation to us.
-                </p>
-            </div>
-            <div class="row mb-3">
-                <div class="col-4 mt-5 border-top border-dark">
-                    <p>Authorized Signature (DFL)</p>
-                </div>
-                <div class="col-2"></div>
-                <div class="col-4 mt-5 border-top border-dark">
-                    <p >Accepted (<span id="review-client_name4"></span>)</p>
-                </div>
-                <div class="col"></div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-4 mt-5 border-top border-dark">
-                    <p>Authorized Signature (DFL)</p>
-                </div>
-                <div class="col"></div>
+
+            <div id="review-signatures">
             </div>
         </div>
     </div>

@@ -37,7 +37,19 @@
                             <form action="" method="post" id="transaction_form">
                                 {% csrf_token %}
                                 <input type="hidden" name="client_id" value="{{ client.id }}">
-                                <input type="hidden" name="client_name" value="{{ client.client_name }}">
+                                {% if client.client_type == "I" %}
+                                <input type="hidden" name="client_name" value="{{ client.source_individual.first_name }} {{ client.source_individual.surname }}">
+                                <input type="hidden" name="client_address1" value="{{ client.source_individual.residential_address }}">
+                                <input type="hidden" name="client_address2" value="{{ client.source_individual.residential_address2 }}">
+                                <input type="hidden" name="client_city" value="{{ client.source_individual.residential_city }}">
+                                <input type="hidden" name="contact_person" value="{{ client.source_individual.first_name }} {{ client.source_individual.surname }}">
+                                {% else %}
+                                <input type="hidden" name="client_name" value="{{ client.source_corporation.registered_name }}">
+                                <input type="hidden" name="client_address1" value="{{ client.source_corporation.registered_address }}">
+                                <input type="hidden" name="client_address2" value="{{ client.source_corporation.registered_address2 }}">
+                                <input type="hidden" name="client_city" value="{{ client.source_corporation.registered_city }}">
+                                <input type="hidden" name="contact_person" value="{{ client.source_corporation.contact_person }}">
+                                {% endif %}
                                 <input type="hidden" name="deal_id" value="{{ deal_id }}">
                                 <input type="hidden" name="trader" value="{{ user.first_name }} {{ user.last_name }}">
                                 <fieldset class="border my-2 px-2">
@@ -101,7 +113,6 @@
                                     <div class="row mb-2">
                                         <div class="col-8 pt-3">
                                             <label>
-                                                <input type="hidden" value="0" name="bank_fee">
                                                 <input type="checkbox" class="checkbox" name="bank_fee" value="{{ bank_fee }}" {% if formdata.bank_fee > 0 %} checked {% endif %}> <span>Apply TTD{{ bank_fee }} Bank Fee</span> 
                                             </label>
                                         </div>
@@ -119,9 +130,9 @@
                                         <div class="col-8 g-1">
                                             <label for="out_payment">Outbound Payment Instructions </label>
                                             <div class="input-group">
-                                                <select name="out_payment" id="out_payment" class="form-control" onchange="check_for_fd(this, 'fd_certificate_number');">
-                                                    <option value="cash">Cash Settlement</option>
-                                                    <option value="fixed">Fixed Deposit</option>
+                                                <select name="out_payment" id="out_payment" class="form-control" onchange="check_for_fd(this, 'fixed_deposit_cert');">
+                                                    <option value="cash"{% if formdata.cash_settlement %} selected {% endif %}>Cash Settlement</option>
+                                                    <option value="fixed"{% if formdata.fixed_deposit %} selected {% endif %}>Fixed Deposit</option>
                                                     {% for beneficiary in beneficiaries %}
                                                     <option value="bb-{{ beneficiary.id }}"{% if beneficiary.id == formdata.beneficiary.id %} selected {% endif %}>{{ beneficiary }}</option>
                                                     {% endfor %}
@@ -131,9 +142,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-4" id="fd_certificate_number_div">
-                                            <label for="fd_certificate_number">Fixed Deposit Certificate Number</label>
-                                            <input type="text" value="{{ formdata.fd_certificate_number }}" class="form-control" name="fd_certificate_number" id="fd_certificate_number" />
+                                        <div class="col-4" id="fixed_deposit_cert_div">
+                                            <label for="fixed_deposit_cert">Fixed Deposit Certificate Number</label>
+                                            <input type="text" value="{{ formdata.fixed_deposit_cert }}" class="form-control" name="fixed_deposit_cert" id="fixed_deposit_cert" />
                                         </div>
                                     </div>
                                     <!--
@@ -141,7 +152,7 @@
                                         <div class="col-8 g-1">
                                             <label for="in_payment">Inbound Payment Instructions </label>
                                             <div class="input-group">
-                                                <select name="in_payment" id="in_payment" class="form-control" onchange="check_for_fd(this, 'fd_certificate_number');">
+                                                <select name="in_payment" id="in_payment" class="form-control" onchange="check_for_fd(this, 'fixed_deposit_cert');">
                                                     <option value="cash">Cash Settlement</option>
                                                     <option value="fixed">Fixed Deposit</option>
                                                     {% for beneficiary in beneficiaries %}
@@ -153,9 +164,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-4" id="fd_certificate_number_div">
-                                            <label for="fd_certificate_number">Fixed Deposit Certificate Number</label>
-                                            <input type="text" value="{{ formdata.fd_certificate_number }}" class="form-control" name="fd_certificate_number" id="fd_certificate_number" />
+                                        <div class="col-4" id="fixed_deposit_cert_div">
+                                            <label for="fixed_deposit_cert">Fixed Deposit Certificate Number</label>
+                                            <input type="text" value="{{ formdata.fixed_deposit_cert }}" class="form-control" name="fixed_deposit_cert" id="fixed_deposit_cert" />
                                         </div>
                                     </div>
                                     -->
@@ -167,11 +178,10 @@
                                         </div>
                                     </div>
                                 </fieldset>
-                                <!-- 
                                 <button type="button" class="btn btn-lg btn-primary py-1 px-3 mt-1" data-toggle="modal" data-target="#reviewModal" onclick="dealReview();">Review</button>
-                                -->
+                                <!-- 
                                 <button type="submit" class="btn btn-primary">Submit</button>
-
+                                -->
 
                                 <!-- Confirmation Modal -->
                                 <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
@@ -208,4 +218,5 @@
 
 {% block script %}
 <script src="{% static "js/transactions.js" %}"></script>
+<script src="{% static "js/deal_review.js" %}"></script>
 {% endblock script %}
