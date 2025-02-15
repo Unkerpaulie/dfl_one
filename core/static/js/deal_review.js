@@ -213,119 +213,119 @@ function build_signatures() {
 }
 
 
+
+function get_beneficiary_info() {
+    const bb_id = out_payment_choice.substring(3);
+    $.ajax({
+        url: `/transactions/${client_id}/beneficiary/${bb_id}`,
+        datatype: 'json',
+        type: 'GET',
+        success: function(res) {
+            const data = JSON.parse(res)[0]["fields"];
+            // set beneficiary values
+            const bank_name = data.bank_name;
+            const account_number = data.account_number;
+            const aba_code = data.aba_code;
+            const bank_address = data.bank_address;
+            const bank_address2 = data.bank_address2;
+            const bank_city = data.bank_city;
+            const bank_state = data.bank_state;
+            const bank_zip = data.bank_zip;
+            const bank_country = data.bank_country;
+            const iban_code = data.iban_code;
+            const swift_code = data.swift_code;
+            const intermediary_bank_name = data.intermediary_bank_name;
+            const intermediary_account_number = data.intermediary_account_number;
+            const intermediary_aba_code = data.intermediary_aba_code;
+            const intermediary_bank_address = data.intermediary_bank_address;
+            const intermediary_bank_address2 = data.intermediary_bank_address2;
+            const intermediary_bank_city = data.intermediary_bank_city;
+            const intermediary_bank_state = data.intermediary_bank_state;
+            const intermediary_bank_zip = data.intermediary_bank_zip;
+            const intermediary_bank_country = data.intermediary_bank_country;
+            const intermediary_iban_code = data.intermediary_iban_code;
+            const intermediary_swift_code = data.intermediary_swift_code;
+            const recipient_name = data.recipient_name;
+            const recipient_address = data.recipient_address;
+            const recipient_address2 = data.recipient_address2;
+            const recipient_city = data.recipient_city;
+            const recipient_state = data.recipient_state;
+            const recipient_zip = data.recipient_zip;
+            const recipient_country = data.recipient_country;
+            
+            var html_div = `
+                        <p>Upon receipt of <span id="review-origin_currency3"></span> funds, Development Finance Limited will transfer <span id="review-y"></span> <span id="review-settlement_amount2"></span> to:</p>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                Intermediary Bank:<br>
+                                <br>
+                                <strong>SWIFT:</strong><br>
+                            </div>
+                            <div class="col-9">
+                                <strong>${intermediary_bank_name}</strong><br>
+                                ${intermediary_bank_address} ${intermediary_bank_address2 ? ", " + intermediary_bank_address2 : ""}, 
+                                ${intermediary_bank_city}, ${intermediary_bank_state} ${intermediary_bank_state}, ${intermediary_bank_country}<br>
+                                <strong>${intermediary_swift_code}</strong><br>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                Beneficiary Bank:<br>
+                                <br>
+                                <strong>SWIFT:</strong><br>
+                            </div>
+                            <div class="col-9">
+                                <strong>${bank_name}</strong><br>
+                                ${bank_address} ${bank_address2 ? ", " + bank_address2 : ""}, 
+                                ${bank_city}, ${bank_state} ${bank_state}, ${bank_country}<br>
+                                <strong>${swift_code}</strong><br>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                Beneficiary Customer:<br>
+                                <br>
+                                <br>
+                                <strong>ACC #:</strong><br>
+                            </div>
+                            <div class="col-9">
+                                <strong>${recipient_name}</strong><br>
+                                ${recipient_address} ${recipient_address2 ? ", " + recipient_address2 : ""}, 
+                                ${recipient_city}, ${recipient_state} ${recipient_state}, ${recipient_country}<br>
+                                <strong>${account_number}</strong><br>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                Payment Details::<br>
+                            </div>
+                            <div class="col-9">
+                                ${payment_details}<br>
+                            </div>
+                        </div>
+            `;
+            document.getElementById("review-outbound_payment").innerHTML = html_div;
+        }
+    });
+}
+
 function dealReview() {
     set_vars();
     console.log(bank_fee);
     console.log(form_elements["bank_fee"].checked);
     build_contract_heading();
     build_summary_box();
-    build_outbound_payment();
+    if (out_payment_choice.substring(0,3) == "bb-") {
+        get_beneficiary_info();
+    } else if (out_payment_choice == "cash"){
+        cash_details();
+    } else {
+        fixed_deposit_details();
+    }
     build_inbound_payment();
     build_signatures();
 }
 
-function olddealReview() {
-    // get values from form
-    
-    // get beneficiary data via ajax if a beneficiary is selected
-    if (out_payment_choice.substring(0,3) == "bb-") {
-        const bb_id = out_payment_choice.substring(3);
-        $.ajax({
-            url: `/transactions/${client_id}/beneficiary/${bb_id}`,
-            datatype: 'json',
-            type: 'GET',
-            success: function(res) {
-                const data = JSON.parse(res)[0]["fields"];
-                // set beneficiary values
-                const bank_name = data.bank_name;
-                const account_number = data.account_number;
-                const aba_code = data.aba_code;
-                const bank_address = data.bank_address;
-                const bank_address2 = data.bank_address2;
-                const bank_city = data.bank_city;
-                const bank_state = data.bank_state;
-                const bank_zip = data.bank_zip;
-                const bank_country = data.bank_country;
-                const iban_code = data.iban_code;
-                const swift_code = data.swift_code;
-                const intermediary_bank_name = data.intermediary_bank_name;
-                const intermediary_account_number = data.intermediary_account_number;
-                const intermediary_aba_code = data.intermediary_aba_code;
-                const intermediary_bank_address = data.intermediary_bank_address;
-                const intermediary_bank_address2 = data.intermediary_bank_address2;
-                const intermediary_bank_city = data.intermediary_bank_city;
-                const intermediary_bank_state = data.intermediary_bank_state;
-                const intermediary_bank_zip = data.intermediary_bank_zip;
-                const intermediary_bank_country = data.intermediary_bank_country;
-                const intermediary_iban_code = data.intermediary_iban_code;
-                const intermediary_swift_code = data.intermediary_swift_code;
-                const recipient_name = data.recipient_name;
-                const recipient_address = data.recipient_address;
-                const recipient_address2 = data.recipient_address2;
-                const recipient_city = data.recipient_city;
-                const recipient_state = data.recipient_state;
-                const recipient_zip = data.recipient_zip;
-                const recipient_country = data.recipient_country;
-                
-                document.getElementById("review-account_number").innerText = account_number;
-                document.getElementById("review-bank_name").innerText = bank_name;
-                document.getElementById("review-bank_address").innerText = bank_address;
-                document.getElementById("review-bank_address2").innerText = bank_address2;
-                document.getElementById("review-bank_state").innerText = bank_state;
-                document.getElementById("review-bank_city").innerText = bank_city;
-                document.getElementById("review-bank_zip").innerText = bank_zip;
-                // document.getElementById("review-bank_country").innerText = bank_country;
-                document.getElementById("review-swift_code").innerText = swift_code;
-                document.getElementById("review-intermediary_bank_name").innerText = intermediary_bank_name;
-                document.getElementById("review-intermediary_bank_address").innerText = intermediary_bank_address;
-                document.getElementById("review-intermediary_bank_address2").innerText = intermediary_bank_address2;
-                document.getElementById("review-intermediary_bank_state").innerText = intermediary_bank_state;
-                document.getElementById("review-intermediary_bank_city").innerText = intermediary_bank_city;
-                document.getElementById("review-intermediary_bank_zip").innerText = intermediary_bank_zip;
-                // document.getElementById("review-intermediary_bank_country").innerText = intermediary_bank_country;
-                document.getElementById("review-intermediary_swift_code").innerText = intermediary_swift_code;
-                document.getElementById("review-recipient_name").innerText = recipient_name;
-                document.getElementById("review-recipient_address").innerText = recipient_address;
-                document.getElementById("review-recipient_address2").innerText = recipient_address2;
-                document.getElementById("review-recipient_state").innerText = recipient_state;
-                document.getElementById("review-recipient_city").innerText = recipient_city;
-                document.getElementById("review-recipient_zip").innerText = recipient_zip;
-                // document.getElementById("review-recipient_country").innerText = recipient_country;
-                document.getElementById("review-client_name").innerText = client_name;
-                document.getElementById("review-client_name2").innerText = client_name;
-                document.getElementById("review-client_name3").innerText = client_name;
-                document.getElementById("review-client_name4").innerText = client_name;
-                document.getElementById("review-trader").innerText = trader;
-                document.getElementById("review-payment_details").innerText = payment_details;
-                document.getElementById("review-deal_id").innerText = deal_id;
-
-            }
-        });
-    }
 
 
-    // review summary box
-    /*
-    document.getElementById("review-bank_fee").innerText = bank_fee;
-    document.getElementById("review-settlement_currency").innerText = settlement_currency;
-    document.getElementById("review-settlement_currency2").innerText = settlement_currency;
-    // document.getElementById("review-settlement_currency3").innerText = settlement_currency;
-    // document.getElementById("review-settlement_currency4").innerText = settlement_currency;
-    document.getElementById("review-settlement_amount").innerText = settlement_amount;
-    document.getElementById("review-settlement_amount2").innerText = settlement_amount;
-    // document.getElementById("review-settlement_amount3").innerText = settlement_amount;
-    document.getElementById("review-foreign_currency").innerText = foreign_currency;
-    document.getElementById("review-foreign_currency2").innerText = foreign_currency;
-    document.getElementById("review-foreign_currency3").innerText = foreign_currency;
-    document.getElementById("review-foreign_amount").innerText = foreign_amount;
-    document.getElementById("review-total_amount").innerText = total_amount;
-    document.getElementById("review-total_amount2").innerText = total_amount;
-    document.getElementById("review-settlement_currency_rate").innerText = settlement_currency_rate;
-    // document.getElementById("review-transaction_type").innerText = transaction_type;
-    document.getElementById("review-value_date").innerText = value_date_formatted;
-    document.getElementById("review-value_date2").innerText = value_date_formatted;
-    document.getElementById("review-value_date3").innerText = value_date_formatted;
-    document.getElementById("review-contract_date").innerText = contract_date_formatted;
-    */
-}
 
