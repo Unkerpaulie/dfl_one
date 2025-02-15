@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import Currency
+from core.models import Currency, LocalBankAccount
 from account.models import User
 from transactions.models import Transaction
 
@@ -32,3 +32,7 @@ class BankFee(models.Model):
 
     def __str__(self):
         return str(self.bank_fee)
+    
+class DFLLocalBank(LocalBankAccount):
+    class Meta:
+        verbose_name_plural = "DFL Bank Accounts"

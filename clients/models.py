@@ -1,6 +1,6 @@
 from django.db import models
 from django.dispatch import Signal
-from core.models import Country, IdentificationType
+from core.models import Country, IdentificationType, LocalBankAccount
 
 
 class ClientList(models.Model):
@@ -158,3 +158,6 @@ class BeneficiaryBank(models.Model):
 
     def __str__(self):
         return f"{self.client}: {self.bank_name} - {self.account_number}"
+    
+class ClientLocalBank(LocalBankAccount):
+    pass

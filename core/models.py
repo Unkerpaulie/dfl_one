@@ -40,3 +40,22 @@ class Country(models.Model):
     def __str__(self):
         return self.country
 
+class LocalBankAccount(models.Model):
+    ACCUOUNT_TYPES = [
+        ("CH", "Checking"),
+        ("SV", "Savings"),
+        ("MM", "Money Marke Account"),
+        ("CD", "Certificate of Deposit"),
+    ]
+    account_owner = models.CharField(max_length=150)
+    bank_name = models.CharField(max_length=150)
+    branch_city = models.CharField(max_length=100, blank=True, null=True)
+    branch_number = models.CharField(max_length=10)
+    account_number = models.CharField(max_length=16)
+    account_type = models.CharField(max_length=2, choices=ACCUOUNT_TYPES)
+
+    class Meta: 
+        abstract = True
+
+    def __str__(self):
+        return f"{self.account_owner} {self.bank_name} {self.account_type} account"
