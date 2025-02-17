@@ -52,6 +52,9 @@
                         <li{% if page_title == "Identification Types" %} class="active"{% endif %}>
                             <a href="{% url "setup:list_identification_types" %}"> Identification Types </a>
                         </li>
+                        <li{% if page_title == "DFL Bank Accounts" %} class="active"{% endif %}>
+                            <a href="{% url "setup:list_bank_accounts" %}"> DFL Bank Accounts </a>
+                        </li>
                     </ul>
                 </li>
                 {% endif %}

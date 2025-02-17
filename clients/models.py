@@ -160,4 +160,4 @@ class BeneficiaryBank(models.Model):
         return f"{self.client}: {self.bank_name} - {self.account_number}"
     
 class ClientLocalBank(LocalBankAccount):
-    pass
+    client = models.ForeignKey(ClientList, related_name="local_banks", on_delete=models.CASCADE)

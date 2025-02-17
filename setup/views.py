@@ -5,7 +5,7 @@ from django.forms.models import model_to_dict
 from django.urls import reverse_lazy
 from core.models import DealStatus, Currency, IdentificationType
 from account.models import User
-from setup.models import CurrencyStock, BankFee
+from setup.models import CurrencyStock, BankFee, DFLLocalBank
 from core.utils import get_currency_balance
 
 def check_admin(user):
@@ -320,4 +320,63 @@ def update_bank_fee(req):
     else:
         context |= {'fee': fee}
         return render(req, 'setup/bank_fee_form.html', context)
+
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
+def list_bank_accounts(req):
+    bank_accounts = DFLLocalBank.objects.all()
+    context = {"page_title": "DFL Bank Accounts"}
+    context["section"] = "setup"
+    context |= {'bank_accounts': bank_accounts}
+    return render(req, 'setup/list_bank_accounts.html', context)
+
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
+def add_bank_account(req):
+    context = {"page_title": "Add Bank Account"}
+    context["section"] = "setup"
+    context["account_types"] = DFLLocalBank.ACCOUNT_TYPES
+    if req.method == 'POST':
+        try:
+            bank_account = DFLLocalBank(
+                account_owner=req.POST['account_owner'],
+                bank_name=req.POST['bank_name'],
+                branch_city=req.POST['branch_city'],
+                branch_number=req.POST['branch_number'],
+                account_number=req.POST['account_number'],
+                account_type=req.POST['account_type']
+            )
+            bank_account.save()
+            messages.success(req, 'Bank account added successfully')
+            return redirect("setup:list_bank_accounts")
+        except:
+            messages.warning(req, 'Error adding bank account')
+            return render(req, 'setup/bank_account_form.html', context)
+    else:
+        return render(req, 'setup/bank_account_form.html', context)
+
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
+def edit_bank_account(req, bank_account_id):
+    bank_account = DFLLocalBank.objects.get(id=bank_account_id)
+    context = {"page_title": "Edit Bank Account"}
+    context["section"] = "setup"
+    context["account_types"] = DFLLocalBank.ACCOUNT_TYPES
+    context["formdata"] = {
+        'account_owner': bank_account.account_owner,
+        'bank_name': bank_account.bank_name,
+        'branch_city': bank_account.branch_city,
+        'branch_number': bank_account.branch_number,
+        'account_number': bank_account.account_number,
+        'account_type': bank_account.account_type
+    }
+    if req.method == 'POST':
+        bank_account.account_owner = req.POST['account_owner']
+        bank_account.bank_name = req.POST['bank_name']
+        bank_account.branch_city = req.POST['branch_city']
+        bank_account.branch_number = req.POST['branch_number']
+        bank_account.account_number = req.POST['account_number']
+        bank_account.account_type = req.POST['account_type']
+        bank_account.save()
+        messages.success(req, 'Bank account updated successfully')
+        return redirect("setup:list_bank_accounts")
+    else:
+        return render(req, 'setup/bank_account_form.html', context)
 

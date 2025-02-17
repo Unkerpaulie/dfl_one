@@ -1,0 +1,49 @@
+{% extends "layout/base.html" %}
+{% load static %}
+{% block title %} - {{ page_title }}{% endblock title %}
+
+{% block content %}
+    <div class="title-block">
+        <a href="{% url "setup:add_bank_account" %}" class="btn btn-primary btn-lg">Add Bank Account</a>
+    </div>
+    <section class="section">
+        <div class="container">
+            <div class="card">
+                <div class="card-block">
+                    <table class="table hover" id="bank-accounts-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Bank Name</th>
+                                <th>Account Name</th>
+                                <th>Account Number</th>
+                                <th>Branch</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for account in bank_accounts %}
+                            <tr>
+                                <th scope="row">{{ account.id }}</th>
+                                <td>{{ account.bank_name }}</td>
+                                <td>{{ account.account_name }}</td>
+                                <td>{{ account.account_number }}</td>
+                                <td>{{ account.branch }}</td>
+                                <td>
+                                    <a href="{% url "setup:edit_bank_account" account.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Bank Account"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+
+{% block script %}
+<script>
+    new DataTable("#bank-accounts-table");
+</script>
+{% endblock script %}

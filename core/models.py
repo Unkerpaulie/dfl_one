@@ -41,7 +41,7 @@ class Country(models.Model):
         return self.country
 
 class LocalBankAccount(models.Model):
-    ACCUOUNT_TYPES = [
+    ACCOUNT_TYPES = [
         ("CH", "Checking"),
         ("SV", "Savings"),
         ("MM", "Money Marke Account"),
@@ -52,7 +52,7 @@ class LocalBankAccount(models.Model):
     branch_city = models.CharField(max_length=100, blank=True, null=True)
     branch_number = models.CharField(max_length=10)
     account_number = models.CharField(max_length=16)
-    account_type = models.CharField(max_length=2, choices=ACCUOUNT_TYPES)
+    account_type = models.CharField(max_length=2, choices=ACCOUNT_TYPES)
 
     class Meta: 
         abstract = True

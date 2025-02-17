@@ -22,4 +22,7 @@ urlpatterns = [
     path('inventory/', views.show_currency_inventory, name="show_currency_inventory"),
     path('inventory/<int:currency_id>/adjust/', views.adjust_currency, name="adjust_currency"),
     path('bank_fee/', views.update_bank_fee, name="update_bank_fee"),
+    path('bank_accounts/', views.list_bank_accounts, name="list_bank_accounts"),
+    path('bank_accounts/add/', views.add_bank_account, name="add_bank_account"),
+    path('bank_accounts/<int:bank_account_id>/edit/', views.edit_bank_account, name="edit_bank_account"),
 ]

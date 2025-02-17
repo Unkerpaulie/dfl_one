@@ -1,0 +1,58 @@
+{% extends "layout/base.html" %}
+{% block title %} - {{ page_title }}{% endblock title %}
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <fieldset class="border my-2 px-2">
+                                    <legend class="w-auto px-2"><small>Bank Account Details</small></legend>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <label for="account_owner">Account Owner *</label>
+                                            <input type="text" value="{% if formdata %}{{ formdata.account_owner }}{% else %}Development Finance Limited{% endif %}" class="form-control" name="account_owner" required />
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="bank_name">Bank Name *</label>
+                                            <input type="text" value="{{ formdata.bank_name }}" class="form-control" name="bank_name" required />
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="branch_city">Branch City</label>
+                                            <input type="text" value="{{ formdata.branch_city }}" class="form-control" name="branch_city" />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <label for="branch_number">Branch Number *</label>
+                                            <input type="text" value="{{ formdata.branch_number }}" class="form-control" name="branch_number" required />
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="account_number">Account Number *</label>
+                                            <input type="text" value="{{ formdata.account_number }}" class="form-control" name="account_number" required />
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="account_type">Account Type *</label>
+                                            <select name="account_type" class="form-control" required>
+                                                {% for type_code, type_name in account_types %}
+                                                <option value="{{ type_code }}"{% if formdata.account_type == type_code %} selected{% endif %}>{{ type_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <button type="submit" class="btn btn-lg btn-primary py-1 px-3">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
