@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.forms.models import model_to_dict
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from core.models import DealStatus, Currency, IdentificationType
 from account.models import User
 from setup.models import CurrencyStock, BankFee, DFLLocalBank
@@ -324,16 +324,27 @@ def update_bank_fee(req):
 @user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def list_bank_accounts(req):
     bank_accounts = DFLLocalBank.objects.all()
-    context = {"page_title": "DFL Bank Accounts"}
-    context["section"] = "setup"
-    context |= {'bank_accounts': bank_accounts}
+    context = {
+        "page_title": "DFL Bank Accounts",
+        "section": "setup",
+        "bank_accounts": bank_accounts,
+        "add_url": reverse('setup:add_bank_account'),
+        "edit_url_name": 'setup:edit_bank_account',  # Used in template for dynamic URL generation
+        "default_account_owner": "Development Finance Limited"
+    }
     return render(req, 'setup/list_bank_accounts.html', context)
 
 @user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def add_bank_account(req):
-    context = {"page_title": "Add Bank Account"}
-    context["section"] = "setup"
-    context["account_types"] = DFLLocalBank.ACCOUNT_TYPES
+    context = {
+        "page_title": "Add Bank Account",
+        "section": "setup",
+        "account_types": DFLLocalBank.ACCOUNT_TYPES,
+        "default_account_owner": "Development Finance Limited",
+        "form_action": reverse('setup:add_bank_account'),
+        "cancel_url": reverse('setup:list_bank_accounts')
+    }
+    
     if req.method == 'POST':
         try:
             bank_account = DFLLocalBank(

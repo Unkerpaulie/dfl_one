@@ -1,8 +1,17 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import IndividualClient, CorporateClient, ClientList, IdentificationInfo, BeneficiaryBank
+from django.urls import reverse
+from .models import (
+    IndividualClient, 
+    CorporateClient, 
+    ClientList, 
+    IdentificationInfo, 
+    BeneficiaryBank,
+    ClientLocalBank
+)
 from core.models import Country, IdentificationType
+from setup.models import DFLLocalBank
 
 @login_required
 def home(req):
@@ -751,3 +760,126 @@ def edit_i_beneficiary(req, client_id, beneficiary_id):
 def edit_c_beneficiary(req, client_id, beneficiary_id):
     client = CorporateClient.objects.get(pk=client_id)
     return edit_beneficiary(req, client, beneficiary_id)
+
+@login_required
+def list_client_bank_accounts_i(req, client_id):
+    client = get_object_or_404(IndividualClient, pk=client_id)
+    bank_accounts = ClientLocalBank.objects.filter(client=client.client_list_entry)
+    context = {
+        "page_title": f"Bank Accounts for {client.client_list_entry.client_name}",
+        "section": "clients",
+        "bank_accounts": bank_accounts,
+        "add_url": reverse('clients:add_bank_account_i', args=[client_id]),
+        "edit_url_name": 'clients:edit_bank_account_i',
+        "default_account_owner": client.client_list_entry.client_name,
+        "client": client
+    }
+    return render(req, 'setup/list_bank_accounts.html', context)
+
+@login_required
+def list_client_bank_accounts_c(req, client_id):
+    client = get_object_or_404(CorporateClient, pk=client_id)
+    bank_accounts = ClientLocalBank.objects.filter(client=client.client_list_entry)
+    context = {
+        "page_title": f"Bank Accounts for {client.client_list_entry.client_name}",
+        "section": "clients",
+        "bank_accounts": bank_accounts,
+        "add_url": reverse('clients:add_bank_account_c', args=[client_id]),
+        "edit_url_name": 'clients:edit_bank_account_c',
+        "default_account_owner": client.client_list_entry.client_name,
+        "client": client
+    }
+    return render(req, 'setup/list_bank_accounts.html', context)
+
+@login_required
+def add_client_bank_account_i(req, client_id):
+    client = get_object_or_404(IndividualClient, pk=client_id)
+    return add_client_bank_account(req, client)
+
+@login_required
+def add_client_bank_account_c(req, client_id):
+    client = get_object_or_404(CorporateClient, pk=client_id)
+    return add_client_bank_account(req, client)
+
+def add_client_bank_account(req, client):
+    context = {
+        "page_title": f"Add Bank Account for {client.client_list_entry.client_name}",
+        "section": "clients",
+        "account_types": DFLLocalBank.ACCOUNT_TYPES,
+        "default_account_owner": client.client_list_entry.client_name,
+        "form_action": reverse(f'clients:add_bank_account_{client.client_list_entry.client_type.lower()}', args=[client.id]),
+        "cancel_url": reverse(f'clients:list_bank_accounts_{client.client_list_entry.client_type.lower()}', args=[client.id]),
+        "client": client
+    }
+    
+    if req.method == 'POST':
+        try:
+            bank_account = ClientLocalBank(
+                client=client.client_list_entry,
+                account_owner=req.POST['account_owner'],
+                bank_name=req.POST['bank_name'],
+                branch_city=req.POST['branch_city'],
+                branch_number=req.POST['branch_number'],
+                account_number=req.POST['account_number'],
+                account_type=req.POST['account_type']
+            )
+            bank_account.save()
+            messages.success(req, 'Bank account added successfully')
+            return redirect(f"clients:list_bank_accounts_{client.client_list_entry.client_type.lower()}", client_id=client.id)
+        except Exception as e:
+            messages.error(req, f'Error adding bank account: {str(e)}')
+            return render(req, 'setup/bank_account_form.html', context)
+    
+    return render(req, 'setup/bank_account_form.html', context)
+
+@login_required
+def edit_client_bank_account_i(req, client_id, account_id):
+    client = get_object_or_404(IndividualClient, pk=client_id)
+    return edit_client_bank_account(req, client, account_id)
+
+@login_required
+def edit_client_bank_account_c(req, client_id, account_id):
+    client = get_object_or_404(CorporateClient, pk=client_id)
+    return edit_client_bank_account(req, client, account_id)
+
+def edit_client_bank_account(req, client, account_id):
+    bank_account = get_object_or_404(ClientLocalBank, pk=account_id)
+    
+    # Verify that the bank account belongs to the client
+    if bank_account.client != client.client_list_entry:
+        messages.error(req, 'Invalid bank account access attempt')
+        return redirect(f'clients:list_bank_accounts_{client.client_list_entry.client_type.lower()}', client_id=client.id)
+    
+    context = {
+        "page_title": f"Edit Bank Account for {client.client_list_entry.client_name}",
+        "section": "clients",
+        "account_types": DFLLocalBank.ACCOUNT_TYPES,
+        "form_action": reverse(f'clients:edit_bank_account_{client.client_list_entry.client_type.lower()}', args=[client.id, account_id]),
+        "cancel_url": reverse(f'clients:list_bank_accounts_{client.client_list_entry.client_type.lower()}', args=[client.id]),
+        "formdata": {
+            'account_owner': bank_account.account_owner,
+            'bank_name': bank_account.bank_name,
+            'branch_city': bank_account.branch_city,
+            'branch_number': bank_account.branch_number,
+            'account_number': bank_account.account_number,
+            'account_type': bank_account.account_type
+        },
+        "client": client
+    }
+    
+    if req.method == 'POST':
+        try:
+            bank_account.account_owner = req.POST['account_owner']
+            bank_account.bank_name = req.POST['bank_name']
+            bank_account.branch_city = req.POST['branch_city']
+            bank_account.branch_number = req.POST['branch_number']
+            bank_account.account_number = req.POST['account_number']
+            bank_account.account_type = req.POST['account_type']
+            bank_account.save()
+            messages.success(req, 'Bank account updated successfully')
+            return redirect(f'clients:list_bank_accounts_{client.client_list_entry.client_type.lower()}', client_id=client.id)
+        except Exception as e:
+            messages.error(req, f'Error updating bank account: {str(e)}')
+            return render(req, 'setup/bank_account_form.html', context)
+    
+    return render(req, 'setup/bank_account_form.html', context)

@@ -17,14 +17,14 @@
                                     <div class="row mb-2">
                                         <div class="col-4">
                                             <label for="account_owner">Account Owner *</label>
-                                            <input type="text" value="{% if formdata %}{{ formdata.account_owner }}{% else %}Development Finance Limited{% endif %}" class="form-control" name="account_owner" required />
+                                            <input type="text" value="{% if formdata %}{{ formdata.account_owner }}{% else %}{{ default_account_owner }}{% endif %}" class="form-control" name="account_owner" required />
                                         </div>
                                         <div class="col-4">
                                             <label for="bank_name">Bank Name *</label>
                                             <input type="text" value="{{ formdata.bank_name }}" class="form-control" name="bank_name" required />
                                         </div>
                                         <div class="col-4">
-                                            <label for="branch_city">Branch City</label>
+                                            <label for="branch_city">Branch Location</label>
                                             <input type="text" value="{{ formdata.branch_city }}" class="form-control" name="branch_city" />
                                         </div>
                                     </div>

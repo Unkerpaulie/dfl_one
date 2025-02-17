@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="title-block">
-        <a href="{% url "setup:add_bank_account" %}" class="btn btn-primary btn-lg">Add Bank Account</a>
+        <a href="{{ add_url }}" class="btn btn-primary btn-lg">Add Bank Account</a>
     </div>
     <section class="section">
         <div class="container">
@@ -15,9 +15,8 @@
                             <tr>
                                 <th>#</th>
                                 <th>Bank Name</th>
-                                <th>Account Name</th>
+                                <th>Branch Location</th>
                                 <th>Account Number</th>
-                                <th>Branch</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -26,11 +25,10 @@
                             <tr>
                                 <th scope="row">{{ account.id }}</th>
                                 <td>{{ account.bank_name }}</td>
-                                <td>{{ account.account_name }}</td>
+                                <td>{{ account.branch_city }}</td>
                                 <td>{{ account.account_number }}</td>
-                                <td>{{ account.branch }}</td>
                                 <td>
-                                    <a href="{% url "setup:edit_bank_account" account.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Bank Account"><i class="fa fa-edit"></i></a>
+                                    <a href="{% url edit_url_name account.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Bank Account"><i class="fa fa-edit"></i></a>
                                 </td>
                             </tr>
                             {% endfor %}

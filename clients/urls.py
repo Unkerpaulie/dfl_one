@@ -17,4 +17,11 @@ urlpatterns = [
     path('i/<int:client_id>/beneficiaries/<int:beneficiary_id>/', views.edit_i_beneficiary, name="edit_i_beneficiary"),
     path('c/<int:client_id>/beneficiaries/<int:beneficiary_id>/', views.edit_c_beneficiary, name="edit_c_beneficiary"),
     # path('<int:client_id>/beneficiaries/<int:beneficiary_id>/edit/', views.edit_beneficiary, name="edit_beneficiary"),
+    # Bank account URLs following i/c convention
+    path('i/<int:client_id>/bank_accounts/', views.list_client_bank_accounts_i, name="list_bank_accounts_i"),
+    path('c/<int:client_id>/bank_accounts/', views.list_client_bank_accounts_c, name="list_bank_accounts_c"),
+    path('i/<int:client_id>/bank_accounts/add/', views.add_client_bank_account_i, name="add_bank_account_i"),
+    path('c/<int:client_id>/bank_accounts/add/', views.add_client_bank_account_c, name="add_bank_account_c"),
+    path('i/<int:client_id>/bank_accounts/<int:account_id>/edit/', views.edit_client_bank_account_i, name="edit_bank_account_i"),
+    path('c/<int:client_id>/bank_accounts/<int:account_id>/edit/', views.edit_client_bank_account_c, name="edit_bank_account_c"),
 ]
