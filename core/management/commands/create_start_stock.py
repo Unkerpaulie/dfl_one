@@ -57,6 +57,7 @@ class Command(BaseCommand):
             legacy_id=0
         )
         client_list.save()
+        client0.client_list_entry = client_list
         client0.save()
         self.stdout.write(self.style.SUCCESS("DFL FX Client Account created"))
 

@@ -10,30 +10,38 @@
         <div class="container">
             <div class="card">
                 <div class="card-block">
-                    <table class="table hover" id="bank-accounts-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Bank Name</th>
-                                <th>Branch Location</th>
-                                <th>Account Number</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for account in bank_accounts %}
-                            <tr>
-                                <th scope="row">{{ account.id }}</th>
-                                <td>{{ account.bank_name }}</td>
-                                <td>{{ account.branch_city }}</td>
-                                <td>{{ account.account_number }}</td>
-                                <td>
-                                    <a href="{% url edit_url_name account.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Bank Account"><i class="fa fa-edit"></i></a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <div class="row row-sm">
+                        {% if bank_accounts %}
+                        <div class="table-responsive">
+                            <table class="table hover" id="bank-accounts-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Bank Name</th>
+                                        <th>Branch Location</th>
+                                        <th>Account Number</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for account in bank_accounts %}
+                                    <tr>
+                                        <th scope="row">{{ account.id }}</th>
+                                        <td>{{ account.bank_name }}</td>
+                                        <td>{{ account.branch_city }}</td>
+                                        <td>{{ account.account_number }}</td>
+                                        <td>
+                                            <a href="{% url edit_url_name account.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Bank Account"><i class="fa fa-edit"></i></a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <h4 class="text-center">No Bank Accounts Found</h4>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

@@ -337,7 +337,7 @@ def list_bank_accounts(req):
 @user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def add_bank_account(req):
     context = {
-        "page_title": "Add Bank Account",
+        "page_title": "Add Bank DFL Account",
         "section": "setup",
         "account_types": DFLLocalBank.ACCOUNT_TYPES,
         "default_account_owner": "Development Finance Limited",
