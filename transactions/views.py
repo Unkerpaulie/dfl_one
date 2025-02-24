@@ -4,9 +4,9 @@ from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Transaction, CurrencyStock
-from clients.models import ClientList, BeneficiaryBank
+from clients.models import ClientList, BeneficiaryBank, ClientLocalBank
 from core.models import Currency, DealStatus
-from setup.models import BankFee
+from setup.models import BankFee, DFLLocalBank
 
 
 # Create your views here.
@@ -25,7 +25,6 @@ def transactions_list(req):
 @login_required
 def new_transaction(req, client_id):
     client = ClientList.objects.get(pk=client_id)
-    # beneficiaries = BeneficiaryBank.objects.filter(client=client)
     bank_fee = BankFee.objects.get(pk=1)
     context = {"page_title": f"New Transaction for {client.client_name}"}
     context["section"] = "transactions"
@@ -33,10 +32,12 @@ def new_transaction(req, client_id):
     context["bank_fee"] = bank_fee.bank_fee
     context |= {
         "beneficiaries": client.beneficiaries.all(),
+        # "local_banks": ClientLocalBank.objects.filter(client=client),
         "inpayment_types": Transaction.INPAYMENT_TYPES,
         "transaction_types": Transaction.TRANSACTION_TYPES, 
         "currencies": Currency.objects.all(), 
-        "deal_statuses": DealStatus.objects.all()
+        "deal_statuses": DealStatus.objects.all(),  
+        "dfl_banks": DFLLocalBank.objects.all()
         }
     context["deal_id"] = Transaction.objects.latest("id").id + 1 
 
@@ -44,20 +45,24 @@ def new_transaction(req, client_id):
         contract_date = req.POST.get("contract_date")
         value_date = req.POST.get("value_date")
         transaction_type = req.POST.get("transaction_type")
-        settlement_currency = int(req.POST.get("settlement_currency"))
-        settlement_currency_rate = float(req.POST.get("settlement_currency_rate"))
-        settlement_amount = float(req.POST.get("settlement_amount"))
         foreign_currency = int(req.POST.get("foreign_currency"))
         foreign_currency_rate = float(req.POST.get("foreign_currency_rate"))
         foreign_amount = req.POST.get("foreign_amount")
+        settlement_currency = int(req.POST.get("settlement_currency"))
+        settlement_currency_rate = float(req.POST.get("settlement_currency_rate"))
+        settlement_amount = float(req.POST.get("settlement_amount"))
         bank_fee = float(req.POST.get("bank_fee"))
-        out_payment = req.POST.get("out_payment")
+        deal_status = int(req.POST.get("deal_status"))
+        in_payment_type = req.POST.get("in_payment_type")
+        check_number = req.POST.get("check_number")
+        dfl_bank_account = int(req.POST.get("dfl_bank_account")) if req.POST.get("in_payment_type") in ["local", "foreign"] else None
         # out_payment values: cash, fixed, bb-
+        out_payment = req.POST.get("out_payment")
         cash_settlement = out_payment == "cash"
         fixed_deposit = out_payment == "fixed"
         fixed_deposit_cert = req.POST.get("fixed_deposit_cert")
         beneficiary = BeneficiaryBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("bb-") else None
-        deal_status = int(req.POST.get("deal_status"))
+        # local_bank_account = ClientLocalBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("lb-") else None
         payment_details = req.POST.get("payment_details")
 
         transaction = Transaction(
@@ -73,13 +78,16 @@ def new_transaction(req, client_id):
             foreign_amount=foreign_amount, 
             bank_fee=bank_fee, 
             deal_status=DealStatus.objects.get(id=deal_status), 
-            trader=req.user, 
-            last_updated_by=req.user, 
+            in_payment_type=in_payment_type,
+            check_number=check_number,
+            dfl_bank_account=DFLLocalBank.objects.get(id=dfl_bank_account) if dfl_bank_account else None,
             cash_settlement=cash_settlement,
             fixed_deposit=fixed_deposit,
             fixed_deposit_cert=fixed_deposit_cert,
             beneficiary=beneficiary,
-            payment_details=payment_details
+            payment_details=payment_details,
+            trader=req.user, 
+            last_updated_by=req.user
         )
         transaction.save()
         # update currency stock
@@ -118,20 +126,21 @@ def new_transaction(req, client_id):
 def edit_transaction(req, client_id, transaction_id):
     transaction = Transaction.objects.get(id=transaction_id)
     client = transaction.client
-    beneficiaries = client.beneficiaries.all()
-    transaction_types = Transaction.TRANSACTION_TYPES
     bank_fee = BankFee.objects.get(pk=1)
-    currencies = Currency.objects.all()
-    deal_statuses = DealStatus.objects.all()
-    # bank_fee = BankFee.objects.get(pk=1)
     context = {"page_title": f"Edit Transaction for {client.client_name}"}
     context["section"] = "transactions"
     context["client"] = client
-    context["transaction"] = transaction
-    context["beneficiaries"] = beneficiaries
     context["bank_fee"] = transaction.bank_fee
-    context |= {"transaction_types": transaction_types, "currencies": currencies, "deal_statuses": deal_statuses}
+    context |= {
+        "beneficiaries": client.beneficiaries.all(),
+        "inpayment_types": Transaction.INPAYMENT_TYPES,
+        "transaction_types": Transaction.TRANSACTION_TYPES, 
+        "currencies": Currency.objects.all(), 
+        "deal_statuses": DealStatus.objects.all(),  
+        "dfl_banks": DFLLocalBank.objects.all()
+        }
     context["deal_id"] = transaction_id
+
     out_payment = None
     if transaction.cash_settlement:
         out_payment = "cash"
@@ -139,24 +148,7 @@ def edit_transaction(req, client_id, transaction_id):
         out_payment = "fixed"
     elif transaction.beneficiary is not None:
         out_payment = f"bb-{transaction.beneficiary.id}"
-    context["formdata"] = {
-        "contract_date": transaction.contract_date,
-        "value_date": transaction.value_date,
-        "transaction_type": transaction.transaction_type,
-        "foreign_currency": transaction.foreign_currency,
-        "foreign_currency_rate": transaction.foreign_currency_rate,
-        "foreign_amount": transaction.foreign_amount,
-        "settlement_currency": transaction.settlement_currency,
-        "settlement_currency_rate": transaction.settlement_currency_rate,
-        "settlement_amount": transaction.settlement_amount,
-        "bank_fee": transaction.bank_fee,
-        "deal_status": transaction.deal_status,
-        "cash_settlement": transaction.cash_settlement,
-        "fixed_deposit": transaction.fixed_deposit,
-        "fixed_deposit_cert": transaction.fixed_deposit_cert,
-        "beneficiary": transaction.beneficiary,
-        "payment_details": transaction.payment_details
-    }
+    context["formdata"] = transaction
 
     if req.method == "POST":
         contract_date = req.POST.get("contract_date")
@@ -225,3 +217,14 @@ def ajax_beneficiary(req, client_id, beneficiary_id):
     beneficiary = BeneficiaryBank.objects.filter(pk=beneficiary_id)
     data = serializers.serialize("json", beneficiary)
     return JsonResponse(data, safe=False)
+
+def ajax_dfl_bank(req, client_id, bank_account_id):
+    bank_account = DFLLocalBank.objects.filter(pk=bank_account_id)
+    data = serializers.serialize("json", bank_account)
+    return JsonResponse(data, safe=False)
+
+def ajax_client_bank(req, client_id, bank_account_id):
+    bank_account = ClientLocalBank.objects.filter(pk=bank_account_id)
+    data = serializers.serialize("json", bank_account)
+    return JsonResponse(data, safe=False)
+

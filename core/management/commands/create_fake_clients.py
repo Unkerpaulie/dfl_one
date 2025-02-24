@@ -22,10 +22,10 @@ class Command(BaseCommand):
         # create variables
         fake = Faker()
         genders = ["M", "F"]
-        mar_statuses = [s[0] for s in IndividualClient.mar_statuses]
-        emp_statuses = [s[0] for s in IndividualClient.emp_statuses]
-        trans_freq = [s[0] for s in IndividualClient.trans_freq]
-        entity_types = [s[0] for s in CorporateClient.entity_types]
+        mar_statuses = [s[0] for s in IndividualClient.MARITAL_STATUSES]
+        emp_statuses = [s[0] for s in IndividualClient.EMPLOYMENT_STATUSES]
+        trans_freq = [s[0] for s in IndividualClient.TRANSACTION_FREQUENCIES]
+        entity_types = [s[0] for s in CorporateClient.ENTITY_TYPES]
         countries = Country.objects.all()
         tt = Country.objects.filter(country_code="TT").first()
         id_types = IdentificationType.objects.all()

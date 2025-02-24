@@ -179,41 +179,7 @@ def edit_individual(req, client_id):
     context["id_types"] = id_types
     context |= {"mar_statuses": mar_statuses, "emp_statuses": emp_statuses, "trans_freq": trans_freq}
     # set form data
-    context['formdata'] = {
-        "legacy_id": client.legacy_id,
-        "first_name": client.first_name,
-        "middle_name": client.middle_name,
-        "surname": client.surname,
-        "date_of_birth": client.date_of_birth,
-        "gender": client.gender,
-        "marital_status": client.marital_status,
-        "residential_address": client.residential_address,
-        "residential_address2": client.residential_address2,
-        "residential_city": client.residential_city,
-        "residential_country": client.residential_country,
-        "mailing_address": client.mailing_address,
-        "mailing_address2": client.mailing_address2,
-        "mailing_city": client.mailing_city,
-        "mailing_country": client.mailing_country,
-        "country_of_birth": client.country_of_birth,
-        "nationality": client.nationality,
-        "dual_citizen": client.dual_citizen,
-        "dual_nationality": client.dual_nationality,
-        "primary_phone": client.primary_phone,
-        "secondary_phone": client.secondary_phone,
-        "email": client.email,
-        "telephone_preferred": client.telephone_preferred,
-        "email_preferred": client.email_preferred,
-        "primary_income_source": client.primary_income_source,
-        "employment_status": client.employment_status,
-        "position_held": client.position_held,
-        "employer": client.employer,
-        "employer_address": client.employer_address,
-        "business_type": client.business_type,
-        "transaction_frequency": client.transaction_frequency,
-        "politically_exposed": client.politically_exposed,
-        "political_details": client.political_details,
-    }
+    context['formdata'] = client
     id_infos = IdentificationInfo.objects.filter(client=client)
     context['id_infos'] = id_infos
 
@@ -433,33 +399,7 @@ def edit_corporate(req, client_id):
     trans_freq = IndividualClient.trans_freq
     context |= {"countries": countries, "entity_types": entity_types, "trans_freq": trans_freq}
     # set form data
-    context['formdata'] = {
-        "legacy_id": client.legacy_id,
-        "registered_name": client.registered_name,
-        "date_of_incorporation": client.date_of_incorporation,
-        "registration_number": client.registration_number,
-        "bir_number": client.bir_number,
-        "vat_registration": client.vat_registration,
-        "parent_company": client.parent_company,
-        "registered_address": client.registered_address,
-        "registered_address2": client.registered_address2,
-        "registered_city": client.registered_city,
-        "registered_country": client.registered_country,
-        "mailing_address": client.mailing_address,
-        "mailing_address2": client.mailing_address2,
-        "mailing_city": client.mailing_city,
-        "mailing_country": client.mailing_country,
-        "contact_person": client.contact_person,
-        "primary_phone": client.primary_phone,
-        "secondary_phone": client.secondary_phone,
-        "email": client.email,
-        "website": client.website,
-        "telephone_preferred": client.telephone_preferred,
-        "email_preferred": client.email_preferred,
-        "entity_type": client.entity_type,
-        "business_type": client.business_type,
-        "transaction_frequency": client.transaction_frequency,
-    }
+    context['formdata'] = client
 
     # get fields from form
     if req.method =="POST":
@@ -647,38 +587,7 @@ def edit_beneficiary(req, client, beneficiary_id):
     context['form_purpose'] = "edit"
     context["countries"] = countries
     # set form data
-    context['formdata'] = {
-        "bank_name": beneficiary.bank_name,
-        "bank_address": beneficiary.bank_address,
-        "bank_address2": beneficiary.bank_address2,
-        "bank_city": beneficiary.bank_city,
-        "bank_state": beneficiary.bank_state,
-        "bank_zip": beneficiary.bank_zip,
-        "bank_country": beneficiary.bank_country,
-        "account_number": beneficiary.account_number,
-        "swift_code": beneficiary.swift_code,
-        "iban_code": beneficiary.iban_code,
-        "aba_code": beneficiary.aba_code,
-        "recipient_name": beneficiary.recipient_name,
-        "recipient_address": beneficiary.recipient_address,
-        "recipient_address2": beneficiary.recipient_address2,
-        "recipient_city": beneficiary.recipient_city,
-        "recipient_state": beneficiary.recipient_state,
-        "recipient_zip": beneficiary.recipient_zip,
-        "recipient_country": beneficiary.recipient_country,
-        "intermediary_bank_name": beneficiary.intermediary_bank_name,
-        "intermediary_bank_address": beneficiary.intermediary_bank_address,
-        "intermediary_bank_address2": beneficiary.intermediary_bank_address2,
-        "intermediary_bank_city": beneficiary.intermediary_bank_city,
-        "intermediary_bank_state": beneficiary.intermediary_bank_state,
-        "intermediary_bank_zip": beneficiary.intermediary_bank_zip,
-        "intermediary_bank_country": beneficiary.intermediary_bank_country,
-        "intermediary_account_number": beneficiary.intermediary_account_number,
-        "intermediary_swift_code": beneficiary.intermediary_swift_code,
-        "intermediary_iban_code": beneficiary.intermediary_iban_code,
-        "intermediary_aba_code": beneficiary.intermediary_aba_code,
-        "special_instructions": beneficiary.special_instructions,
-    }
+    context['formdata'] = beneficiary
 
     # get fields from form
     if req.method =="POST":
@@ -856,14 +765,7 @@ def edit_client_bank_account(req, client, account_id):
         "account_types": DFLLocalBank.ACCOUNT_TYPES,
         "form_action": reverse(f'clients:edit_bank_account_{client.client_list_entry.client_type.lower()}', args=[client.id, account_id]),
         "cancel_url": reverse(f'clients:list_bank_accounts_{client.client_list_entry.client_type.lower()}', args=[client.id]),
-        "formdata": {
-            'account_owner': bank_account.account_owner,
-            'bank_name': bank_account.bank_name,
-            'branch_city': bank_account.branch_city,
-            'branch_number': bank_account.branch_number,
-            'account_number': bank_account.account_number,
-            'account_type': bank_account.account_type
-        },
+        "formdata": bank_account,
         "client": client
     }
     

@@ -124,38 +124,7 @@ def edit_beneficiary(req, client_id, beneficiary_id):
     context['form_purpose'] = "edit"
     context["countries"] = countries
     # set form data
-    context['formdata'] = {
-        "bank_name": beneficiary.bank_name,
-        "bank_address": beneficiary.bank_address,
-        "bank_address2": beneficiary.bank_address2,
-        "bank_city": beneficiary.bank_city,
-        "bank_state": beneficiary.bank_state,
-        "bank_zip": beneficiary.bank_zip,
-        "bank_country": beneficiary.bank_country,
-        "account_number": beneficiary.account_number,
-        "swift_code": beneficiary.swift_code,
-        "iban_code": beneficiary.iban_code,
-        "aba_code": beneficiary.aba_code,
-        "recipient_name": beneficiary.recipient_name,
-        "recipient_address": beneficiary.recipient_address,
-        "recipient_address2": beneficiary.recipient_address2,
-        "recipient_city": beneficiary.recipient_city,
-        "recipient_state": beneficiary.recipient_state,
-        "recipient_zip": beneficiary.recipient_zip,
-        "recipient_country": beneficiary.recipient_country,
-        "intermediary_bank_name": beneficiary.intermediary_bank_name,
-        "intermediary_bank_address": beneficiary.intermediary_bank_address,
-        "intermediary_bank_address2": beneficiary.intermediary_bank_address2,
-        "intermediary_bank_city": beneficiary.intermediary_bank_city,
-        "intermediary_bank_state": beneficiary.intermediary_bank_state,
-        "intermediary_bank_zip": beneficiary.intermediary_bank_zip,
-        "intermediary_bank_country": beneficiary.intermediary_bank_country,
-        "intermediary_account_number": beneficiary.intermediary_account_number,
-        "intermediary_swift_code": beneficiary.intermediary_swift_code,
-        "intermediary_iban_code": beneficiary.intermediary_iban_code,
-        "intermediary_aba_code": beneficiary.intermediary_aba_code,
-        "special_instructions": beneficiary.special_instructions,
-    }
+    context['formdata'] = beneficiary
 
     # get fields from form
     if req.method =="POST":

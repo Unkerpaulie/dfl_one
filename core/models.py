@@ -58,4 +58,4 @@ class LocalBankAccount(models.Model):
         abstract = True
 
     def __str__(self):
-        return f"{self.account_owner} {self.bank_name} {self.account_type} account"
+        return f"{self.bank_name} {self.account_type} account"

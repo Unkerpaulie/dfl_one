@@ -19,10 +19,14 @@ var foreign_amount;
 var foreign_currency_rate;
 var bank_fee;
 var total_amount;
+var inbound_payment;
+var check_number;
+var dfl_bank_account;
 var payment_details;
 var client_id;
 var trader;
 var out_payment_choice;
+var fixed_deposit_cert;
 
 
 function set_vars() {
@@ -52,10 +56,14 @@ function set_vars() {
     foreign_currency_rate = Math.round(form_elements["foreign_currency_rate"].value * 10000) / 10000;
     bank_fee = form_elements["bank_fee"].checked ? form_elements["bank_fee"].value : 0;
     total_amount = Number(settlement_amount) + Number(bank_fee);
+    inbound_payment = form_elements["in_payment_type"].options[form_elements["in_payment_type"].selectedIndex].value;
+    check_number = form_elements["check_number"].value;
+    dfl_bank_account = form_elements["dfl_bank_account"].options[form_elements["dfl_bank_account"].selectedIndex].value;
     payment_details = form_elements["payment_details"].value;
     client_id = form_elements["client_id"].value;
     trader = form_elements["trader"].value;
     out_payment_choice = form_elements["out_payment"].options[form_elements["out_payment"].selectedIndex].value;
+    fixed_deposit_cert = form_elements["fixed_deposit_cert"].value;
 }
 
 
@@ -112,76 +120,186 @@ function build_summary_box() {
     document.getElementById("review-summary_box").innerHTML = html_div;
 }
 
-function build_inbound_payment() {
+function cash_details_in() {
     var html_div = `
+            <div>
+                <p>${client_name} will pay ${settlement_currency} ${settlement_amount} in cash to Development Finance Limited on ${value_date_formatted}.</p>
+            </div>
+    `;
+    document.getElementById("review-inbound_payment").innerHTML = html_div;
+}
+
+function check_details_in() {
+    var html_div = `
+            <div>
+                <p>${client_name} will pay ${settlement_currency} ${settlement_amount} by check #${check_number} to Development Finance Limited on ${value_date_formatted}.</p>
+            </div>
+    `;
+    document.getElementById("review-inbound_payment").innerHTML = html_div;
+}
+
+function get_dfl_bank_info() {
+    const bb_id = out_payment_choice.substring(3);
+    $.ajax({
+        url: `/transactions/${client_id}/beneficiary/${bb_id}`,
+        datatype: 'json',
+        type: 'GET',
+        success: function(res) {
+            const data = JSON.parse(res)[0]["fields"];
+            var html_div = `
             <div>
                 <p>${client_name} will send ${settlement_currency} ${settlement_amount} to Development Finance Limited on ${value_date_formatted} as follows:</p>
             </div>
             <div class="row mb-3">
                 <div class="col-3"></div>
                 <div class="col-9">
-                    RBC Royal Bank<br>
-                    Independence Sq.<br>
-                    Account # 1000-040-134874-3-2
+                    ${data.bank_name}<br>
+                    ${data.branch_city} <br>
+                    Account # ${data.branch_number}-${data.account_number}<br>
+                    Account Type: ${data.account_type}<br>
                 </div>
             </div>
+            `;
+            document.getElementById("review-inbound_payment").innerHTML = html_div;
+        }
+    });
+}
+
+function build_inbound_payment() {
+    if (inbound_payment == "cash") {
+        cash_details_in();
+    } else if (inbound_payment == "check"){
+        check_details_in();
+    } else {
+        get_dfl_bank_info();
+    }
+}
+
+function get_beneficiary_info() {
+    const bb_id = out_payment_choice.substring(3);
+    $.ajax({
+        url: `/transactions/${client_id}/beneficiary/${bb_id}`,
+        datatype: 'json',
+        type: 'GET',
+        success: function(res) {
+            const data = JSON.parse(res)[0]["fields"];
+            
+            var html_div = `
+                        <p>Upon receipt of <span id="review-origin_currency3"></span> funds, Development Finance Limited will transfer <span id="review-y"></span> <span id="review-settlement_amount2"></span> to:</p>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                Intermediary Bank:<br>
+                                <br>
+                                <strong>SWIFT:</strong><br>
+                            </div>
+                            <div class="col-9">
+                                <strong>${data.intermediary_bank_name}</strong><br>
+                                ${data.intermediary_bank_address} ${data.intermediary_bank_address2 ? ", " + data.intermediary_bank_address2 : ""}, 
+                                ${data.intermediary_bank_city}, ${data.intermediary_bank_state} ${data.intermediary_bank_state}, ${data.intermediary_bank_country}<br>
+                                <strong>${data.intermediary_swift_code}</strong><br>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                Beneficiary Bank:<br>
+                                <br>
+                                <strong>SWIFT:</strong><br>
+                            </div>
+                            <div class="col-9">
+                                <strong>${data.bank_name}</strong><br>
+                                ${data.bank_address} ${data.bank_address2 ? ", " + data.bank_address2 : ""}, 
+                                ${data.bank_city}, ${data.bank_state} ${data.bank_state}, ${data.bank_country}<br>
+                                <strong>${data.swift_code}</strong><br>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                Beneficiary Customer:<br>
+                                <br>
+                                <br>
+                                <strong>ACC #:</strong><br>
+                            </div>
+                            <div class="col-9">
+                                <strong>${data.recipient_name}</strong><br>
+                                ${data.recipient_address} ${data.recipient_address2 ? ", " + data.recipient_address2 : ""}, 
+                                ${data.recipient_city}, ${data.recipient_state} ${data.recipient_state}, ${data.recipient_country}<br>
+                                <strong>${data.account_number}</strong><br>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                Payment Details::<br>
+                            </div>
+                            <div class="col-9">
+                                ${payment_details}<br>
+                            </div>
+                        </div>
+            `;
+            document.getElementById("review-outbound_payment").innerHTML = html_div;
+        }
+    });
+}
+
+function get_client_bank_info() {
+    const bb_id = out_payment_choice.substring(3);
+    $.ajax({
+        url: `/transactions/${client_id}/client_bank/${bb_id}`,
+        datatype: 'json',
+        type: 'GET',
+        success: function(res) {
+            const data = JSON.parse(res)[0]["fields"];
+            var html_div = `
+                        <p>Upon receipt of <span id="review-origin_currency3"></span> funds, Development Finance Limited will transfer <span id="review-y"></span> <span id="review-settlement_amount2"></span> to:</p>     
+                <div class="row mb-3">
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            Account Owner:<br>
+                            Recipient Bank:<br>
+                            <br>
+                            <strong>ACC #:</strong><br>
+                        </div>
+                        <div class="col-9">
+                            <strong>${data.account_owner}</strong><br>
+                            ${data.bank_name}<br>
+                            ${data.branch_city} <br> 
+                            <strong>${data.branch_number}-${data.account_number}</strong><br>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById("review-outbound_payment").innerHTML = html_div;
+        }
+    });
+}
+
+function cash_details_out() {
+    var html_div = `
+            <div>
+                <p>Development Finance Limited will pay ${settlement_currency} ${settlement_amount} in cash to ${client_name} on ${value_date_formatted}.</p>
+            </div>
     `;
-    document.getElementById("review-inbound_payment").innerHTML = html_div;
+    document.getElementById("review-outbound_payment").innerHTML = html_div;
+}
+
+function fixed_details_out() {
+    var html_div = `
+            <div>
+                <p>Development Finance Limited will hold ${settlement_currency} ${settlement_amount} in fixed deposit account ${fixed_deposit_cert}.</p>
+            </div>
+    `;
+    document.getElementById("review-outbound_payment").innerHTML = html_div;
 }
 
 function build_outbound_payment() {
-    var html_div = `
-                <p>Upon receipt of <span id="review-origin_currency3"></span> funds, Development Finance Limited will transfer <span id="review-y"></span> <span id="review-settlement_amount2"></span> to:</p>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        Intermediary Bank:<br>
-                        <br>
-                        <strong>SWIFT:</strong><br>
-                    </div>
-                    <div class="col-9">
-                        <strong>${12345}</strong><br>
-                        ${12345} ${12345}, 
-                        ${12345}, ${12345} ${12345}<br>
-                        <strong>${12345}</strong><br>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        Beneficiary Bank:<br>
-                        <br>
-                        <strong>SWIFT:</strong><br>
-                    </div>
-                    <div class="col-9">
-                        <strong>${12345}</strong><br>
-                        ${12345} ${12345}, 
-                        ${12345}, ${12345} ${12345}<br>
-                        <strong>${12345}
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        Beneficiary Customer:<br>
-                        <br>
-                        <br>
-                        <strong>ACC #:</strong><br>
-                    </div>
-                    <div class="col-9">
-                        <strong>${12345}</strong><br>
-                        ${12345} ${12345}, <br>
-                        ${12345}, ${12345} ${12345}<br>
-                        <strong>${12345}</strong><br>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-3">
-                        Payment Details::<br>
-                    </div>
-                    <div class="col-9">
-                        ${12345}<br>
-                    </div>
-                </div>
-    `;
-    document.getElementById("review-outbound_payment").innerHTML = html_div;
+    if (out_payment_choice.substring(0,3) == "bb-") {
+        get_beneficiary_info();
+    } else if (out_payment_choice == "cash"){
+        cash_details_out();
+    } else if (out_payment_choice == "fixed"){
+        fixed_details_out();
+    } else {
+        get_client_bank_info();
+    }
 }
 
 function build_signatures() {
@@ -212,117 +330,13 @@ function build_signatures() {
     document.getElementById("review-signatures").innerHTML = html_div;
 }
 
-
-
-function get_beneficiary_info() {
-    const bb_id = out_payment_choice.substring(3);
-    $.ajax({
-        url: `/transactions/${client_id}/beneficiary/${bb_id}`,
-        datatype: 'json',
-        type: 'GET',
-        success: function(res) {
-            const data = JSON.parse(res)[0]["fields"];
-            // set beneficiary values
-            const bank_name = data.bank_name;
-            const account_number = data.account_number;
-            const aba_code = data.aba_code;
-            const bank_address = data.bank_address;
-            const bank_address2 = data.bank_address2;
-            const bank_city = data.bank_city;
-            const bank_state = data.bank_state;
-            const bank_zip = data.bank_zip;
-            const bank_country = data.bank_country;
-            const iban_code = data.iban_code;
-            const swift_code = data.swift_code;
-            const intermediary_bank_name = data.intermediary_bank_name;
-            const intermediary_account_number = data.intermediary_account_number;
-            const intermediary_aba_code = data.intermediary_aba_code;
-            const intermediary_bank_address = data.intermediary_bank_address;
-            const intermediary_bank_address2 = data.intermediary_bank_address2;
-            const intermediary_bank_city = data.intermediary_bank_city;
-            const intermediary_bank_state = data.intermediary_bank_state;
-            const intermediary_bank_zip = data.intermediary_bank_zip;
-            const intermediary_bank_country = data.intermediary_bank_country;
-            const intermediary_iban_code = data.intermediary_iban_code;
-            const intermediary_swift_code = data.intermediary_swift_code;
-            const recipient_name = data.recipient_name;
-            const recipient_address = data.recipient_address;
-            const recipient_address2 = data.recipient_address2;
-            const recipient_city = data.recipient_city;
-            const recipient_state = data.recipient_state;
-            const recipient_zip = data.recipient_zip;
-            const recipient_country = data.recipient_country;
-            
-            var html_div = `
-                        <p>Upon receipt of <span id="review-origin_currency3"></span> funds, Development Finance Limited will transfer <span id="review-y"></span> <span id="review-settlement_amount2"></span> to:</p>
-                        <div class="row mb-3">
-                            <div class="col-3">
-                                Intermediary Bank:<br>
-                                <br>
-                                <strong>SWIFT:</strong><br>
-                            </div>
-                            <div class="col-9">
-                                <strong>${intermediary_bank_name}</strong><br>
-                                ${intermediary_bank_address} ${intermediary_bank_address2 ? ", " + intermediary_bank_address2 : ""}, 
-                                ${intermediary_bank_city}, ${intermediary_bank_state} ${intermediary_bank_state}, ${intermediary_bank_country}<br>
-                                <strong>${intermediary_swift_code}</strong><br>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-3">
-                                Beneficiary Bank:<br>
-                                <br>
-                                <strong>SWIFT:</strong><br>
-                            </div>
-                            <div class="col-9">
-                                <strong>${bank_name}</strong><br>
-                                ${bank_address} ${bank_address2 ? ", " + bank_address2 : ""}, 
-                                ${bank_city}, ${bank_state} ${bank_state}, ${bank_country}<br>
-                                <strong>${swift_code}</strong><br>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-3">
-                                Beneficiary Customer:<br>
-                                <br>
-                                <br>
-                                <strong>ACC #:</strong><br>
-                            </div>
-                            <div class="col-9">
-                                <strong>${recipient_name}</strong><br>
-                                ${recipient_address} ${recipient_address2 ? ", " + recipient_address2 : ""}, 
-                                ${recipient_city}, ${recipient_state} ${recipient_state}, ${recipient_country}<br>
-                                <strong>${account_number}</strong><br>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-3">
-                                Payment Details::<br>
-                            </div>
-                            <div class="col-9">
-                                ${payment_details}<br>
-                            </div>
-                        </div>
-            `;
-            document.getElementById("review-outbound_payment").innerHTML = html_div;
-        }
-    });
-}
-
 function dealReview() {
     set_vars();
-    console.log(bank_fee);
-    console.log(form_elements["bank_fee"].checked);
+    console.log(out_payment_choice);
     build_contract_heading();
     build_summary_box();
-    if (out_payment_choice.substring(0,3) == "bb-") {
-        get_beneficiary_info();
-    } else if (out_payment_choice == "cash"){
-        cash_details();
-    } else {
-        fixed_deposit_details();
-    }
     build_inbound_payment();
+    build_outbound_payment();
     build_signatures();
 }
 

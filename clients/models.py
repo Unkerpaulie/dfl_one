@@ -15,22 +15,16 @@ class ClientList(models.Model):
 class IndividualClient(models.Model):
     client_list_entry = models.OneToOneField(ClientList, related_name="source_individual", on_delete=models.CASCADE, null=True, blank=True)
     # choice lists
-    mar_statuses = [
-        ("S", "Single"),
-        ("M", "Married"),
-        ("D", "Divorced"),
-        ("W", "Widowed"),
-        ("O", "Other"),
-    ]
-    emp_statuses = [("E", "Employed"), ("S", "Self-Employed"), ("O", "Other")]
-    trans_freq = [("M", "Monthly"), ("Q", "Quarterly"), ("Y", "Annually")]
+    MARITAL_STATUSES = [("S", "Single"), ("M", "Married"), ("D", "Divorced"), ("W", "Widowed"), ("O", "Other")]
+    EMPLOYMENT_STATUSES = [("E", "Employed"), ("S", "Self-Employed"), ("O", "Other")]
+    TRANSACTION_FREQUENCIES = [("M", "Monthly"), ("Q", "Quarterly"), ("Y", "Annually")]
     legacy_id = models.CharField(max_length=20, null=True, blank=True)
     first_name = models.CharField(max_length=150)
     middle_name = models.CharField(max_length=150, null=True, blank=True)
     surname = models.CharField(max_length=150)
     date_of_birth = models.DateField()
     gender = models.CharField(max_length=1, choices=[("M", "Male"), ("F", "Female")])
-    marital_status = models.CharField(max_length=1, choices=mar_statuses)
+    marital_status = models.CharField(max_length=1, choices=MARITAL_STATUSES)
     residential_address = models.CharField(max_length=200)
     residential_address2 = models.CharField(max_length=200, null=True, blank=True)
     residential_city = models.CharField(max_length=150)
@@ -49,12 +43,12 @@ class IndividualClient(models.Model):
     telephone_preferred = models.BooleanField(default=False)
     email_preferred = models.BooleanField(default=False)
     primary_income_source = models.CharField(max_length=200)
-    employment_status = models.CharField(max_length=1, choices=emp_statuses)
+    employment_status = models.CharField(max_length=1, choices=EMPLOYMENT_STATUSES)
     position_held = models.CharField(max_length=200, null=True, blank=True)
     employer = models.CharField(max_length=200, null=True, blank=True)
     employer_address = models.CharField(max_length=200, null=True, blank=True)
     business_type = models.CharField(max_length=200, null=True, blank=True)
-    transaction_frequency = models.CharField(max_length=1, choices=trans_freq)
+    transaction_frequency = models.CharField(max_length=1, choices=TRANSACTION_FREQUENCIES)
     politically_exposed = models.BooleanField(default=False)
     political_details = models.CharField(max_length=200, null=True, blank=True)
     
@@ -65,15 +59,8 @@ class IndividualClient(models.Model):
 class CorporateClient(models.Model):
     # choice lists
     client_list_entry = models.OneToOneField(ClientList, related_name="source_corporation", on_delete=models.CASCADE, null=True, blank=True)
-    entity_types = [
-        ("L", "Limited Liability"),
-        ("P", "Partnership"),
-        ("T", "Trust"),
-        ("S", "Sole Trader"),
-        ("G", "Government Enterprise"),
-        ("O", "Other"),
-    ]
-    trans_freq = [("M", "Monthly"), ("Q", "Quarterly"), ("Y", "Annually")]
+    ENTITY_TYPES = [("L", "Limited Liability"), ("P", "Partnership"), ("T", "Trust"), ("S", "Sole Trader"), ("G", "Government Enterprise")]
+    TRANSACTION_FREQUENCIES = [("M", "Monthly"), ("Q", "Quarterly"), ("Y", "Annually")]
 
     legacy_id = models.CharField(max_length=20, null=True, blank=True)
     registered_name = models.CharField(max_length=250)
@@ -99,9 +86,9 @@ class CorporateClient(models.Model):
     telephone_preferred = models.BooleanField(default=False)
     email_preferred = models.BooleanField(default=False)
     website = models.CharField(max_length=250)
-    entity_type = models.CharField(max_length=1, choices=entity_types)
+    entity_type = models.CharField(max_length=1, choices=ENTITY_TYPES)
     business_type = models.CharField(max_length=200, null=True, blank=True)
-    transaction_frequency = models.CharField(max_length=1, choices=trans_freq)
+    transaction_frequency = models.CharField(max_length=1, choices=TRANSACTION_FREQUENCIES)
     politically_exposed = models.BooleanField(default=False)
     political_details = models.CharField(max_length=200, null=True, blank=True)
    

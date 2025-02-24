@@ -70,13 +70,7 @@ def edit_user(req, user_id):
     context["section"] = "setup"
     context["roles"] = User.ROLE_CHOICES
     context["form_purpose"] = "edit"
-    context["formdata"] = {
-        'first_name': user.first_name, 
-        'last_name': user.last_name, 
-        'email': user.email, 
-        'role': user.role,
-        'is_active': user.is_active
-        }
+    context["formdata"] = user
     if req.method == 'POST':
         first_name = req.POST['first_name']
         last_name = req.POST['last_name']
@@ -133,7 +127,7 @@ def edit_currency(req, currency_id):
     currency = Currency.objects.get(id=currency_id)
     context = {"page_title": "Edit Currency"}
     context["section"] = "setup"
-    context["formdata"] = {'currency_name': currency.currency_name, 'currency_code': currency.currency_code,'symbol': currency.symbol}
+    context["formdata"] = currency
     if req.method == 'POST':
         currency_name = req.POST['currency_name']
         currency_code = req.POST['currency_code']
@@ -181,7 +175,7 @@ def edit_deal_status(req, deal_status_id):
     deal_status = DealStatus.objects.get(id=deal_status_id)
     context = {"page_title": "Edit Deal Status"}
     context["section"] = "setup"
-    context["formdata"] = {'status_name': deal_status.status_name}
+    context["formdata"] = deal_status
     if req.method == 'POST':
         status_name = req.POST['status_name']
         deal_status.status_name = status_name
@@ -222,7 +216,7 @@ def edit_identification_type(req, identification_type_id):
     identification_type = IdentificationType.objects.get(id=identification_type_id)
     context = {"page_title": "Edit Identification Type"}
     context["section"] = "setup"
-    context["formdata"] = {'id_type': identification_type.id_type}
+    context["formdata"] = identification_type
     if req.method == 'POST':
         id_type = req.POST['id_type']
         identification_type.id_type = id_type
@@ -311,7 +305,7 @@ def update_bank_fee(req):
     fee = BankFee.objects.get(id=1)
     context = {"page_title": "Update Bank Fee"}
     context["section"] = "setup"
-    context["formdata"] = {'bank_fee': fee.bank_fee}
+    context["formdata"] = fee
     if req.method == 'POST':
         bank_fee = req.POST['bank_fee']
         fee.bank_fee = bank_fee
@@ -371,14 +365,7 @@ def edit_bank_account(req, bank_account_id):
     context = {"page_title": "Edit Bank Account"}
     context["section"] = "setup"
     context["account_types"] = DFLLocalBank.ACCOUNT_TYPES
-    context["formdata"] = {
-        'account_owner': bank_account.account_owner,
-        'bank_name': bank_account.bank_name,
-        'branch_city': bank_account.branch_city,
-        'branch_number': bank_account.branch_number,
-        'account_number': bank_account.account_number,
-        'account_type': bank_account.account_type
-    }
+    context["formdata"] = bank_account
     if req.method == 'POST':
         bank_account.account_owner = req.POST['account_owner']
         bank_account.bank_name = req.POST['bank_name']

@@ -7,9 +7,11 @@ $(document).ready(function() {
     });
 });
 
+// runs when the page is loaded
 document.addEventListener("DOMContentLoaded", function() {
     checkForTT('settlement_currency'); 
     check_for_fd(document.getElementById("out_payment"), "fixed_deposit_cert");
+    check_inpayment();
 });
 
 // not currently in use
@@ -32,11 +34,11 @@ function checkForTT(elem) {
 }
 
 function show_div(elem) {
-    document.getElementById(`${elem}_div`).style.visibility = "visible";
+    document.getElementById(`${elem}_div`).style.display = "block";
 }
 
 function hide_div(elem) {
-    document.getElementById(`${elem}_div`).style.visibility = "hidden";
+    document.getElementById(`${elem}_div`).style.display = "none";
 }
 
 function check_for_fd(selector, elem) {
@@ -47,9 +49,22 @@ function check_for_fd(selector, elem) {
     }
 }
 
+function check_inpayment() {
+    var in_payment = document.getElementById("in_payment_type").value;
+    if (in_payment == "cash") {
+        hide_div("check");
+        hide_div("dfl_bank");
+    } else if (in_payment == "check") {
+        show_div("check");
+        hide_div("dfl_bank");
+    } else {
+        hide_div("check");
+        show_div("dfl_bank");        
+    }
+}
+
 function calcSettlemetAmount() {
     var foreign_amount = document.getElementById("foreign_amount").value;
-    // var exchange_rate = document.getElementById("exchange_rate").value;
     var settlement_currency_rate = document.getElementById("settlement_currency_rate").value;
     var foreign_currency_rate = document.getElementById("foreign_currency_rate").value;
     if (!foreign_currency_rate || !settlement_currency_rate) {
