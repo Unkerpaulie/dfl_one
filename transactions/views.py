@@ -3,10 +3,10 @@ from django.http import JsonResponse
 from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Transaction
+from .models import Transaction, CurrencyStock
 from clients.models import ClientList, BeneficiaryBank
 from core.models import Currency, DealStatus
-from setup.models import CurrencyStock, BankFee
+from setup.models import BankFee
 
 
 # Create your views here.
@@ -26,17 +26,18 @@ def transactions_list(req):
 def new_transaction(req, client_id):
     client = ClientList.objects.get(pk=client_id)
     # beneficiaries = BeneficiaryBank.objects.filter(client=client)
-    beneficiaries = client.beneficiaries.all()
-    transaction_types = Transaction.transaction_types
-    currencies = Currency.objects.all()
-    deal_statuses = DealStatus.objects.all()
     bank_fee = BankFee.objects.get(pk=1)
     context = {"page_title": f"New Transaction for {client.client_name}"}
     context["section"] = "transactions"
     context["client"] = client
-    context["beneficiaries"] = beneficiaries
     context["bank_fee"] = bank_fee.bank_fee
-    context |= {"transaction_types": transaction_types, "currencies": currencies, "deal_statuses": deal_statuses}
+    context |= {
+        "beneficiaries": client.beneficiaries.all(),
+        "inpayment_types": Transaction.INPAYMENT_TYPES,
+        "transaction_types": Transaction.TRANSACTION_TYPES, 
+        "currencies": Currency.objects.all(), 
+        "deal_statuses": DealStatus.objects.all()
+        }
     context["deal_id"] = Transaction.objects.latest("id").id + 1 
 
     if req.method == "POST":        
@@ -118,7 +119,7 @@ def edit_transaction(req, client_id, transaction_id):
     transaction = Transaction.objects.get(id=transaction_id)
     client = transaction.client
     beneficiaries = client.beneficiaries.all()
-    transaction_types = Transaction.transaction_types
+    transaction_types = Transaction.TRANSACTION_TYPES
     bank_fee = BankFee.objects.get(pk=1)
     currencies = Currency.objects.all()
     deal_statuses = DealStatus.objects.all()

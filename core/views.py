@@ -6,8 +6,7 @@ from django.forms.models import model_to_dict
 from django.db.models import Q
 from core.utils import get_blotter_data, get_currency_balance, get_blotter_details
 from .models import Currency
-from transactions.models import Transaction
-from setup.models import CurrencyStock
+from transactions.models import Transaction, CurrencyStock
 
 
 # home page is consolidated blotter

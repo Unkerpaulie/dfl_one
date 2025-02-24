@@ -1,6 +1,5 @@
 from django.contrib import admin
-from.models import CurrencyStock, BankFee, DFLLocalBank
+from .models import BankFee, DFLLocalBank
 
-admin.site.register(CurrencyStock)
 admin.site.register(BankFee)
 admin.site.register(DFLLocalBank)

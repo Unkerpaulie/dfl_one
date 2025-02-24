@@ -128,6 +128,27 @@
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col-8 g-1">
+                                            <label for="in_payment">Inbound Payment Instructions </label>
+                                            <div class="input-group">
+                                                <select name="in_payment" id="in_payment" class="form-control" onchange="check_for_fd(this, 'fixed_deposit_cert');">
+                                                    <option value="cash"{% if formdata.cash_settlement %} selected {% endif %}>Cash Settlement</option>
+                                                    <option value="fixed"{% if formdata.fixed_deposit %} selected {% endif %}>Fixed Deposit</option>
+                                                    {% for beneficiary in beneficiaries %}
+                                                    <option value="bb-{{ beneficiary.id }}"{% if beneficiary.id == formdata.beneficiary.id %} selected {% endif %}>{{ beneficiary }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <a class="btn btn-primary-outline p-2" href="{% if client.client_type == 'I' %}{% url 'clients:new_i_beneficiary' client.id %}{% else %}{% url 'clients:new_c_beneficiary' client.id %}{% endif %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4" id="fixed_deposit_cert_div">
+                                            <label for="fixed_deposit_cert">Fixed Deposit Certificate Number</label>
+                                            <input type="text" value="{{ formdata.fixed_deposit_cert }}" class="form-control" name="fixed_deposit_cert" id="fixed_deposit_cert" />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-8 g-1">
                                             <label for="out_payment">Outbound Payment Instructions </label>
                                             <div class="input-group">
                                                 <select name="out_payment" id="out_payment" class="form-control" onchange="check_for_fd(this, 'fixed_deposit_cert');">

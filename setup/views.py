@@ -5,7 +5,8 @@ from django.forms.models import model_to_dict
 from django.urls import reverse, reverse_lazy
 from core.models import DealStatus, Currency, IdentificationType
 from account.models import User
-from setup.models import CurrencyStock, BankFee, DFLLocalBank
+from setup.models import BankFee, DFLLocalBank
+from transactions.models import CurrencyStock
 from core.utils import get_currency_balance
 
 def check_admin(user):

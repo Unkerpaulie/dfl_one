@@ -2,12 +2,12 @@ from django.core.management.base import BaseCommand, CommandError
 import random, json
 from pathlib import Path
 from datetime import date, timedelta
-from clients.models import *
-from transactions.models import Transaction
-from setup.models import CurrencyStock, Currency, BankFee
-from core.models import DealStatus
-from account.models import User
 from faker import Faker
+from clients.models import *
+from transactions.models import Transaction, CurrencyStock 
+from setup.models import BankFee
+from core.models import Currency, DealStatus
+from account.models import User
 
 
 class Command(BaseCommand):

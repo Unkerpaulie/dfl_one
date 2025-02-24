@@ -1,7 +1,6 @@
 from django.db.models import Q
-from core.models import Currency
-from setup.models import CurrencyStock
-from transactions.models import Transaction
+# from core.models import Currency
+from transactions.models import Transaction, CurrencyStock  # Updated import
 
 
 def get_currency_balance(currency):
