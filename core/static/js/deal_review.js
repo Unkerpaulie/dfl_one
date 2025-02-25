@@ -332,7 +332,6 @@ function build_signatures() {
 
 function dealReview() {
     set_vars();
-    console.log(out_payment_choice);
     build_contract_heading();
     build_summary_box();
     build_inbound_payment();
