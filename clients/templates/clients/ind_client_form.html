@@ -18,7 +18,7 @@
                                     <div class="row mb-2">
                                         <div class="col-4">
                                             <label>
-                                                <input type="checkbox" class="checkbox" onclick="toggleDivVisibility(this, 'legacy_id')"> <span>This is a Legacy Client</span> 
+                                                <input type="checkbox" id="legacy_id_chk" class="checkbox" onclick="toggleDivVisibility(this, 'legacy_id')" {% if formdata.legacy_id %}checked{% endif %}> <span>This is a Legacy Client</span> 
                                             </label>
                                         </div>
                                         <div class="col-8" id="legacy_id">
@@ -112,7 +112,7 @@
                                     <div class="row mb-2">
                                         <div class="col g-1">
                                             <label>
-                                                <input type="checkbox" class="checkbox" onclick="toggleDivVisibility(this, 'mailing_address')"> <span>This Client has a different mailing address</span> 
+                                                <input type="checkbox" id="mailing_address_chk" class="checkbox" onclick="toggleDivVisibility(this, 'mailing_address')" {% if formdata.mailing_address %}checked{% endif %}> <span>This Client has a different mailing address</span> 
                                             </label>
                                         </div>
                                     </div>
@@ -190,7 +190,7 @@
                                         <div class="col">
                                             <label>
                                                 <input type="hidden" value="off" name="dual_citizen">
-                                                <input type="checkbox" class="checkbox" name="dual_citizen" onclick="toggleDivVisibility(this, 'dual_nationality')"> <span>Client has dual citizenship</span> 
+                                                <input type="checkbox"  id="dual_nationality_chk" class="checkbox" name="dual_citizen" onclick="toggleDivVisibility(this, 'dual_nationality')" {% if formdata.dual_citizen %}checked{% endif%}> <span>Client has dual citizenship</span> 
                                             </label>
                                         </div>
                                         <div class="col" id="dual_nationality">
@@ -339,7 +339,7 @@
                                         <div class="col-4">
                                             <label>
                                                 <input type="hidden" value="off" name="politically_exposed">
-                                                <input type="checkbox" class="checkbox" name="politically_exposed" onclick="toggleDivVisibility(this, 'political_details')" {% if formdata.politically_exposed %} checked {% endif %}> <span>Client is politically exposed</span> 
+                                                <input type="checkbox" id="political_details_chk" class="checkbox" name="politically_exposed" onclick="toggleDivVisibility(this, 'political_details')" {% if formdata.politically_exposed %} checked {% endif %}> <span>Client is politically exposed</span> 
                                             </label>
                                         </div>
                                         <div class="col-8" id="political_details">
@@ -373,14 +373,19 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Hide the div by default
-        document.getElementById("legacy_id").style.display = "none";
-        document.getElementById("mailing_address").style.display = "none";
-        document.getElementById("dual_nationality").style.display = "none";
-        document.getElementById("political_details").style.display = "none";
+        const toggle_divs = ["legacy_id", "mailing_address", "dual_nationality", "political_details"];
+        toggle_divs.forEach(divId => {
+            const div = document.getElementById(divId);
+            div.style.display = "none";
+        });
+        toggle_divs.forEach(divId => {
+            const checkbox = document.getElementById(divId + "_chk");
+            toggleDivVisibility(checkbox, divId);
+        });
     });
 
     function toggleDivVisibility(checkbox, divId) {
-        var div = document.getElementById(divId);
+        const div = document.getElementById(divId);
         if (checkbox.checked) {
             div.style.display = "block";
         } else {
@@ -389,7 +394,7 @@
     }
     
     function toggleEleRequired(checkbox, eleId) {
-        var ele = document.getElementById(eleId);
+        const ele = document.getElementById(eleId);
         if (checkbox.checked) {
             ele.required = true;
         } else {

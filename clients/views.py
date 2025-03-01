@@ -49,9 +49,9 @@ def new_individual(req):
     context['form_purpose'] = "new"
     countries = Country.objects.all()
     id_types = IdentificationType.objects.all()
-    mar_statuses = IndividualClient.mar_statuses
-    emp_statuses = IndividualClient.emp_statuses
-    trans_freq = IndividualClient.trans_freq
+    mar_statuses = IndividualClient.MARITAL_STATUSES
+    emp_statuses = IndividualClient.EMPLOYMENT_STATUSES
+    trans_freq = IndividualClient.TRANSACTION_FREQUENCIES
     context["countries"] = countries
     context["id_types"] = id_types
     context |= {"mar_statuses": mar_statuses, "emp_statuses": emp_statuses, "trans_freq": trans_freq}
@@ -172,9 +172,9 @@ def edit_individual(req, client_id):
     context['form_purpose'] = "edit"
     countries = Country.objects.all()
     id_types = IdentificationType.objects.all()
-    mar_statuses = IndividualClient.mar_statuses
-    emp_statuses = IndividualClient.emp_statuses
-    trans_freq = IndividualClient.trans_freq
+    mar_statuses = IndividualClient.MARITAL_STATUSES
+    emp_statuses = IndividualClient.EMPLOYMENT_STATUSES
+    trans_freq = IndividualClient.TRANSACTION_FREQUENCIES
     context["countries"] = countries
     context["id_types"] = id_types
     context |= {"mar_statuses": mar_statuses, "emp_statuses": emp_statuses, "trans_freq": trans_freq}
@@ -308,8 +308,8 @@ def new_corporate(req):
     context["section"] = "clients"
     context['form_purpose'] = "new"
     countries = Country.objects.all()
-    entity_types = CorporateClient.entity_types
-    trans_freq = IndividualClient.trans_freq
+    entity_types = CorporateClient.ENTITY_TYPES
+    trans_freq = IndividualClient.TRANSACTION_FREQUENCIES
     context |= {"countries": countries, "entity_types": entity_types, "trans_freq": trans_freq}
 
     # get fields from form
@@ -395,8 +395,8 @@ def edit_corporate(req, client_id):
     context["section"] = "clients"
     context['form_purpose'] = "edit"
     countries = Country.objects.all()
-    entity_types = CorporateClient.entity_types
-    trans_freq = IndividualClient.trans_freq
+    entity_types = CorporateClient.ENTITY_TYPES
+    trans_freq = IndividualClient.TRANSACTION_FREQUENCIES
     context |= {"countries": countries, "entity_types": entity_types, "trans_freq": trans_freq}
     # set form data
     context['formdata'] = client
