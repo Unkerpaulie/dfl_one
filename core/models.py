@@ -58,7 +58,7 @@ class LocalBankAccount(models.Model):
         abstract = True
 
     def __str__(self):
-        return f"{self.bank_name} {self.account_type} account"
+        return f"{self.bank_name} ({self.get_account_type_display()})"
 
 class InternationalBankAccount(models.Model):
     bank_name = models.CharField(max_length=100)
@@ -108,4 +108,4 @@ class InternationalBankAccount(models.Model):
         abstract = True
 
     def __str__(self):
-        return f"{self.bank_name} {self.account_type} account"
+        return f"{self.bank_name} ({self.currency.currency_code} {self.get_account_type_display()})"

@@ -11,11 +11,11 @@
                 <fieldset class="border my-2 px-2">
                     <legend class="w-auto px-2"><small>Bank Information</small></legend>
                     <div class="row mb-2">
-                        <div class="col-8">
+                        <div class="col-9">
                             <label for="bank_name">Bank Name *</label>
                             <input type="text" value="{{ formdata.bank_name }}" class="form-control" name="bank_name" required />
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                             <label for="currency">Currency *</label>
                             <select name="currency" class="form-control" required>
                                 {% for currency in currencies %}
@@ -239,19 +239,12 @@
 {% endblock content %}
 
 {% block script %}
+<script src="{% static "js/utils.js" %}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Hide the div by default
         document.getElementById("intermediary_info").style.display = "none";
     });
 
-    function toggleDivVisibility(checkbox, divId) {
-        var div = document.getElementById(divId);
-        if (checkbox.checked) {
-            div.style.display = "block";
-        } else {
-            div.style.display = "none";
-        }
-    }
 </script>
 {% endblock script %}

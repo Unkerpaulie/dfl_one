@@ -1,4 +1,5 @@
 {% extends "layout/base.html" %}
+{% load static %}
 {% block title %} - {{ page_title }}{% endblock title %}
 {% block content %}
     <div class="right_col" role="main">
@@ -370,6 +371,7 @@
 {% endblock content %}
 
 {% block script %}
+<script src="{% static "js/utils.js" %}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Hide the div by default
@@ -384,24 +386,6 @@
         });
     });
 
-    function toggleDivVisibility(checkbox, divId) {
-        const div = document.getElementById(divId);
-        if (checkbox.checked) {
-            div.style.display = "block";
-        } else {
-            div.style.display = "none";
-        }
-    }
-    
-    function toggleEleRequired(checkbox, eleId) {
-        const ele = document.getElementById(eleId);
-        if (checkbox.checked) {
-            ele.required = true;
-        } else {
-            ele.required = false;
-        }
-    }
-    
     
     function add_id_entry() {
         console.log("clicked");

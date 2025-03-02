@@ -11,6 +11,7 @@
                     <a href="{{ add_url }}" class="btn btn-primary">Add New Account</a>
                 </div>
             </div>
+            {% if bank_accounts %}
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -39,7 +40,10 @@
                     </tbody>
                 </table>
             </div>
+            {% else %}
+            <h4 class="text-center">No International Bank Accounts Found</h4>
+            {% endif %}
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}

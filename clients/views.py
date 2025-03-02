@@ -569,7 +569,7 @@ def new_beneficiary(req, client):
             return redirect('clients:beneficiaries_i', client_id=client.id)
         else:
             return redirect('clients:beneficiaries_c', client_id=client.id)
-    return render(req, "clients/beneficiary_form.html", context)
+    return render(req, "setup/international_account_form.html", context)
 
 @login_required
 def new_i_beneficiary(req, client_id):
@@ -667,7 +667,7 @@ def edit_beneficiary(req, client, beneficiary_id):
         beneficiary.save()
         messages.success(req, f"Beneficiary for client {client.client_list_entry} updated successfully.")
         return redirect('clients:home')
-    return render(req, "clients/beneficiary_form.html", context)
+    return render(req, "setup/international_account_form.html", context)
 
 @login_required
 def edit_i_beneficiary(req, client_id, beneficiary_id):
