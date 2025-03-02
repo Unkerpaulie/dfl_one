@@ -55,6 +55,9 @@
                         <li{% if page_title == "DFL Bank Accounts" %} class="active"{% endif %}>
                             <a href="{% url "setup:list_bank_accounts" %}"> DFL Bank Accounts </a>
                         </li>
+                        <li{% if page_title == "DFL International Bank Accounts" %} class="active"{% endif %}>
+                            <a href="{% url "setup:list_international_accounts" %}"> DFL International Bank Accounts </a>
+                        </li>
                     </ul>
                 </li>
                 {% endif %}

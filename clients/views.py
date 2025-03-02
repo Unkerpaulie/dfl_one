@@ -10,7 +10,7 @@ from .models import (
     BeneficiaryBank,
     ClientLocalBank
 )
-from core.models import Country, IdentificationType
+from core.models import Country, IdentificationType, Currency
 from setup.models import DFLLocalBank
 
 @login_required
@@ -487,12 +487,16 @@ def new_beneficiary(req, client):
     context["section"] = "clients"
     context['client'] = client
     context['form_purpose'] = "new"
+    context['show_special_instructions'] = True
     countries = Country.objects.all()
     context["countries"] = countries
+    context["currencies"] = Currency.objects.all().exclude(currency_code="TTD")
+
     
     # get fields from form    
     if req.method =="POST":
         # get form data
+        currency = req.POST['currency']
         bank_name = req.POST['bank_name'].strip()
         bank_address = req.POST['bank_address'].strip()
         bank_address2 = req.POST['bank_address2'].strip()
@@ -557,6 +561,7 @@ def new_beneficiary(req, client):
             intermediary_iban_code=intermediary_iban_code,
             intermediary_aba_code=intermediary_aba_code,
             special_instructions=special_instructions,
+            currency=Currency.objects.get(pk=currency)
         )
         beneficiary.save()
         messages.success(req, f"New beneficiary for client {client.client_list_entry} created successfully.")
@@ -585,13 +590,16 @@ def edit_beneficiary(req, client, beneficiary_id):
     context["section"] = "clients"
     context['client'] = client
     context['form_purpose'] = "edit"
+    context['show_special_instructions'] = True
     context["countries"] = countries
+    context["currencies"] = Currency.objects.all().exclude(currency_code="TTD")
     # set form data
     context['formdata'] = beneficiary
 
     # get fields from form
     if req.method =="POST":
         # get form data 
+        currency = req.POST['currency']
         bank_name = req.POST['bank_name'].strip()
         bank_address = req.POST['bank_address'].strip()
         bank_address2 = req.POST['bank_address2'].strip()
@@ -655,6 +663,7 @@ def edit_beneficiary(req, client, beneficiary_id):
         beneficiary.intermediary_iban_code=intermediary_iban_code
         beneficiary.intermediary_aba_code=intermediary_aba_code
         beneficiary.special_instructions=special_instructions
+        beneficiary.currency=Currency.objects.get(pk=currency)
         beneficiary.save()
         messages.success(req, f"Beneficiary for client {client.client_list_entry} updated successfully.")
         return redirect('clients:home')

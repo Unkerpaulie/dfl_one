@@ -36,7 +36,7 @@
                                 <td>
                                     <a href="{% url "transactions:new_transaction" client_list_entry.id %}" class="btn btn-sm btn-oval btn-primary mx-1" title="New Transaction"><i class="fa fa-money"></i></a>
                                     <a href="{% if client_list_entry.client_type == 'I' %}{% url 'clients:edit_individual' client_list_entry.id %}{% else %}{% url 'clients:edit_corporate' client_list_entry.id %}{% endif %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Client Info"><i class="fa fa-edit"></i></a>
-                                    <a href="{% if client_list_entry.client_type == 'I' %}{% url 'clients:beneficiaries_i' client_list_entry.id %}{% else %}{% url 'clients:beneficiaries_c' client_list_entry.id %}{% endif %}" class="btn btn-sm btn-oval btn-dark mx-1" title="Beneficiaries"><i class="fa fa-university"></i></a>
+                                    <a href="{% if client_list_entry.client_type == 'I' %}{% url 'clients:beneficiaries_i' client_list_entry.id %}{% else %}{% url 'clients:beneficiaries_c' client_list_entry.id %}{% endif %}" class="btn btn-sm btn-oval btn-dark mx-1" title="International Beneficiaries"><i class="fa fa-university"></i></a>
                                     <a href="{% if client_list_entry.client_type == 'I' %}{% url 'clients:list_bank_accounts_i' client_list_entry.id %}{% else %}{% url 'clients:list_bank_accounts_c' client_list_entry.id %}{% endif %}" class="btn btn-sm btn-oval btn-info mx-1" title="Local Bank Accounts"><i class="fa fa-university"></i></a>
                                 </td>
                             </tr>

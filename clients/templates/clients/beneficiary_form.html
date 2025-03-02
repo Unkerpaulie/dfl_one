@@ -16,9 +16,17 @@
                                 <fieldset class="border my-2 px-2">
                                     <legend class="w-auto px-2"><small>Beneficiary Bank Information</small></legend>
                                     <div class="row mb-2">
-                                        <div class="col g-1">
+                                        <div class="col-8">
                                             <label for="bank_name">Bank Name * </label>
                                             <input type="text" value="{{ formdata.bank_name }}" class="form-control" name="bank_name" required />
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="currency">Currency * </label>
+                                            <select name="currency" class="form-control" required>
+                                                {% for currency in currencies %}
+                                                <option value="{{ currency.id }}"{% if currency.id == formdata.currency.id %} selected {% endif %}>{{ currency }}</option>
+                                                {% endfor %}
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="row mb-2">
@@ -216,6 +224,7 @@
                                         </div>
                                     </div>
                                 </fieldset>
+                                {% if show_special_instructions %}
                                 <fieldset class="border my-2 px-2">
                                     <legend class="w-auto px-2"><small>Special Instructions (optional)</small></legend>
                                     <div class="row mb-2">
@@ -224,6 +233,7 @@
                                         </div>
                                     </div>
                                 </fieldset>
+                                {% endif %}
                                 <button type="submit" class="btn btn-lg btn-primary py-1 px-3">Submit</button>
                             </form>
                             <!-- end form for validations -->

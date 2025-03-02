@@ -1,0 +1,45 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %} - {{ page_title }}{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col">
+                    <a href="{{ add_url }}" class="btn btn-primary">Add New Account</a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Bank Name</th>
+                            <th>Currency</th>
+                            <th>Account Number</th>
+                            <th>SWIFT Code</th>
+                            <th>Country</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for account in bank_accounts %}
+                        <tr>
+                            <td>{{ account.bank_name }}</td>
+                            <td>{{ account.currency }}</td>
+                            <td>{{ account.account_number }}</td>
+                            <td>{{ account.swift_code }}</td>
+                            <td>{{ account.bank_country }}</td>
+                            <td>
+                                <a href="{% url edit_url_name account.id %}" class="btn btn-sm btn-primary">Edit</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

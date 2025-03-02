@@ -1,6 +1,6 @@
 from django.db import models
 from django.dispatch import Signal
-from core.models import Country, IdentificationType, LocalBankAccount
+from core.models import Country, IdentificationType, LocalBankAccount, InternationalBankAccount
 
 
 class ClientList(models.Model):
@@ -108,43 +108,10 @@ class IdentificationInfo(models.Model):
         return f"{self.client} {self.id_type}"
 
     
-class BeneficiaryBank(models.Model):
+class BeneficiaryBank(InternationalBankAccount):
     client = models.ForeignKey(ClientList, related_name="beneficiaries", on_delete=models.CASCADE)
-    bank_name = models.CharField(max_length=100)
-    bank_address = models.CharField(max_length=200)
-    bank_address2 = models.CharField(max_length=200, null=True, blank=True)
-    bank_city = models.CharField(max_length=150)
-    bank_state = models.CharField(max_length=20, null=True, blank=True)
-    bank_zip = models.CharField(max_length=10, null=True, blank=True)
-    bank_country = models.ForeignKey(Country, related_name="banks_from_here", on_delete=models.CASCADE)
-    account_number = models.CharField(max_length=30)
-    swift_code = models.CharField(max_length=30, null=True, blank=True)
-    iban_code = models.CharField(max_length=30, null=True, blank=True)
-    aba_code = models.CharField(max_length=30, null=True, blank=True)
-
-    recipient_name = models.CharField(max_length=100)
-    recipient_address = models.CharField(max_length=200)
-    recipient_address2 = models.CharField(max_length=200, null=True, blank=True)
-    recipient_city = models.CharField(max_length=150)
-    recipient_state = models.CharField(max_length=20, null=True, blank=True)
-    recipient_zip = models.CharField(max_length=10, null=True, blank=True)
-    recipient_country = models.ForeignKey(Country, related_name="recipients_from_here", on_delete=models.CASCADE)
-    
-    intermediary_bank_name = models.CharField(max_length=100, null=True, blank=True)
-    intermediary_bank_address = models.CharField(max_length=200, null=True, blank=True)
-    intermediary_bank_address2 = models.CharField(max_length=200, null=True, blank=True)
-    intermediary_bank_city = models.CharField(max_length=150, null=True, blank=True)
-    intermediary_bank_state = models.CharField(max_length=20, null=True, blank=True)
-    intermediary_bank_zip = models.CharField(max_length=10, null=True, blank=True)
-    intermediary_bank_country = models.ForeignKey(Country, related_name="intermediary_banks_from_here", on_delete=models.CASCADE, null=True, blank=True)
-    intermediary_account_number = models.CharField(max_length=30, null=True, blank=True)
-    intermediary_swift_code = models.CharField(max_length=30, null=True, blank=True)
-    intermediary_iban_code = models.CharField(max_length=30, null=True, blank=True)
-    intermediary_aba_code = models.CharField(max_length=30, null=True, blank=True)
     special_instructions = models.TextField(null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.client}: {self.bank_name} - {self.account_number}"
     
 class ClientLocalBank(LocalBankAccount):
     client = models.ForeignKey(ClientList, related_name="local_banks", on_delete=models.CASCADE)

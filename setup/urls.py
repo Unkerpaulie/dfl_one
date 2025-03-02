@@ -25,4 +25,7 @@ urlpatterns = [
     path('bank_accounts/', views.list_bank_accounts, name="list_bank_accounts"),
     path('bank_accounts/add/', views.add_bank_account, name="add_bank_account"),
     path('bank_accounts/<int:bank_account_id>/edit/', views.edit_bank_account, name="edit_bank_account"),
+    path('international-accounts/', views.list_international_accounts, name='list_international_accounts'),
+    path('international-accounts/add/', views.add_international_account, name='add_international_account'),
+    path('international-accounts/edit/<int:account_id>/', views.edit_international_account, name='edit_international_account'),
 ]

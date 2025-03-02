@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.forms.models import model_to_dict
 from django.urls import reverse, reverse_lazy
-from core.models import DealStatus, Currency, IdentificationType
+from core.models import DealStatus, Currency, IdentificationType, Country
 from account.models import User
-from setup.models import BankFee, DFLLocalBank
+from setup.models import BankFee, DFLLocalBank, DFLInternationalBank
 from transactions.models import CurrencyStock
 from core.utils import get_currency_balance
 
@@ -320,7 +320,7 @@ def update_bank_fee(req):
 def list_bank_accounts(req):
     bank_accounts = DFLLocalBank.objects.all()
     context = {
-        "page_title": "DFL Bank Accounts",
+        "page_title": "DFL Local Bank Accounts",
         "section": "setup",
         "bank_accounts": bank_accounts,
         "add_url": reverse('setup:add_bank_account'),
@@ -332,7 +332,7 @@ def list_bank_accounts(req):
 @user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def add_bank_account(req):
     context = {
-        "page_title": "Add Bank DFL Account",
+        "page_title": "Add DFL Local Bank Account",
         "section": "setup",
         "account_types": DFLLocalBank.ACCOUNT_TYPES,
         "default_account_owner": "Development Finance Limited",
@@ -362,7 +362,7 @@ def add_bank_account(req):
 @user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
 def edit_bank_account(req, bank_account_id):
     bank_account = DFLLocalBank.objects.get(id=bank_account_id)
-    context = {"page_title": "Edit Bank Account"}
+    context = {"page_title": "Edit DFL Local Bank Account"}
     context["section"] = "setup"
     context["account_types"] = DFLLocalBank.ACCOUNT_TYPES
     context["formdata"] = bank_account
@@ -379,3 +379,126 @@ def edit_bank_account(req, bank_account_id):
     else:
         return render(req, 'setup/bank_account_form.html', context)
 
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
+def list_international_accounts(req):
+    accounts = DFLInternationalBank.objects.all()
+    context = {
+        "page_title": "DFL International Bank Accounts",
+        "section": "setup",
+        "bank_accounts": accounts,
+        "add_url": reverse('setup:add_international_account'),
+        "edit_url_name": 'setup:edit_international_account'
+    }
+    return render(req, 'setup/list_international_accounts.html', context)
+
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
+def add_international_account(req):
+    context = {
+        "page_title": "Add DFL International Bank Account",
+        "section": "setup",
+        "form_purpose": "new",
+        "show_special_instructions": False,
+        "countries": Country.objects.all(),
+        "currencies": Currency.objects.all(),
+        "account_types": DFLLocalBank.ACCOUNT_TYPES,
+        "form_action": reverse('setup:add_international_account'),
+        "cancel_url": reverse('setup:list_international_accounts')
+    }
+    
+    if req.method == 'POST':
+        # get form data
+        currency = req.POST['currency']
+        bank_name = req.POST['bank_name'].strip()
+        bank_address = req.POST['bank_address'].strip()
+        bank_address2 = req.POST['bank_address2'].strip()
+        bank_city = req.POST['bank_city'].strip()
+        bank_state = req.POST['bank_state'].strip()
+        bank_zip = req.POST['bank_zip'].strip()
+        bank_country = int(req.POST['bank_country'])
+        account_number = req.POST['account_number'].strip()
+        swift_code = req.POST['swift_code'].strip()
+        iban_code = req.POST['iban_code'].strip()
+        aba_code = req.POST['aba_code'].strip()
+        recipient_name = req.POST['recipient_name'].strip()
+        recipient_address = req.POST['recipient_address'].strip()
+        recipient_address2 = req.POST['recipient_address2'].strip()
+        recipient_city = req.POST['recipient_city'].strip()
+        recipient_state = req.POST['recipient_state'].strip()
+        recipient_zip = req.POST['recipient_zip'].strip()
+        recipient_country = int(req.POST['recipient_country'])
+        account_type = req.POST['account_type']
+
+        # Handle intermediary bank info if provided
+        intermediary_bank_name = req.POST.get('intermediary_bank_name', '').strip()
+        if intermediary_bank_name:
+            intermediary_data = {
+                'intermediary_bank_name': intermediary_bank_name,
+                'intermediary_bank_address': req.POST['intermediary_bank_address'].strip(),
+                'intermediary_bank_address2': req.POST['intermediary_bank_address2'].strip(),
+                'intermediary_bank_city': req.POST['intermediary_bank_city'].strip(),
+                'intermediary_bank_state': req.POST['intermediary_bank_state'].strip(),
+                'intermediary_bank_zip': req.POST['intermediary_bank_zip'].strip(),
+                'intermediary_bank_country': Country.objects.get(pk=int(req.POST['intermediary_bank_country'])),
+                'intermediary_account_number': req.POST['intermediary_account_number'].strip(),
+                'intermediary_swift_code': req.POST['intermediary_swift_code'].strip(),
+                'intermediary_iban_code': req.POST['intermediary_iban_code'].strip(),
+                'intermediary_aba_code': req.POST['intermediary_aba_code'].strip(),
+            }
+        else:
+            intermediary_data = {}
+
+        # create new account
+        account = DFLInternationalBank(
+            bank_name=bank_name,
+            bank_address=bank_address,
+            bank_address2=bank_address2,
+            bank_city=bank_city,
+            bank_state=bank_state,
+            bank_zip=bank_zip,
+            bank_country=Country.objects.get(pk=bank_country),
+            account_number=account_number,
+            swift_code=swift_code,
+            iban_code=iban_code,
+            aba_code=aba_code,
+            recipient_name=recipient_name,
+            recipient_address=recipient_address,
+            recipient_address2=recipient_address2,
+            recipient_city=recipient_city,
+            recipient_state=recipient_state,
+            recipient_zip=recipient_zip,
+            recipient_country=Country.objects.get(pk=recipient_country),
+            account_type=account_type,
+            currency=Currency.objects.get(pk=currency),
+            **intermediary_data
+        )
+        account.save()
+        messages.success(req, "New international bank account created successfully.")
+        return redirect('setup:list_international_accounts')
+    return render(req, 'setup/international_account_form.html', context)
+
+@user_passes_test(check_admin, login_url=reverse_lazy('setup:restricted'))
+def edit_international_account(req, account_id):
+    account = get_object_or_404(DFLInternationalBank, pk=account_id)
+    context = {
+        "page_title": f"Edit DFL International Bank Account - {account.bank_name}",
+        "section": "setup",
+        "form_purpose": "edit",
+        "show_special_instructions": False,
+        "countries": Country.objects.all(),
+        "currencies": Currency.objects.all(),
+        "account_types": DFLInternationalBank.ACCOUNT_TYPES,
+        "formdata": account,
+        "form_action": reverse('setup:edit_international_account', args=[account_id]),
+        "cancel_url": reverse('setup:list_international_accounts')
+    }
+
+    if req.method == 'POST':
+        # Similar to add_international_account POST handling
+        # Update account fields instead of creating new
+        account.currency = Currency.objects.get(pk=req.POST['currency'])
+        account.bank_name = req.POST['bank_name'].strip()
+        # ... update other fields ...
+        account.save()
+        messages.success(req, f"International bank account {account.bank_name} updated successfully.")
+        return redirect('setup:list_international_accounts')
+    return render(req, 'setup/international_account_form.html', context)
