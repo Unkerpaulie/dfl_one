@@ -53,13 +53,20 @@ function check_inpayment() {
     var in_payment = document.getElementById("in_payment_type").value;
     if (in_payment == "cash") {
         hide_div("check");
-        hide_div("dfl_bank");
+        hide_div("local_bank");
+        hide_div("intl_bank");
     } else if (in_payment == "check") {
         show_div("check");
-        hide_div("dfl_bank");
-    } else {
+        hide_div("local_bank");
+        hide_div("intl_bank");        
+    } else if (in_payment == "local") {
         hide_div("check");
-        show_div("dfl_bank");        
+        show_div("local_bank");                
+        hide_div("intl_bank");                
+    } else if (in_payment == "foreign") {
+        hide_div("check");
+        hide_div("local_bank");
+        show_div("intl_bank");
     }
 }
 

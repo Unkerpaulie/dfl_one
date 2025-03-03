@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Transaction, CurrencyStock
 from clients.models import ClientList, BeneficiaryBank, ClientLocalBank
 from core.models import Currency, DealStatus
-from setup.models import BankFee, DFLLocalBank
+from setup.models import BankFee, DFLLocalBank, DFLInternationalBank
 
 
 # Create your views here.
@@ -37,7 +37,8 @@ def new_transaction(req, client_id):
         "transaction_types": Transaction.TRANSACTION_TYPES, 
         "currencies": Currency.objects.all(), 
         "deal_statuses": DealStatus.objects.all(),  
-        "dfl_banks": DFLLocalBank.objects.all()
+        "local_banks": DFLLocalBank.objects.all(),
+        "intl_banks": DFLInternationalBank.objects.all()
         }
     context["deal_id"] = Transaction.objects.latest("id").id + 1 
 
@@ -55,14 +56,15 @@ def new_transaction(req, client_id):
         deal_status = int(req.POST.get("deal_status"))
         in_payment_type = req.POST.get("in_payment_type")
         check_number = req.POST.get("check_number")
-        dfl_bank_account = int(req.POST.get("dfl_bank_account")) if req.POST.get("in_payment_type") in ["local", "foreign"] else None
+        dfl_local_bank_account = int(req.POST.get("dfl_local_bank_account")) if req.POST.get("in_payment_type") == "local" else None
+        dfl_intl_bank_account = int(req.POST.get("dfl_intl_bank_account")) if req.POST.get("in_payment_type") == "foreign" else None
         # out_payment values: cash, fixed, bb-
         out_payment = req.POST.get("out_payment")
         cash_settlement = out_payment == "cash"
         fixed_deposit = out_payment == "fixed"
         fixed_deposit_cert = req.POST.get("fixed_deposit_cert")
-        beneficiary = BeneficiaryBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("bb-") else None
-        # local_bank_account = ClientLocalBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("lb-") else None
+        client_beneficiary_account = BeneficiaryBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("bb-") else None
+        client_local_bank_account = ClientLocalBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("lb-") else None
         payment_details = req.POST.get("payment_details")
 
         transaction = Transaction(
@@ -80,11 +82,13 @@ def new_transaction(req, client_id):
             deal_status=DealStatus.objects.get(id=deal_status), 
             in_payment_type=in_payment_type,
             check_number=check_number,
-            dfl_bank_account=DFLLocalBank.objects.get(id=dfl_bank_account) if dfl_bank_account else None,
+            dfl_local_bank_account=DFLLocalBank.objects.get(id=dfl_local_bank_account) if dfl_local_bank_account else None,
+            dfl_intl_bank_account=DFLLocalBank.objects.get(id=dfl_intl_bank_account) if dfl_local_bank_account else None,
             cash_settlement=cash_settlement,
             fixed_deposit=fixed_deposit,
             fixed_deposit_cert=fixed_deposit_cert,
-            beneficiary=beneficiary,
+            client_beneficiary_account=client_beneficiary_account,
+            client_local_bank_account=client_local_bank_account,
             payment_details=payment_details,
             trader=req.user, 
             last_updated_by=req.user
@@ -137,7 +141,8 @@ def edit_transaction(req, client_id, transaction_id):
         "transaction_types": Transaction.TRANSACTION_TYPES, 
         "currencies": Currency.objects.all(), 
         "deal_statuses": DealStatus.objects.all(),  
-        "dfl_banks": DFLLocalBank.objects.all()
+        "local_banks": DFLLocalBank.objects.all(),
+        "intl_banks": DFLInternationalBank.objects.all()
         }
     context["deal_id"] = transaction_id
 
@@ -146,8 +151,10 @@ def edit_transaction(req, client_id, transaction_id):
         out_payment = "cash"
     elif transaction.fixed_deposit:
         out_payment = "fixed"
-    elif transaction.beneficiary is not None:
-        out_payment = f"bb-{transaction.beneficiary.id}"
+    elif transaction.client_local_bank_account is not None:
+        out_payment = f"bb-{transaction.client_local_bank_account.id}"
+    elif transaction.client_beneficiary_account is not None:
+        out_payment = f"bb-{transaction.client_beneficiary_account.id}"
     context["formdata"] = transaction
 
     if req.method == "POST":
@@ -166,7 +173,8 @@ def edit_transaction(req, client_id, transaction_id):
         cash_settlement = out_payment == "cash"
         fixed_deposit = out_payment == "fixed"
         fixed_deposit_cert = req.POST.get("fixed_deposit_cert")
-        beneficiary = BeneficiaryBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("bb-") else None
+        client_beneficiary_account = BeneficiaryBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("bb-") else None
+        client_local_bank_account = ClientLocalBank.objects.get(id=int(out_payment.split("-")[1])) if out_payment.startswith("lb-") else None
         payment_details = req.POST.get("payment_details")
         
         # update transaction data from form
@@ -185,7 +193,8 @@ def edit_transaction(req, client_id, transaction_id):
         transaction.cash_settlement = cash_settlement
         transaction.fixed_deposit = fixed_deposit
         transaction.fixed_deposit_cert = fixed_deposit_cert
-        transaction.beneficiary = BeneficiaryBank.objects.filter(id=beneficiary).first()
+        transaction.client_beneficiary_account = client_beneficiary_account
+        transaction.client_local_bank_account = client_local_bank_account
         transaction.payment_details = payment_details
         transaction.last_updated_by = req.user
         transaction.save()

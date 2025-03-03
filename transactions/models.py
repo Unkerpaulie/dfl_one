@@ -2,7 +2,7 @@ from django.db import models
 from clients.models import ClientList, BeneficiaryBank, ClientLocalBank
 from core.models import Currency, DealStatus
 from account.models import User
-from setup.models import DFLLocalBank
+from setup.models import DFLLocalBank, DFLInternationalBank
 
 
 class Transaction(models.Model):
@@ -24,13 +24,14 @@ class Transaction(models.Model):
     # inbound payment options to DFL
     in_payment_type = models.CharField(max_length=10, choices=INPAYMENT_TYPES)
     check_number = models.CharField(max_length=20, null=True, blank=True)
-    dfl_bank_account = models.ForeignKey(DFLLocalBank, on_delete=models.CASCADE, null=True, blank=True)
+    dfl_local_bank_account = models.ForeignKey(DFLLocalBank, on_delete=models.CASCADE, null=True, blank=True)
+    dfl_intl_bank_account = models.ForeignKey(DFLInternationalBank, on_delete=models.CASCADE, null=True, blank=True)
     # outbound payment options to client
-    local_bank_account = models.ForeignKey(ClientLocalBank, on_delete=models.CASCADE, null=True, blank=True)
     cash_settlement = models.BooleanField(default=False)
     fixed_deposit = models.BooleanField(default=False)
     fixed_deposit_cert = models.CharField(max_length=255, null=True, blank=True)
-    beneficiary = models.ForeignKey(BeneficiaryBank, on_delete=models.CASCADE, null=True, blank=True)
+    client_local_bank_account = models.ForeignKey(ClientLocalBank, on_delete=models.CASCADE, null=True, blank=True)
+    client_beneficiary_account = models.ForeignKey(BeneficiaryBank, on_delete=models.CASCADE, null=True, blank=True)
     payment_details = models.CharField(max_length=255, null=True, blank=True)
 
     trader = models.ForeignKey(User, related_name="trader", on_delete=models.CASCADE)

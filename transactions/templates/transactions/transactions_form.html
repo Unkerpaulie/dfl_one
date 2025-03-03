@@ -145,11 +145,19 @@
                                                 <label for="check_number">Check Number</label>
                                                 <input type="text" value="{{ formdata.check_number|default_if_none:"" }}" class="form-control" name="check_number" id="check_number" />
                                             </div>
-                                            <div id="dfl_bank_div">
-                                                <label for="dfl_bank_account">DFL Bank Account</label>
-                                                <select name="dfl_bank_account" id="dfl_bank_account" class="form-control">
-                                                    {% for dfl_bank in dfl_banks %}
-                                                    <option value="{{ dfl_bank.id }}"{% if dfl_bank.id == formdata.dfl_bank_account.id %} selected {% endif %}>{{ dfl_bank }}</option>    
+                                            <div id="local_bank_div">
+                                                <label for="dfl_local_bank_account">Local Bank Account</label>
+                                                <select name="dfl_local_bank_account" id="dfl_local_bank_account" class="form-control">
+                                                    {% for dfl_local_bank in local_banks %}
+                                                    <option value="{{ dfl_local_bank.id }}"{% if dfl_local_bank.id == formdata.dfl_local_bank_account.id %} selected {% endif %}>{{ dfl_local_bank }}</option>    
+                                                    {% endfor %}    
+                                                </select>    
+                                            </div>
+                                            <div id="intl_bank_div">
+                                                <label for="dfl_intl_bank_account">International Bank Account</label>
+                                                <select name="dfl_intl_bank_account" id="dfl_intl_bank_account" class="form-control">
+                                                    {% for dfl_intl_bank in intl_banks %}
+                                                    <option value="{{ dfl_intl_bank.id }}"{% if dfl_intl_bank.id == formdata.dfl_intl_bank_account.id %} selected {% endif %}>{{ dfl_intl_bank }}</option>    
                                                     {% endfor %}    
                                                 </select>    
                                             </div>
@@ -167,7 +175,7 @@
                                                     {% endfor %}
                                                 </select>
                                                 <div class="input-group-append">
-                                                    <a class="btn btn-primary-outline p-2" href="{% if client.client_type == 'I' %}{% url 'clients:new_i_beneficiary' client.id %}{% else %}{% url 'clients:new_c_beneficiary' client.id %}{% endif %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
+                                                    <a class="btn btn-primary-outline p-2" href="{% if client.client_type == 'I' %}{% url 'clients:new_i_beneficiary' client.id %}{% else %}{% url 'clients:new_c_beneficiary' client.id %}{% endif %}" role="button"><i class="fa fa-plus"></i> New Beneficiary</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -189,7 +197,7 @@
                                                     {% endfor %}
                                                 </select>
                                                 <div class="input-group-append">
-                                                    <a class="btn btn-primary-outline p-2" href="{% if client.client_list_entry.client_type == 'I' %}{% url 'clients:new_i_beneficiary' client.id %}{% else %}{% url 'clients:new_c_beneficiary' client.id %}{% endif %}" role="button"><i class="fa fa-plus"></i> New Beneficary</a>
+                                                    <a class="btn btn-primary-outline p-2" href="{% if client.client_type == 'I' %}{% url 'clients:new_i_beneficiary' client.id %}{% else %}{% url 'clients:new_c_beneficiary' client.id %}{% endif %}" role="button"><i class="fa fa-plus"></i> New Beneficiary</a>
                                                 </div>
                                             </div>
                                         </div>
