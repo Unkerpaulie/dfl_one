@@ -96,7 +96,6 @@ class InternationalBankAccount(models.Model):
         on_delete=models.CASCADE, 
         null=True, 
         blank=True)
-    intermediary_account_number = models.CharField(max_length=30, null=True, blank=True)
     intermediary_swift_code = models.CharField(max_length=30, null=True, blank=True)
     intermediary_iban_code = models.CharField(max_length=30, null=True, blank=True)
     intermediary_aba_code = models.CharField(max_length=30, null=True, blank=True)

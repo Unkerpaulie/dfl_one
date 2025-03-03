@@ -9,6 +9,56 @@
         <div class="card">
             <div class="card-body">
                 <fieldset class="border my-2 px-2">
+                    <legend class="w-auto px-2"><small>Recipient Information</small></legend>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="recipient_name">Recipient Name *</label>
+                            <input type="text" value="{% if formdata %}{{ formdata.recipient_name }}{% else %}{{ default_account_owner }}{% endif %}" class="form-control" name="recipient_name" required />
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="recipient_address">Recipient Address *</label>
+                            <input type="text" value="{{ formdata.recipient_address }}" class="form-control" name="recipient_address" required />
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="recipient_address2">Recipient Address (line 2)</label>
+                            <input type="text" value="{{ formdata.recipient_address2|default_if_none:"" }}" class="form-control" name="recipient_address2" />
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="recipient_city">City *</label>
+                            <input type="text" value="{{ formdata.recipient_city }}" class="form-control" name="recipient_city" required />
+                        </div>
+                        <div class="col">
+                            <label for="recipient_state">State/Province</label>
+                            <input type="text" value="{{ formdata.recipient_state }}" class="form-control" name="recipient_state" />
+                        </div>
+                        <div class="col">
+                            <label for="recipient_zip">Zip Code</label>
+                            <input type="text" value="{{ formdata.recipient_zip }}" class="form-control" name="recipient_zip" />
+                        </div>
+                        <div class="col">
+                            <label for="recipient_country">Country *</label>
+                            <select name="recipient_country" class="form-control" required>
+                                {% if form_purpose == "new" %}
+                                {% for country in countries %}
+                                <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
+                                {% endfor %}
+                                {% else %}
+                                {% for country in countries %}
+                                <option value="{{ country.id }}" {% if country.country_code == formdata.recipient_country.country_code %} selected {% endif %}>{{ country.country }}</option>
+                                {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border my-2 px-2">
                     <legend class="w-auto px-2"><small>Bank Information</small></legend>
                     <div class="row mb-2">
                         <div class="col-9">
@@ -38,19 +88,19 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col">
-                            <label for="bank_city">Bank City *</label>
+                            <label for="bank_city">City *</label>
                             <input type="text" value="{{ formdata.bank_city }}" class="form-control" name="bank_city" required />
                         </div>
                         <div class="col">
-                            <label for="bank_state">Bank State/Province</label>
+                            <label for="bank_state">State/Province</label>
                             <input type="text" value="{{ formdata.bank_state }}" class="form-control" name="bank_state" />
                         </div>
                         <div class="col">
-                            <label for="bank_zip">Bank Zip Code</label>
+                            <label for="bank_zip">Zip Code</label>
                             <input type="text" value="{{ formdata.bank_zip }}" class="form-control" name="bank_zip" />
                         </div>
                         <div class="col">
-                            <label for="bank_country">Bank Country *</label>
+                            <label for="bank_country">Country *</label>
                             <select name="bank_country" class="form-control" required>
                                 {% if form_purpose == "new" %}
                                 {% for country in countries %}
@@ -70,11 +120,19 @@
                             <input type="text" value="{{ formdata.account_number }}" name="account_number" class="form-control" required />
                         </div>
                         <div class="col">
-                            <label for="swift_code">Swift Code</label>
-                            <input type="text" value="{{ formdata.swift_code|default_if_none:"" }}" name="swift_code" class="form-control" />
+                            <label for="account_type">Account Type *</label>
+                            <select name="account_type" class="form-control" required>
+                                {% for acc_type in account_types %}
+                                <option value="{{ acc_type.0 }}" {% if acc_type.0 == formdata.account_type %} selected {% endif %}>{{ acc_type.1 }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                     <div class="row mb-2">
+                        <div class="col">
+                            <label for="swift_code">Swift Code</label>
+                            <input type="text" value="{{ formdata.swift_code|default_if_none:"" }}" name="swift_code" class="form-control" />
+                        </div>
                         <div class="col">
                             <label for="aba_code">ABA/Transit Number</label>
                             <input type="text" value="{{ formdata.aba_code }}" name="aba_code" class="form-control" />
@@ -82,56 +140,6 @@
                         <div class="col">
                             <label for="iban_code">IBAN Number</label>
                             <input type="text" value="{{ formdata.iban_code|default_if_none:"" }}" name="iban_code" class="form-control" />
-                        </div>
-                    </div>
-                </fieldset>
-
-                <fieldset class="border my-2 px-2">
-                    <legend class="w-auto px-2"><small>Recipient Information</small></legend>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <label for="recipient_name">Recipient Name *</label>
-                            <input type="text" value="{{ formdata.recipient_name }}" class="form-control" name="recipient_name" required />
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <label for="recipient_address">Recipient Address *</label>
-                            <input type="text" value="{{ formdata.recipient_address }}" class="form-control" name="recipient_address" required />
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <label for="recipient_address2">Recipient Address (line 2)</label>
-                            <input type="text" value="{{ formdata.recipient_address2|default_if_none:"" }}" class="form-control" name="recipient_address2" />
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <label for="recipient_city">Recipient City *</label>
-                            <input type="text" value="{{ formdata.recipient_city }}" class="form-control" name="recipient_city" required />
-                        </div>
-                        <div class="col">
-                            <label for="recipient_state">Recipient State/Province</label>
-                            <input type="text" value="{{ formdata.recipient_state }}" class="form-control" name="recipient_state" />
-                        </div>
-                        <div class="col">
-                            <label for="recipient_zip">Recipient Zip Code</label>
-                            <input type="text" value="{{ formdata.recipient_zip }}" class="form-control" name="recipient_zip" />
-                        </div>
-                        <div class="col">
-                            <label for="recipient_country">Recipient Country *</label>
-                            <select name="recipient_country" class="form-control" required>
-                                {% if form_purpose == "new" %}
-                                {% for country in countries %}
-                                <option value="{{ country.id }}"{% if country.country_code == "TT" %} selected{% endif %}>{{ country.country }}</option>
-                                {% endfor %}
-                                {% else %}
-                                {% for country in countries %}
-                                <option value="{{ country.id }}" {% if country.country_code == formdata.recipient_country.country_code %} selected {% endif %}>{{ country.country }}</option>
-                                {% endfor %}
-                                {% endif %}
-                            </select>
                         </div>
                     </div>
                 </fieldset>
@@ -167,21 +175,19 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col">
-                            <label for="intermediary_bank_city">Intermediary Bank City</label>
+                            <label for="intermediary_bank_city">City</label>
                             <input type="text" value="{{ formdata.intermediary_bank_city|default_if_none:"" }}" class="form-control" name="intermediary_bank_city" />
                         </div>
-                    </div>
-                    <div class="row mb-2">
                         <div class="col">
-                            <label for="intermediary_bank_state">Intermediary Bank State/Province</label>
+                            <label for="intermediary_bank_state">State/Province</label>
                             <input type="text" value="{{ formdata.intermediary_bank_state }}" class="form-control" name="intermediary_bank_state" />
                         </div>
                         <div class="col">
-                            <label for="intermediary_bank_zip">Intermediary Bank Zip Code</label>
+                            <label for="intermediary_bank_zip">Zip Code</label>
                             <input type="text" value="{{ formdata.intermediary_bank_zip }}" class="form-control" name="intermediary_bank_zip" />
                         </div>
                         <div class="col">
-                            <label for="intermediary_bank_country">Intermediary Bank Country</label>
+                            <label for="intermediary_bank_country">Country</label>
                             <select name="intermediary_bank_country" class="form-control">
                                 {% if form_purpose == "new" %}
                                 {% for country in countries %}
@@ -197,21 +203,15 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col">
-                            <label for="intermediary_account_number">Intermediary Bank Account Number</label>
-                            <input type="text" value="{{ formdata.intermediary_account_number }}" name="intermediary_account_number" class="form-control" />
-                        </div>
-                        <div class="col">
-                            <label for="intermediary_swift_code">Intermediary Swift Code</label>
+                            <label for="intermediary_swift_code">Swift Code</label>
                             <input type="text" value="{{ formdata.intermediary_swift_code|default_if_none:"" }}" name="intermediary_swift_code" class="form-control" />
                         </div>
-                    </div>
-                    <div class="row mb-2">
                         <div class="col">
-                            <label for="intermediary_aba_code">Intermediary ABA/Transit Number</label>
-                            <input type="text" value="{{ formdata.intermediary_aba_code }}" name="intermediary_aba_code" class="form-control" />
+                            <label for="intermediary_aba_code">ABA/Transit Number</label>
+                            <input type="text" value="{{ formdata.intermediary_aba_code|default_if_none:"" }}" name="intermediary_aba_code" class="form-control" />
                         </div>
                         <div class="col">
-                            <label for="intermediary_iban_code">Intermediary IBAN Number</label>
+                            <label for="intermediary_iban_code">IBAN Number</label>
                             <input type="text" value="{{ formdata.intermediary_iban_code|default_if_none:"" }}" name="intermediary_iban_code" class="form-control" />
                         </div>
                     </div>

@@ -19,8 +19,6 @@
                             <th>Bank Name</th>
                             <th>Currency</th>
                             <th>Account Number</th>
-                            <th>SWIFT Code</th>
-                            <th>Country</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -30,10 +28,8 @@
                             <td>{{ account.bank_name }}</td>
                             <td>{{ account.currency }}</td>
                             <td>{{ account.account_number }}</td>
-                            <td>{{ account.swift_code }}</td>
-                            <td>{{ account.bank_country }}</td>
                             <td>
-                                <a href="{% url edit_url_name account.id %}" class="btn btn-sm btn-primary">Edit</a>
+                                <a href="{% url edit_url_name account.id %}" class="btn btn-sm btn-oval btn-warning mx-1" title="Edit Account Info"><i class="fa fa-edit"></i></a>
                             </td>
                         </tr>
                         {% endfor %}

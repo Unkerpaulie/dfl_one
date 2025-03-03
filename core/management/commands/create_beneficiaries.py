@@ -47,7 +47,6 @@ class Command(BaseCommand):
                     intermediary_bank_state=fake.state_abbr() if random.random() > 0.7 else "" if add_intermediary else "",
                     intermediary_bank_zip=fake.postalcode() if random.random() > 0.7 else "" if add_intermediary else "",
                     intermediary_bank_country=Country.objects.get(pk=random.choice(country_ids)) if add_intermediary else None,
-                    intermediary_account_number=fake.ean() if add_intermediary else "",
                     intermediary_swift_code=fake.swift() if random.random() > 0.6 else "" if add_intermediary else "",
                     intermediary_iban_code=fake.bban() if random.random() > 0.95 else "" if add_intermediary else "",
                     intermediary_aba_code=fake.aba() if random.random() > 0.9 else "" if add_intermediary else "",

@@ -206,15 +206,9 @@
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col">
-                                            <label for="intermediary_account_number">Intermediary Bank Account Number</label>
-                                            <input type="text" value="{{ formdata.intermediary_account_number }}" name="intermediary_account_number" class="form-control" /> 
-                                        </div>
-                                        <div class="col">
                                             <label for="intermediary_swift_code">Intermediary Swift Code </label>
                                             <input type="text" value="{{ formdata.intermediary_swift_code|default_if_none:"" }}" name="intermediary_swift_code" class="form-control" /> 
                                         </div>
-                                    </div>
-                                    <div class="row mb-2">
                                         <div class="col">
                                             <label for="intermediary_aba_code">Intermediary ABA/Transit Number</label>
                                             <input type="text" value="{{ formdata.intermediary_aba_code }}" name="intermediary_aba_code" class="form-control" /> 

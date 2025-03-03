@@ -66,7 +66,7 @@ function set_vars() {
     fixed_deposit_cert = form_elements["fixed_deposit_cert"].value;
 }
 
-
+// contract heading details
 function build_contract_heading() {
     var html_div = `
             <div class="row">
@@ -87,6 +87,7 @@ function build_contract_heading() {
     document.getElementById("review-contract_heading").innerHTML = html_div;
 }
 
+// summary box details
 function build_summary_box() {
     var html_div = `
             <div>We now confirm details of the above transaction as follows:</div>
@@ -120,6 +121,7 @@ function build_summary_box() {
     document.getElementById("review-summary_box").innerHTML = html_div;
 }
 
+// inbound payment
 function cash_details_in() {
     var html_div = `
             <div>
@@ -139,9 +141,8 @@ function check_details_in() {
 }
 
 function get_dfl_bank_info() {
-    const bb_id = out_payment_choice.substring(3);
     $.ajax({
-        url: `/transactions/${client_id}/beneficiary/${bb_id}`,
+        url: `/transactions/${client_id}/dfl_bank/${dfl_bank_account}`,
         datatype: 'json',
         type: 'GET',
         success: function(res) {
@@ -175,6 +176,7 @@ function build_inbound_payment() {
     }
 }
 
+// outbound payment details
 function get_beneficiary_info() {
     const bb_id = out_payment_choice.substring(3);
     $.ajax({
@@ -185,7 +187,7 @@ function get_beneficiary_info() {
             const data = JSON.parse(res)[0]["fields"];
             
             var html_div = `
-                        <p>Upon receipt of <span id="review-origin_currency3"></span> funds, Development Finance Limited will transfer <span id="review-y"></span> <span id="review-settlement_amount2"></span> to:</p>
+                        <p>Upon receipt of ${settlement_currency} funds, Development Finance Limited will transfer ${foreign_currency} ${foreign_amount} to:</p>
                         <div class="row mb-3">
                             <div class="col-3">
                                 Intermediary Bank:<br>
@@ -215,7 +217,6 @@ function get_beneficiary_info() {
                         <div class="row mb-3">
                             <div class="col-3">
                                 Beneficiary Customer:<br>
-                                <br>
                                 <br>
                                 <strong>ACC #:</strong><br>
                             </div>
@@ -249,7 +250,7 @@ function get_client_bank_info() {
         success: function(res) {
             const data = JSON.parse(res)[0]["fields"];
             var html_div = `
-                        <p>Upon receipt of <span id="review-origin_currency3"></span> funds, Development Finance Limited will transfer <span id="review-y"></span> <span id="review-settlement_amount2"></span> to:</p>     
+                        <p>Upon receipt of ${foreign_currency} funds, Development Finance Limited will transfer ${settlement_currency} ${settlement_amount} to:</p>     
                 <div class="row mb-3">
                     <div class="row mb-3">
                         <div class="col-3">
@@ -334,6 +335,7 @@ function dealReview() {
     set_vars();
     build_contract_heading();
     build_summary_box();
+    console.log(dfl_bank_account);
     build_inbound_payment();
     build_outbound_payment();
     build_signatures();

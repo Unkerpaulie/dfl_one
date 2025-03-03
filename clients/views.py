@@ -490,6 +490,7 @@ def new_beneficiary(req, client):
     context['show_special_instructions'] = True
     countries = Country.objects.all()
     context["countries"] = countries
+    context["account_types"] = DFLLocalBank.ACCOUNT_TYPES
     context["currencies"] = Currency.objects.all().exclude(currency_code="TTD")
 
     
@@ -505,6 +506,7 @@ def new_beneficiary(req, client):
         bank_zip = req.POST['bank_zip'].strip()
         bank_country = int(req.POST['bank_country'])
         account_number = req.POST['account_number'].strip()
+        account_type = req.POST['account_type'].strip()
         swift_code = req.POST['swift_code'].strip()
         iban_code = req.POST['iban_code'].strip()
         aba_code = req.POST['aba_code'].strip()
@@ -522,7 +524,6 @@ def new_beneficiary(req, client):
         intermediary_bank_state = req.POST['intermediary_bank_state'].strip()
         intermediary_bank_zip = req.POST['intermediary_bank_zip'].strip()
         intermediary_bank_country = int(req.POST['intermediary_bank_country'])
-        intermediary_account_number = req.POST['intermediary_account_number'].strip()
         intermediary_swift_code = req.POST['intermediary_swift_code'].strip()
         intermediary_iban_code = req.POST['intermediary_iban_code'].strip()
         intermediary_aba_code = req.POST['intermediary_aba_code'].strip()
@@ -539,6 +540,7 @@ def new_beneficiary(req, client):
             bank_zip=bank_zip,
             bank_country=Country.objects.get(pk=bank_country),
             account_number=account_number,
+            account_type=account_type,
             swift_code=swift_code,
             iban_code=iban_code,
             aba_code=aba_code,
@@ -556,7 +558,6 @@ def new_beneficiary(req, client):
             intermediary_bank_state=intermediary_bank_state,
             intermediary_bank_zip=intermediary_bank_zip,
             intermediary_bank_country=Country.objects.get(pk=intermediary_bank_country),
-            intermediary_account_number=intermediary_account_number,
             intermediary_swift_code=intermediary_swift_code,
             intermediary_iban_code=intermediary_iban_code,
             intermediary_aba_code=intermediary_aba_code,
@@ -592,6 +593,7 @@ def edit_beneficiary(req, client, beneficiary_id):
     context['form_purpose'] = "edit"
     context['show_special_instructions'] = True
     context["countries"] = countries
+    context["account_types"] = DFLLocalBank.ACCOUNT_TYPES
     context["currencies"] = Currency.objects.all().exclude(currency_code="TTD")
     # set form data
     context['formdata'] = beneficiary
@@ -608,6 +610,7 @@ def edit_beneficiary(req, client, beneficiary_id):
         bank_zip = req.POST['bank_zip'].strip()
         bank_country = int(req.POST['bank_country'])
         account_number = req.POST['account_number'].strip()
+        account_type = req.POST['account_type'].strip()
         swift_code = req.POST['swift_code'].strip()
         iban_code = req.POST['iban_code'].strip()
         aba_code = req.POST['aba_code'].strip()
@@ -625,11 +628,9 @@ def edit_beneficiary(req, client, beneficiary_id):
         intermediary_bank_state = req.POST['intermediary_bank_state'].strip()
         intermediary_bank_zip = req.POST['intermediary_bank_zip'].strip()
         intermediary_bank_country = int(req.POST['intermediary_bank_country'])
-        intermediary_account_number = req.POST['intermediary_account_number'].strip()
         intermediary_swift_code = req.POST['intermediary_swift_code'].strip()
         intermediary_iban_code = req.POST['intermediary_iban_code'].strip()
         intermediary_aba_code = req.POST['intermediary_aba_code'].strip()
-        intermediary_account_number = req.POST['intermediary_account_number'].strip()
         special_instructions = req.POST['special_instructions'].strip()
 
         # update beneficiary
@@ -641,6 +642,7 @@ def edit_beneficiary(req, client, beneficiary_id):
         beneficiary.bank_zip=bank_zip
         beneficiary.bank_country=Country.objects.get(pk=bank_country)
         beneficiary.account_number=account_number
+        beneficiary.account_type=account_type
         beneficiary.swift_code=swift_code
         beneficiary.iban_code=iban_code
         beneficiary.aba_code=aba_code
@@ -658,7 +660,6 @@ def edit_beneficiary(req, client, beneficiary_id):
         beneficiary.intermediary_bank_state=intermediary_bank_state
         beneficiary.intermediary_bank_zip=intermediary_bank_zip
         beneficiary.intermediary_bank_country=Country.objects.get(pk=intermediary_bank_country)
-        beneficiary.intermediary_account_number=intermediary_account_number
         beneficiary.intermediary_swift_code=intermediary_swift_code
         beneficiary.intermediary_iban_code=intermediary_iban_code
         beneficiary.intermediary_aba_code=intermediary_aba_code
