@@ -147,7 +147,7 @@
                 <div class="row mb-2">
                     <div class="col">
                         <label>
-                            <input type="checkbox" class="checkbox" onclick="toggleDivVisibility(this, 'intermediary_info')">
+                            <input type="checkbox" id="intermediary_info_chk" class="checkbox" onclick="toggleDivVisibility(this, 'intermediary_info')" {% if formdata.intermediary_bank_name %}checked{% endif %}>
                             <span>Enter Intermediary Bank Information</span>
                         </label>
                     </div>
@@ -243,7 +243,15 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Hide the div by default
-        document.getElementById("intermediary_info").style.display = "none";
+        const toggle_divs = ["intermediary_info"];
+        toggle_divs.forEach(divId => {
+            const div = document.getElementById(divId);
+            div.style.display = "none";
+        });
+        toggle_divs.forEach(divId => {
+            const checkbox = document.getElementById(divId + "_chk");
+            toggleDivVisibility(checkbox, divId);
+        });
     });
 
 </script>
