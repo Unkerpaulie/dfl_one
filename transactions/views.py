@@ -32,7 +32,7 @@ def new_transaction(req, client_id):
     context["bank_fee"] = bank_fee.bank_fee
     context |= {
         "beneficiaries": client.beneficiaries.all(),
-        # "local_banks": ClientLocalBank.objects.filter(client=client),
+        "local_banks": ClientLocalBank.objects.filter(client=client),
         "inpayment_types": Transaction.INPAYMENT_TYPES,
         "transaction_types": Transaction.TRANSACTION_TYPES, 
         "currencies": Currency.objects.all(), 
@@ -54,12 +54,13 @@ def new_transaction(req, client_id):
         settlement_amount = float(req.POST.get("settlement_amount"))
         bank_fee = float(req.POST.get("bank_fee"))
         deal_status = int(req.POST.get("deal_status"))
+        # inbound payment options to DFL
         in_payment_type = req.POST.get("in_payment_type")
         check_number = req.POST.get("check_number")
         dfl_local_bank_account = int(req.POST.get("dfl_local_bank_account")) if req.POST.get("in_payment_type") == "local" else None
         dfl_intl_bank_account = int(req.POST.get("dfl_intl_bank_account")) if req.POST.get("in_payment_type") == "foreign" else None
-        # out_payment values: cash, fixed, bb-
-        out_payment = req.POST.get("out_payment")
+        # out_payment values: cash, fixed, bb-, lb-
+        out_payment = req.POST.get("out_payment") # not saved in model
         cash_settlement = out_payment == "cash"
         fixed_deposit = out_payment == "fixed"
         fixed_deposit_cert = req.POST.get("fixed_deposit_cert")
@@ -72,18 +73,20 @@ def new_transaction(req, client_id):
             contract_date=contract_date, 
             value_date=value_date, 
             transaction_type=transaction_type, 
-            settlement_currency=Currency.objects.get(id=settlement_currency),
-            settlement_currency_rate=settlement_currency_rate, 
-            settlement_amount=settlement_amount, 
             foreign_currency=Currency.objects.get(id=foreign_currency), 
             foreign_currency_rate=foreign_currency_rate, 
             foreign_amount=foreign_amount, 
+            settlement_currency=Currency.objects.get(id=settlement_currency),
+            settlement_currency_rate=settlement_currency_rate, 
+            settlement_amount=settlement_amount, 
             bank_fee=bank_fee, 
             deal_status=DealStatus.objects.get(id=deal_status), 
+            # inbound payment options to DFL
             in_payment_type=in_payment_type,
             check_number=check_number,
             dfl_local_bank_account=DFLLocalBank.objects.get(id=dfl_local_bank_account) if dfl_local_bank_account else None,
             dfl_intl_bank_account=DFLLocalBank.objects.get(id=dfl_intl_bank_account) if dfl_local_bank_account else None,
+            # outbound payment options to client
             cash_settlement=cash_settlement,
             fixed_deposit=fixed_deposit,
             fixed_deposit_cert=fixed_deposit_cert,
@@ -137,6 +140,7 @@ def edit_transaction(req, client_id, transaction_id):
     context["bank_fee"] = transaction.bank_fee
     context |= {
         "beneficiaries": client.beneficiaries.all(),
+        "local_banks": ClientLocalBank.objects.filter(client=client),
         "inpayment_types": Transaction.INPAYMENT_TYPES,
         "transaction_types": Transaction.TRANSACTION_TYPES, 
         "currencies": Currency.objects.all(), 
@@ -152,7 +156,7 @@ def edit_transaction(req, client_id, transaction_id):
     elif transaction.fixed_deposit:
         out_payment = "fixed"
     elif transaction.client_local_bank_account is not None:
-        out_payment = f"bb-{transaction.client_local_bank_account.id}"
+        out_payment = f"lb-{transaction.client_local_bank_account.id}"
     elif transaction.client_beneficiary_account is not None:
         out_payment = f"bb-{transaction.client_beneficiary_account.id}"
     context["formdata"] = transaction

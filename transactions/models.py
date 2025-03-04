@@ -30,10 +30,10 @@ class Transaction(models.Model):
     cash_settlement = models.BooleanField(default=False)
     fixed_deposit = models.BooleanField(default=False)
     fixed_deposit_cert = models.CharField(max_length=255, null=True, blank=True)
-    client_local_bank_account = models.ForeignKey(ClientLocalBank, on_delete=models.CASCADE, null=True, blank=True)
     client_beneficiary_account = models.ForeignKey(BeneficiaryBank, on_delete=models.CASCADE, null=True, blank=True)
+    client_local_bank_account = models.ForeignKey(ClientLocalBank, on_delete=models.CASCADE, null=True, blank=True)
     payment_details = models.CharField(max_length=255, null=True, blank=True)
-
+    # autoamatically set
     trader = models.ForeignKey(User, related_name="trader", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     last_updated_by = models.ForeignKey(User, related_name="updater", on_delete=models.CASCADE)

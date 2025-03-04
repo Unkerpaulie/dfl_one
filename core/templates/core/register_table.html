@@ -44,7 +44,6 @@
                                             <th>Beneficiary Bank</th>
                                             <th>Beneficiary Acc #</th>
                                             <th>Intermediary Bank</th>
-                                            <th>Intermediary Acc #</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -62,10 +61,10 @@
                                             <td>{{ transaction.settlement_amount|floatformat:2|intcomma }}</td>
                                             <td>{{ transaction.deal_status }}</td>
                                             <td>{{ transaction.trader.first_name }} {{ transaction.trader.last_name }}</td>
-                                            <td>{{ transaction.beneficiary.recipient_name }}</td>
-                                            <td>{{ transaction.beneficiary.bank_name }}</td>
-                                            <td>{{ transaction.beneficiary.account_number }}</td>
-                                            <td>{{ transaction.beneficiary.intermediary_bank_name }}</td>
+                                            <td>{{ transaction.client_beneficiary_account.recipient_name }}</td>
+                                            <td>{{ transaction.client_beneficiary_account.bank_name }}</td>
+                                            <td>{{ transaction.client_beneficiary_account.account_number }}</td>
+                                            <td>{{ transaction.client_beneficiary_account.intermediary_bank_name }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>

@@ -5,7 +5,7 @@ from datetime import date, timedelta
 from faker import Faker
 from clients.models import *
 from transactions.models import Transaction, CurrencyStock 
-from setup.models import BankFee
+from setup.models import BankFee, DFLLocalBank, DFLInternationalBank
 from core.models import Currency, DealStatus
 from account.models import User
 
@@ -47,10 +47,13 @@ class Command(BaseCommand):
                 settlement_amount=foreign_currency["rate"] * amount,
                 bank_fee=BankFee.objects.get(pk=1).bank_fee,
                 deal_status=DealStatus.objects.get(pk=2),
+                in_payment_type=(ip := random.choice(["cash", "check", "foreign"])),
+                check_number=fake.random_number(digits=10) if ip == "check" else None,
+                client_beneficiary_account=random.choice(client.beneficiaries.all()) if ip == "foreign" else None,
+                client_local_bank_account=None,                
+                payment_details=fake.sentence(),                
                 trader=trader,
-                last_updated_by=trader,
-                beneficiary=random.choice(client.beneficiaries.all()),
-                payment_details=fake.sentence()
+                last_updated_by=trader
             )
             t.save()
             self.stdout.write(self.style.SUCCESS(f"{i+1}: {t}"))

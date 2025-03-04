@@ -72,3 +72,10 @@ This script pulls data not randomly generated (reference data for pull down menu
 `tryfake.py`
 
 This script generates fake data for testing purposes. It gives an example of each of the functions andwhat they generate.
+
+## To do
+
+* Make transaction form pulldowns more responsive to the options selected, like a purchase would not have a settlement currency of TTD, and the foreign bank accounts would befiltered by the currency selected
+* Make reviewers have read only access to the client form and transaction form
+* Backlinks from Register and Blotter to the transaction
+* Make transaction actions "View" instead of "Edit" for reviewers

@@ -58,11 +58,11 @@ function check_inpayment() {
     } else if (in_payment == "check") {
         show_div("check");
         hide_div("local_bank");
-        hide_div("intl_bank");        
+        hide_div("intl_bank");
     } else if (in_payment == "local") {
         hide_div("check");
-        show_div("local_bank");                
-        hide_div("intl_bank");                
+        show_div("local_bank");
+        hide_div("intl_bank");
     } else if (in_payment == "foreign") {
         hide_div("check");
         hide_div("local_bank");

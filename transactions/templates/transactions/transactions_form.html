@@ -171,7 +171,10 @@
                                                     <option value="cash"{% if formdata.cash_settlement %} selected {% endif %}>Cash Settlement</option>
                                                     <option value="fixed"{% if formdata.fixed_deposit %} selected {% endif %}>Fixed Deposit</option>
                                                     {% for beneficiary in beneficiaries %}
-                                                    <option value="bb-{{ beneficiary.id }}"{% if beneficiary.id == formdata.beneficiary.id %} selected {% endif %}>{{ beneficiary }}</option>
+                                                    <option value="bb-{{ beneficiary.id }}"{% if beneficiary.id == formdata.client_beneficiary_account.id %} selected {% endif %}>{{ beneficiary }}</option>
+                                                    {% endfor %}
+                                                    {% for local_bank in local_banks %}
+                                                    <option value="lb-{{ local_bank.id }}"{% if local_bank.id == formdata.client_local_bank_account.id %} selected {% endif %}>{{ local_bank }}</option>    
                                                     {% endfor %}
                                                 </select>
                                                 <div class="input-group-append">
