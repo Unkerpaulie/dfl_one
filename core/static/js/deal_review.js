@@ -21,7 +21,8 @@ var bank_fee;
 var total_amount;
 var inbound_payment;
 var check_number;
-var dfl_bank_account;
+var dfl_local_bank_account;
+var dfl_intl_bank_account;
 var payment_details;
 var client_id;
 var trader;
@@ -58,7 +59,8 @@ function set_vars() {
     total_amount = Number(settlement_amount) + Number(bank_fee);
     inbound_payment = form_elements["in_payment_type"].options[form_elements["in_payment_type"].selectedIndex].value;
     check_number = form_elements["check_number"].value;
-    dfl_bank_account = form_elements["dfl_bank_account"].options[form_elements["dfl_bank_account"].selectedIndex].value;
+    dfl_local_bank_account = form_elements["dfl_local_bank_account"].options[form_elements["dfl_local_bank_account"].selectedIndex].value;
+    dfl_intl_bank_account = form_elements["dfl_intl_bank_account"].options[form_elements["dfl_intl_bank_account"].selectedIndex].value;
     payment_details = form_elements["payment_details"].value;
     client_id = form_elements["client_id"].value;
     trader = form_elements["trader"].value;
@@ -140,9 +142,9 @@ function check_details_in() {
     document.getElementById("review-inbound_payment").innerHTML = html_div;
 }
 
-function get_dfl_bank_info() {
+function get_dfl_local_bank_info() {
     $.ajax({
-        url: `/transactions/${client_id}/dfl_bank/${dfl_bank_account}`,
+        url: `/transactions/${client_id}/dfl_local_bank/${dfl_local_bank_account}`,
         datatype: 'json',
         type: 'GET',
         success: function(res) {
@@ -172,7 +174,7 @@ function build_inbound_payment() {
     } else if (inbound_payment == "check"){
         check_details_in();
     } else {
-        get_dfl_bank_info();
+        get_dfl_local_bank_info();
     }
 }
 
@@ -335,7 +337,6 @@ function dealReview() {
     set_vars();
     build_contract_heading();
     build_summary_box();
-    console.log(dfl_bank_account);
     build_inbound_payment();
     build_outbound_payment();
     build_signatures();
